@@ -1,0 +1,238 @@
+{
+  "nodes": [
+    {
+      "data": {
+        "id": "yang_dad",
+        "label": "楊爸爸",
+        "type": "person",
+        "role": "割頸案受害者父親",
+        "party": null,
+        "stance": 5,
+        "stance_label": "⭐⭐⭐⭐⭐",
+        "description": null
+      },
+      "style": {
+        "background-color": "#FF6B6B",
+        "shape": "ellipse"
+      }
+    },
+    {
+      "data": {
+        "id": "wang_wanyu",
+        "label": "王婉諭",
+        "type": "person",
+        "role": "時代力量主席",
+        "party": "時代力量",
+        "stance": 5,
+        "stance_label": "⭐⭐⭐⭐⭐",
+        "description": null
+      },
+      "style": {
+        "background-color": "#FF6B6B",
+        "shape": "ellipse"
+      }
+    },
+    {
+      "data": {
+        "id": "hung_meng_kai",
+        "label": "洪孟楷",
+        "type": "person",
+        "role": "國民黨立委",
+        "party": "國民黨",
+        "stance": 4,
+        "stance_label": "⭐⭐⭐⭐",
+        "description": null
+      },
+      "style": {
+        "background-color": "#FFA07A",
+        "shape": "ellipse"
+      }
+    },
+    {
+      "data": {
+        "id": "npp",
+        "label": "時代力量",
+        "type": "party",
+        "role": null,
+        "party": null,
+        "stance": 5,
+        "stance_label": "⭐⭐⭐⭐⭐",
+        "description": null
+      },
+      "style": {
+        "background-color": "#FF6B6B",
+        "shape": "hexagon"
+      }
+    },
+    {
+      "data": {
+        "id": "kmt",
+        "label": "國民黨",
+        "type": "party",
+        "role": null,
+        "party": null,
+        "stance": 3,
+        "stance_label": "⭐⭐⭐",
+        "description": null
+      },
+      "style": {
+        "background-color": "#FFD93D",
+        "shape": "hexagon"
+      }
+    },
+    {
+      "data": {
+        "id": "child_growth_alliance",
+        "label": "孩想陪你長大聯盟",
+        "type": "organization",
+        "role": null,
+        "party": null,
+        "stance": 5,
+        "stance_label": "⭐⭐⭐⭐⭐",
+        "description": null
+      },
+      "style": {
+        "background-color": "#FF6B6B",
+        "shape": "round-rectangle"
+      }
+    },
+    {
+      "data": {
+        "id": "cutting_neck_case",
+        "label": "割頸案",
+        "type": "case",
+        "role": null,
+        "party": null,
+        "stance": 0,
+        "stance_label": "未評估",
+        "description": null
+      },
+      "style": {
+        "background-color": "#95A5A6",
+        "shape": "triangle"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "data": {
+        "source": "yang_dad",
+        "target": "wang_wanyu",
+        "type": "participate",
+        "interaction": "記者會",
+        "label": "記者會",
+        "strength": 0.7,
+        "direction": "undirected",
+        "verified": false,
+        "evidence_count": 1,
+        "sentiment": null,
+        "interaction_category": "public_action"
+      },
+      "style": {
+        "line-color": "#3498db",
+        "width": 3.0999999999999996,
+        "line-style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "source": "yang_dad",
+        "target": "child_growth_alliance",
+        "type": "ally",
+        "interaction": null,
+        "label": "ally",
+        "strength": 0.6,
+        "direction": "undirected",
+        "verified": false,
+        "evidence_count": 1,
+        "sentiment": null,
+        "interaction_category": "general"
+      },
+      "style": {
+        "line-color": "#27ae60",
+        "width": 2.8,
+        "line-style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "source": "wang_wanyu",
+        "target": "npp",
+        "type": "hierarchy",
+        "interaction": null,
+        "label": "hierarchy",
+        "strength": 0.6,
+        "direction": "undirected",
+        "verified": false,
+        "evidence_count": 1,
+        "sentiment": null,
+        "interaction_category": "general"
+      },
+      "style": {
+        "line-color": "#34495e",
+        "width": 2.8,
+        "line-style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "source": "hung_meng_kai",
+        "target": "kmt",
+        "type": "hierarchy",
+        "interaction": null,
+        "label": "hierarchy",
+        "strength": 0.6,
+        "direction": "undirected",
+        "verified": false,
+        "evidence_count": 1,
+        "sentiment": null,
+        "interaction_category": "general"
+      },
+      "style": {
+        "line-color": "#34495e",
+        "width": 2.8,
+        "line-style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "source": "hung_meng_kai",
+        "target": "cutting_neck_case",
+        "type": "propose",
+        "interaction": "修法提案",
+        "label": "修法提案",
+        "strength": 0.7,
+        "direction": "undirected",
+        "verified": false,
+        "evidence_count": 1,
+        "sentiment": null,
+        "interaction_category": "legislative"
+      },
+      "style": {
+        "line-color": "#f39c12",
+        "width": 3.0999999999999996,
+        "line-style": "dashed"
+      }
+    },
+    {
+      "data": {
+        "source": "wang_wanyu",
+        "target": "yang_dad",
+        "type": "participate",
+        "interaction": "陪同記者會",
+        "label": "陪同記者會",
+        "strength": 0.7,
+        "direction": "undirected",
+        "verified": false,
+        "evidence_count": 1,
+        "sentiment": null,
+        "interaction_category": "public_action"
+      },
+      "style": {
+        "line-color": "#3498db",
+        "width": 3.0999999999999996,
+        "line-style": "dashed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Spec Master Method</title>
+  <style>
+    :root{
+      --bg:#07111e; --panel:#0f1a2c; --panel-2:#152238; --line:#27344d;
+      --text:#eef4ff; --muted:#b7c4dc; --blue:#4ea1ff; --teal:#43d6c2; --amber:#ffb34d;
+      --shadow:0 20px 52px rgba(0,0,0,.32); --radius:16px; --radius-sm:12px; --max:1180px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at top left, rgba(78,161,255,.16), transparent 30%),
+        radial-gradient(circle at top right, rgba(67,214,194,.14), transparent 26%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height:1.55;
+    }
+    a{color:var(--blue)}
+    .wrap{max-width:var(--max); margin:0 auto; padding:28px 20px 64px}
+    .hero{
+      padding:32px; border:1px solid rgba(255,255,255,.08); border-radius:20px;
+      background:linear-gradient(180deg, rgba(15,26,44,.98), rgba(15,26,44,.86));
+      box-shadow:var(--shadow); display:grid; gap:18px; position:relative;
+    }
+    .lang-switch{position:absolute; top:16px; right:16px; display:flex; gap:8px}
+    .lang-switch button{
+      border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04);
+      color:var(--text); padding:7px 12px; border-radius:999px; cursor:pointer; font:inherit;
+    }
+    .lang-switch button.active{background:rgba(78,161,255,.2); border-color:rgba(78,161,255,.4)}
+    .eyebrow{display:inline-flex; align-items:center; gap:8px; color:var(--muted);
+      font-size:12px; text-transform:uppercase; letter-spacing:.08em}
+    .eyebrow::before{content:""; width:10px; height:10px; border-radius:999px;
+      background:linear-gradient(135deg, var(--blue), var(--teal))}
+    h1,h2,h3,p{margin:0}
+    h1{font-size:clamp(2rem, 4.4vw, 3.7rem); line-height:1.04; max-width:18ch}
+    .lede{color:var(--muted); font-size:1.05rem; max-width:78ch}
+    .stats{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px; margin-top:4px}
+    .stat{padding:16px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius-sm)}
+    .stat b{display:block; font-size:1.5rem; margin-bottom:6px}
+    .stat span{color:var(--muted); font-size:.9rem}
+    .cta{display:flex; flex-wrap:wrap; gap:10px; margin-top:4px}
+    .cta a{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px;
+      text-decoration:none; font-weight:600; font-size:.95rem}
+    .cta a.primary{background:linear-gradient(135deg, var(--blue), var(--teal)); color:#06121f}
+    .cta a.ghost{border:1px solid rgba(255,255,255,.16); color:var(--text)}
+    .section{margin-top:24px; padding:24px; background:rgba(255,255,255,.02);
+      border:1px solid rgba(255,255,255,.06); border-radius:18px}
+    .section h2{font-size:1.35rem; margin-bottom:6px}
+    .section .sub{color:var(--muted); margin-bottom:14px}
+    .grid{display:grid; gap:14px}
+    .cols-2{grid-template-columns:repeat(2, minmax(0,1fr))}
+    .cols-3{grid-template-columns:repeat(3, minmax(0,1fr))}
+    .card{padding:16px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--panel)}
+    .card h3{margin-bottom:8px; font-size:1rem}
+    .card p,.card li{color:var(--muted); font-size:.96rem}
+    .card code, td code, p code{background:rgba(78,161,255,.12); border:1px solid rgba(78,161,255,.18);
+      padding:1px 6px; border-radius:6px; font-size:.85em; color:#dceaff}
+    table{width:100%; border-collapse:collapse; border-radius:12px; overflow:hidden}
+    th,td{padding:12px 11px; border-bottom:1px solid rgba(255,255,255,.08); text-align:left; vertical-align:top}
+    th{color:#dfe8ff; font-size:.9rem}
+    td{color:var(--muted); font-size:.95rem}
+    .group-tag{display:inline-flex; align-items:center; padding:3px 10px; border-radius:999px; font-size:12px;
+      margin-bottom:10px; background:rgba(67,214,194,.12); border:1px solid rgba(67,214,194,.22); color:#d4fff7}
+    .flow{display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:10px}
+    .flow-step{padding:14px; border:1px solid var(--line); border-radius:14px; background:var(--panel-2); min-height:150px}
+    .flow-step b{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px;
+      border-radius:999px; margin-bottom:10px; background:rgba(78,161,255,.16); color:#e8f3ff; font-size:.84rem}
+    .flow-step h3{font-size:.98rem; margin-bottom:6px}
+    .flow-step p{color:var(--muted); font-size:.88rem}
+    .flow-step .own{display:block; margin-top:8px; font-size:.78rem; color:#9fb6d8}
+    .warn{color:#fff1d2; background:rgba(255,179,77,.08); border:1px solid rgba(255,179,77,.18);
+      border-radius:12px; padding:14px 16px}
+    .footer{display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; margin-top:22px;
+      padding-top:14px; border-top:1px solid rgba(255,255,255,.08); color:var(--muted); font-size:.92rem}
+    @media (max-width: 980px){
+      .stats,.cols-2,.cols-3,.flow{grid-template-columns:1fr}
+      .wrap{padding:16px} .hero,.section{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="lang-switch" aria-label="Language switch">
+        <button type="button" data-lang="en" class="active">EN</button>
+        <button type="button" data-lang="zh">繁中</button>
+      </div>
+      <div class="eyebrow" data-en="The Spec Master Method" data-zh="Spec Master 開發方法">The Spec Master Method</div>
+      <h1 data-en="Bring DevSecOps, Scrum, and TDD into agentic workflows — without losing the truth" data-zh="把 DevSecOps、Scrum 與 TDD 帶進 agentic 工作流 — 而且不失真">Bring DevSecOps, Scrum, and TDD into agentic workflows — without losing the truth</h1>
+      <p class="lede" data-en="Coding agents produce code, mutate files, and hand work to other agents faster than humans can re-establish context. The bottleneck moves from writing code to coordinating ownership, evidence, and runtime boundaries. The Spec Master Method is an open-source family of 14 composable skills that ports proven engineering discipline — SDD, TDD, DDD, test management, and refactoring — into a governed, inspectable agentic workflow." data-zh="程式代理人產生程式碼、變更檔案、把工作交給其他代理人的速度，已經快過人類重新建立上下文的速度。瓶頸從「寫程式」轉移到「協調責任歸屬、證據與執行環境邊界」。Spec Master 開發方法是一套開源的 14 個可組合 skills，把已驗證的工程紀律——SDD、TDD、DDD、測試管理與重構——移植成一個受治理、可檢視的 agentic 工作流。">Coding agents produce code, mutate files, and hand work to other agents faster than humans can re-establish context. The bottleneck moves from writing code to coordinating ownership, evidence, and runtime boundaries. The Spec Master Method is an open-source family of 14 composable skills that ports proven engineering discipline — SDD, TDD, DDD, test management, and refactoring — into a governed, inspectable agentic workflow.</p>
+      <div class="stats">
+        <div class="stat"><b>14</b><span data-en="composable open-source skills" data-zh="個可組合的開源 skills">composable open-source skills</span></div>
+        <div class="stat"><b>6</b><span data-en="SDD delivery phases, each with an owner" data-zh="個 SDD 交付階段，各有 owner">SDD delivery phases, each with an owner</span></div>
+        <div class="stat"><b>5</b><span data-en="practices unified: SDD · TDD · DDD · test mgmt · refactoring" data-zh="種實踐整合：SDD · TDD · DDD · 測試管理 · 重構">practices unified: SDD · TDD · DDD · test mgmt · refactoring</span></div>
+        <div class="stat"><b>0</b><span data-en="unearned readiness claims by design" data-zh="個未經證據支撐的 readiness 宣稱">unearned readiness claims by design</span></div>
+      </div>
+      <div class="cta">
+        <a class="primary" href="skills/spec-master/spec-master/index.html" data-en="Spec Master family page →" data-zh="Spec Master 家族頁 →">Spec Master family page →</a>
+        <a class="ghost" href="skills/spec-master/spec-driven-development/index.html" data-en="Spec-Driven Development brief →" data-zh="規格驅動開發說帖 →">Spec-Driven Development brief →</a>
+        <a class="ghost" href="docs/agentic-delivery-methodology.md" data-en="Read the methodology article →" data-zh="閱讀方法論文章 →">Read the methodology article →</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Why traditional process needs porting, not abandoning" data-zh="為什麼傳統流程需要的是移植，而不是丟棄">Why traditional process needs porting, not abandoning</h2>
+      <p class="sub" data-en="Agile, CI/CD, and code review still work — but in an agentic team they must get stricter about ownership, evidence freshness, and claim boundaries." data-zh="敏捷、CI/CD 與程式審查依然有效——但在代理人團隊裡，它們必須對責任歸屬、證據新鮮度與宣稱邊界更嚴格。">Agile, CI/CD, and code review still work — but in an agentic team they must get stricter about ownership, evidence freshness, and claim boundaries.</p>
+      <div class="grid cols-3">
+        <div class="card">
+          <h3 data-en="What gets more valuable" data-zh="什麼變得更有價值">What gets more valuable</h3>
+          <p data-en="Choosing the right owner before work starts, keeping authority surfaces separate from derived summaries, and making evidence fresh enough to trust." data-zh="在工作開始前選對 owner、讓權威面與衍生摘要分離、讓證據新鮮到值得信任。">Choosing the right owner before work starts, keeping authority surfaces separate from derived summaries, and making evidence fresh enough to trust.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="What gets more fragile" data-zh="什麼變得更脆弱">What gets more fragile</h3>
+          <p data-en="A green file that looks authoritative but is not. Mock-heavy tests that look ready. One skill trying to own planning, evidence, and execution at once." data-zh="一個看似權威其實不是的綠燈檔案。看起來就緒的 mock-heavy 測試。一個 skill 想同時擁有規劃、證據與執行。">A green file that looks authoritative but is not. Mock-heavy tests that look ready. One skill trying to own planning, evidence, and execution at once.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="The team-owned answer" data-zh="團隊自有的解法">The team-owned answer</h3>
+          <p data-en="Vendors change agents quickly and many decisions stay black-box. An inspectable workflow, evidence trail, and retrospective surface keep process improvement owned by the team — not by a vendor's hidden defaults." data-zh="供應商更換代理人很快，許多決策仍是黑盒。可檢視的工作流、證據軌跡與回顧面，讓流程改善掌握在團隊手上——而不是供應商的隱藏預設。">Vendors change agents quickly and many decisions stay black-box. An inspectable workflow, evidence trail, and retrospective surface keep process improvement owned by the team — not by a vendor's hidden defaults.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="The engineering value stack" data-zh="工程價值堆疊">The engineering value stack</h2>
+      <p class="sub" data-en="Each classic practice keeps its job — and gets a concrete owner skill in the family." data-zh="每個經典實踐都保有它的職責——並在家族中得到一個具體的 owner skill。">Each classic practice keeps its job — and gets a concrete owner skill in the family.</p>
+      <table>
+        <thead>
+          <tr>
+            <th data-en="Practice" data-zh="實踐">Practice</th>
+            <th data-en="Job it still does" data-zh="它依然負責的任務">Job it still does</th>
+            <th data-en="Who owns it here" data-zh="這裡由誰負責">Who owns it here</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td data-en="Spec-Driven Development (SDD)" data-zh="規格驅動開發 (SDD)">Spec-Driven Development (SDD)</td><td data-en="Turn vague intent into traceable delivery; cut rework and late clarification." data-zh="把模糊意圖轉成可追溯交付；降低返工與晚期澄清。">Turn vague intent into traceable delivery; cut rework and late clarification.</td><td><code>spec-driven-development</code></td></tr>
+          <tr><td data-en="Test-Driven Development (TDD)" data-zh="測試驅動開發 (TDD)">Test-Driven Development (TDD)</td><td data-en="Pin behavior before code changes; make refactoring safe; lower defect leakage." data-zh="改程式前先釘住行為；讓重構安全；降低缺陷外漏。">Pin behavior before code changes; make refactoring safe; lower defect leakage.</td><td><code>tdd-workflow</code> + <code>test-design-generator</code></td></tr>
+          <tr><td data-en="Domain-Driven Design (DDD)" data-zh="領域驅動設計 (DDD)">Domain-Driven Design (DDD)</td><td data-en="Align boundaries with business language; reduce cross-team ambiguity." data-zh="讓邊界對齊業務語言；降低跨團隊歧義。">Align boundaries with business language; reduce cross-team ambiguity.</td><td data-en="SDD Phase 2 design (bounded contexts & contracts)" data-zh="SDD Phase 2 設計（bounded context 與契約）">SDD Phase 2 design (bounded contexts &amp; contracts)</td></tr>
+          <tr><td data-en="Test Management" data-zh="測試管理">Test Management</td><td data-en="Turn green CI into auditable, decision-grade risk evidence." data-zh="把 CI 綠燈變成可稽核、可決策的風險證據。">Turn green CI into auditable, decision-grade risk evidence.</td><td><code>test-registry-manager</code> + <code>test-quality-reviewer</code></td></tr>
+          <tr><td data-en="Refactoring" data-zh="重構">Refactoring</td><td data-en="Lower cost of change — only after behavior is protected by tests." data-zh="降低變更成本——但只在行為被測試保護之後。">Lower cost of change — only after behavior is protected by tests.</td><td><code>code-refactoring-advisor</code> (paired with the safety net)</td></tr>
+          <tr><td data-en="Security left-shift" data-zh="安全左移">Security left-shift</td><td data-en="Catch injection, secrets, and weak crypto during review, not in production." data-zh="在審查階段抓出注入、機密與弱加密，而不是在正式環境。">Catch injection, secrets, and weak crypto during review, not in production.</td><td><code>security-risk-reviewer</code> + <code>code-review</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2 data-en="The six-phase flow and who owns each handoff" data-zh="六階段流程與每個交棒的 owner">The six-phase flow and who owns each handoff</h2>
+      <p class="sub" data-en="spec-master routes the request first; spec-driven-development runs the lifecycle; registries and the code-review family verify the evidence." data-zh="spec-master 先路由請求；spec-driven-development 跑生命週期；registries 與 code-review 家族驗證證據。">spec-master routes the request first; spec-driven-development runs the lifecycle; registries and the code-review family verify the evidence.</p>
+      <div class="flow">
+        <div class="flow-step"><b>1</b><h3 data-en="Requirements" data-zh="需求">Requirements</h3><p data-en="EARS-style acceptance criteria; YAGNI Rung 1 filters speculative needs." data-zh="EARS 式驗收標準；YAGNI Rung 1 過濾投機需求。">EARS-style acceptance criteria; YAGNI Rung 1 filters speculative needs.</p><span class="own">spec-master → spec-driven-development</span></div>
+        <div class="flow-step"><b>2</b><h3 data-en="Design & contracts" data-zh="設計與契約">Design &amp; contracts</h3><p data-en="Bounded contexts, data models, impact analysis (DDD)." data-zh="Bounded context、資料模型、影響分析（DDD）。">Bounded contexts, data models, impact analysis (DDD).</p><span class="own">spec-driven-development</span></div>
+        <div class="flow-step"><b>3</b><h3 data-en="Tasks & traceability" data-zh="任務與追溯">Tasks &amp; traceability</h3><p data-en="Plan closeout for TESTS.md, RTM, SPECS, CR, and issue disposition." data-zh="規劃 TESTS.md、RTM、SPECS、CR 與 issue 的收尾。">Plan closeout for TESTS.md, RTM, SPECS, CR, and issue disposition.</p><span class="own">spec-driven-development</span></div>
+        <div class="flow-step"><b>4</b><h3 data-en="Implementation" data-zh="實作">Implementation</h3><p data-en="Red → green → refactor with evidence reports; YAGNI Rung 5–6." data-zh="紅燈 → 綠燈 → 重構，附證據報告；YAGNI Rung 5–6。">Red → green → refactor with evidence reports; YAGNI Rung 5–6.</p><span class="own">tdd-workflow · test-registry-manager</span></div>
+        <div class="flow-step"><b>5</b><h3 data-en="Review verdict" data-zh="複核裁決">Review verdict</h3><p data-en="review.md owns readiness; left-shift detection flags smells, risks, gaps." data-zh="review.md 擁有 readiness；left-shift 偵測標記異味、風險與缺口。">review.md owns readiness; left-shift detection flags smells, risks, gaps.</p><span class="own">code-review family</span></div>
+        <div class="flow-step"><b>6</b><h3 data-en="Optimization" data-zh="優化">Optimization</h3><p data-en="Convert repeated findings into bounded improvements or promoted process changes." data-zh="把重複發現轉成有界改善或升級的流程變更。">Convert repeated findings into bounded improvements or promoted process changes.</p><span class="own">issue-log-manager · spec-registry-manager</span></div>
+      </div>
+      <p class="warn" style="margin-top:14px" data-en="Evidence flows one way: ISSUE_LOG → spec artifacts & reports → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md. Derived summaries never sync back into upstream truth — that is how the method prevents false-green readiness." data-zh="證據單向流動：ISSUE_LOG → spec 工件與報告 → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md。衍生摘要永遠不會反向同步回上游真相——這就是此方法防止 false-green readiness 的方式。">Evidence flows one way: ISSUE_LOG → spec artifacts &amp; reports → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md. Derived summaries never sync back into upstream truth — that is how the method prevents false-green readiness.</p>
+    </section>
+
+    <section class="section">
+      <h2 data-en="The 14 skills, in three layers" data-zh="14 個 skills，分三層">The 14 skills, in three layers</h2>
+      <p class="sub" data-en="All are open-source in this repository and installable as sibling skill folders." data-zh="全部在本 repository 開源，並可作為並列 skill 資料夾安裝。">All are open-source in this repository and installable as sibling skill folders.</p>
+      <div class="grid cols-3">
+        <div class="card">
+          <span class="group-tag" data-en="Layer 1 · Govern & route" data-zh="第一層 · 治理與路由">Layer 1 · Govern &amp; route</span>
+          <ul>
+            <li><code>spec-master</code> — <span data-en="front-door router & improvement classifier" data-zh="前門路由器與改善項分類器">front-door router &amp; improvement classifier</span></li>
+            <li><code>spec-registry-manager</code> — <span data-en="SPECS.md lifecycle & CR reconciliation" data-zh="SPECS.md 生命週期與 CR 對齊">SPECS.md lifecycle &amp; CR reconciliation</span></li>
+            <li><code>issue-log-manager</code> — <span data-en="holding surface for unresolved work" data-zh="未解決工作的暫存面">holding surface for unresolved work</span></li>
+            <li><code>local-infra-registry-governance</code> — <span data-en="dev/UAT/E2E runtime allocation" data-zh="dev/UAT/E2E 執行環境配置">dev/UAT/E2E runtime allocation</span></li>
+            <li><code>shared-governance</code> — <span data-en="git/worktree & ownership guardrails" data-zh="git/worktree 與責任護欄">git/worktree &amp; ownership guardrails</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="group-tag" data-en="Layer 2 · Deliver" data-zh="第二層 · 交付">Layer 2 · Deliver</span>
+          <ul>
+            <li><code>spec-driven-development</code> — <span data-en="the 6-phase delivery backbone" data-zh="六階段交付主幹">the 6-phase delivery backbone</span></li>
+            <li><code>tdd-workflow</code> — <span data-en="red/green/refactor discipline (Phase 4)" data-zh="紅/綠/重構紀律（Phase 4）">red/green/refactor discipline (Phase 4)</span></li>
+            <li><code>test-registry-manager</code> — <span data-en="TESTS.md catalog, traceability, freshness" data-zh="TESTS.md 目錄、追溯、新鮮度">TESTS.md catalog, traceability, freshness</span></li>
+            <li><code>test-design-generator</code> — <span data-en="concrete test cases from acceptance criteria" data-zh="由驗收標準生成具體測試案例">concrete test cases from acceptance criteria</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="group-tag" data-en="Layer 3 · Verify (left-shift)" data-zh="第三層 · 驗證（左移）">Layer 3 · Verify (left-shift)</span>
+          <ul>
+            <li><code>code-review</code> — <span data-en="review orchestration with CLI tools" data-zh="以 CLI 工具編排審查">review orchestration with CLI tools</span></li>
+            <li><code>code-refactoring-advisor</code> — <span data-en="detect smells, name the refactoring" data-zh="偵測異味、指名重構手法">detect smells, name the refactoring</span></li>
+            <li><code>test-quality-reviewer</code> — <span data-en="evaluate whether tests really protect behavior" data-zh="評估測試是否真的保護行為">evaluate whether tests really protect behavior</span></li>
+            <li><code>security-risk-reviewer</code> — <span data-en="OWASP/CWE scan, ranked by risk" data-zh="OWASP/CWE 掃描，依風險排序">OWASP/CWE scan, ranked by risk</span></li>
+            <li><code>sonarqube-bridge</code> — <span data-en="SonarQube integration" data-zh="SonarQube 整合">SonarQube integration</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Scrum, DevSecOps, and Responsible AI alignment" data-zh="Scrum、DevSecOps 與 Responsible AI 對齊">Scrum, DevSecOps, and Responsible AI alignment</h2>
+      <div class="grid cols-3">
+        <div class="card">
+          <h3 data-en="Scrum boundary management" data-zh="Scrum 邊界管理">Scrum boundary management</h3>
+          <p data-en="Product Owner routes ownership before backlog hardens; Scrum Master holds routing discipline; Developers execute via the right downstream skill. The method strengthens Scrum boundaries instead of replacing them." data-zh="Product Owner 在 backlog 寫死前先路由責任；Scrum Master 維持路由紀律；Developers 透過正確的下游 skill 執行。此方法強化 Scrum 邊界，而非取代它。">Product Owner routes ownership before backlog hardens; Scrum Master holds routing discipline; Developers execute via the right downstream skill. The method strengthens Scrum boundaries instead of replacing them.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="DevSecOps evidence integrity" data-zh="DevSecOps 證據完整性">DevSecOps evidence integrity</h3>
+          <p data-en="Test evidence, review verdict, and demo readiness live on separate authority surfaces, so mock-heavy green CI cannot masquerade as production-ready. Security review is left-shifted into Phase 5." data-zh="測試證據、review verdict 與 demo readiness 分屬不同權威面，讓 mock-heavy 綠燈 CI 無法假扮成可上線。安全審查左移進 Phase 5。">Test evidence, review verdict, and demo readiness live on separate authority surfaces, so mock-heavy green CI cannot masquerade as production-ready. Security review is left-shifted into Phase 5.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="Responsible AI controls" data-zh="Responsible AI 控制">Responsible AI controls</h3>
+          <p data-en="Human oversight via phase gates, accountability via separate owners, transparency via authority-surface routing. Aligns with NIST AI RMF, OECD AI Principles, and ISO/IEC 42001." data-zh="以 phase gate 做人類監督、以分離 owner 做問責、以權威面路由做透明。對齊 NIST AI RMF、OECD AI Principles 與 ISO/IEC 42001。">Human oversight via phase gates, accountability via separate owners, transparency via authority-surface routing. Aligns with NIST AI RMF, OECD AI Principles, and ISO/IEC 42001.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Start here" data-zh="從這裡開始">Start here</h2>
+      <div class="grid cols-3">
+        <div class="card"><h3>1.</h3><p data-en="Read the Spec Master family page to learn routing and authority surfaces." data-zh="閱讀 Spec Master 家族頁，了解路由與權威面。">Read the <a href="skills/spec-master/spec-master/index.html">Spec Master family page</a> to learn routing and authority surfaces.</p></div>
+        <div class="card"><h3>2.</h3><p data-en="Read the Spec-Driven Development brief for the 6-phase lifecycle and artifacts." data-zh="閱讀規格驅動開發說帖，了解六階段生命週期與工件。">Read the <a href="skills/spec-master/spec-driven-development/index.html">Spec-Driven Development brief</a> for the 6-phase lifecycle and artifacts.</p></div>
+        <div class="card"><h3>3.</h3><p data-en="Install the skills and point your coding agent at spec-master as the front door — see AGENTS.md for the routing rules." data-zh="安裝 skills，並讓你的程式代理人以 spec-master 作為前門——路由規則見 AGENTS.md。">Install the skills (see the <a href="README.md">README</a>) and point your coding agent at <code>spec-master</code> as the front door — see <a href="AGENTS.md">AGENTS.md</a> for the routing rules.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Credits & lineage" data-zh="致謝與淵源">Credits &amp; lineage</h2>
+      <p class="sub" data-en="This method ports established practice — it does not claim to invent it." data-zh="此方法移植既有實踐——並不主張是它發明的。">This method ports established practice — it does not claim to invent it.</p>
+      <div class="grid cols-3">
+        <div class="card">
+          <h3 data-en="Spec-driven workflow" data-zh="規格驅動工作流">Spec-driven workflow</h3>
+          <p data-en="spec-driven-development is inspired by AWS Kiro's requirements → design → tasks spec flow." data-zh="spec-driven-development 啟發自 AWS Kiro 的 requirements → design → tasks 規格流程。"><code>spec-driven-development</code> is inspired by <a href="https://kiro.dev/">AWS Kiro</a>'s requirements → design → tasks spec flow.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="Minimal-implementation ladder" data-zh="最小實作階梯">Minimal-implementation ladder</h3>
+          <p data-en="The YAGNI ladder adapts Ponytail (MIT) by Dietrich Gebert." data-zh="YAGNI 階梯改編自 Dietrich Gebert 的 Ponytail（MIT）。">The YAGNI ladder adapts <a href="https://github.com/DietrichGebert/ponytail">Ponytail</a> (MIT) by Dietrich Gebert.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="Practice & standards" data-zh="實踐與標準">Practice &amp; standards</h3>
+          <p data-en="Scrum Guide, Agile Manifesto, Kent Beck (TDD), Eric Evans (DDD), Martin Fowler, EARS, OWASP, NIST/OECD/ISO." data-zh="Scrum Guide、Agile Manifesto、Kent Beck（TDD）、Eric Evans（DDD）、Martin Fowler、EARS、OWASP、NIST/OECD/ISO。">Scrum Guide, Agile Manifesto, Kent Beck (TDD), Eric Evans (DDD), Martin Fowler, EARS, OWASP, NIST/OECD/ISO.</p>
+        </div>
+      </div>
+      <p style="margin-top:12px" data-en="Full attribution and licenses: see CREDITS.md." data-zh="完整出處與授權：見 CREDITS.md。">Full attribution and licenses: see <a href="CREDITS.md">CREDITS.md</a>.</p>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Evidence and claim boundary" data-zh="證據與宣稱邊界">Evidence and claim boundary</h2>
+      <div class="warn" data-en="This page explains a methodology and a skill family. It does not claim that any consuming repository is demo-ready, production-ready, or fully integrated. Those claims must come from that repo's own review.md, test evidence, and runtime registry state." data-zh="本頁說明一套方法論與 skill 家族，本身不宣稱任何使用中的 repository 已可示範、可上線或完全整合。這些宣稱必須來自該 repo 自己的 review.md、測試證據與執行環境註冊狀態。">This page explains a methodology and a skill family. It does not claim that any consuming repository is demo-ready, production-ready, or fully integrated. Those claims must come from that repo's own review.md, test evidence, and runtime registry state.</div>
+    </section>
+
+    <div class="footer">
+      <span data-en="Open-source under MIT. Family root: skills/spec-master/" data-zh="MIT 開源。家族根目錄：skills/spec-master/">Open-source under MIT. Family root: <code>skills/spec-master/</code></span>
+      <span data-en="Deep dives: spec-master · spec-driven-development index.html" data-zh="深入閱讀：spec-master · spec-driven-development 的 index.html">Deep dives: spec-master · spec-driven-development index.html</span>
+    </div>
+  </main>
+  <script>
+    const storageKey = 'spec-master-method-lang';
+    const buttons = Array.from(document.querySelectorAll('.lang-switch button'));
+    const nodes = Array.from(document.querySelectorAll('[data-en][data-zh]'));
+    function setLang(lang){
+      document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : 'en';
+      document.title = lang === 'zh' ? 'Spec Master 開發方法' : 'The Spec Master Method';
+      localStorage.setItem(storageKey, lang);
+      buttons.forEach((b) => b.classList.toggle('active', b.dataset.lang === lang));
+      nodes.forEach((node) => {
+        if (node.querySelector('[data-en],[data-zh]')) return;
+        node.textContent = lang === 'zh' ? node.dataset.zh : node.dataset.en;
+      });
+    }
+    buttons.forEach((b) => b.addEventListener('click', () => setLang(b.dataset.lang)));
+    setLang(localStorage.getItem(storageKey) || 'en');
+  </script>
+</body>
+</html>

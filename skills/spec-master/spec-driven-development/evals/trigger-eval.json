@@ -1,0 +1,62 @@
+[
+  {
+    "query": "幫我為新的 notification-center 功能建立完整 spec，從 requirements 開始。",
+    "should_trigger": true
+  },
+  {
+    "query": "這個功能要補 design、tasks、implementation plan，還要先想清楚 contract 跟驗證路徑。",
+    "should_trigger": true
+  },
+  {
+    "query": "這次 spec closeout 前，除了 review，我還需要安排 folder-level TESTS.md 更新和 workspace .agents/specs/TESTS.md refresh，請幫我規劃 workflow。",
+    "should_trigger": true
+  },
+  {
+    "query": "目前 E2E 很多都靠 fake provider 跟 HAR replay，請用 spec workflow 幫我重新規劃 tasks，避免 live demo false-green。",
+    "should_trigger": true
+  },
+  {
+    "query": "某個 spec 已經做到 implementation 後期，現在要決定哪些測試證據先寫回 folder-level TESTS.md，哪些交給 test-registry-manager，請幫我安排 closeout。",
+    "should_trigger": true
+  },
+  {
+    "query": "請替 spec-driven-development 正名，補上可打包交付的商業價值說明與操作手冊 HTML。",
+    "should_trigger": true
+  },
+  {
+    "query": "我要說明 SDD 在 coding agent 時代的價值，包含 TDD、DDD、test management、refactor、Scrum Team 與 Agile Manifesto mapping。",
+    "should_trigger": true
+  },
+  {
+    "query": "請補進 spec governance artifacts 的商業意義與流程，包含 TESTS.md、SPECS.md、NEXT_STEPS.md、RTM.md 的 why how what when。",
+    "should_trigger": true
+  },
+  {
+    "query": "請把 ISSUE_LOG 到 SPEC、SDD、RTM 之間的生命週期，以及 NEXT_STEPS.md 的定位寫清楚。",
+    "should_trigger": true
+  },
+  {
+    "query": "我懷疑 SDD 的 phases 和 references 沒寫清楚 governance artifacts lifecycle，請 review 並更新。",
+    "should_trigger": true
+  },
+  {
+    "query": "請直接更新 folder-level TESTS.md，補 duplicate IDs、stale rows、Evidence Ref 跟 unmapped_to_spec 就好。",
+    "should_trigger": false
+  },
+  {
+    "query": "請幫我盤點 SPECS.md，補 Depends On、Impacts 與 Open Change Requests 摘要。",
+    "should_trigger": false
+  },
+  {
+    "query": "我要把 backend + frontend local stack 跑起來做 E2E，先處理 local env reuse。",
+    "should_trigger": false
+  },
+  {
+    "query": "我只想修一個 failing unit test，不需要 requirements、design 或任務規劃。",
+    "should_trigger": false
+  },
+  {
+    "query": "請做 stakeholder-facing project review HTML，重點是 value proposition 和 readiness。",
+    "should_trigger": false
+  }
+]

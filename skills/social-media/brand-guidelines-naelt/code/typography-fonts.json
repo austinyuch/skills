@@ -1,0 +1,34 @@
+{
+  "fontFamily": {
+    "sans": "'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
+    "serif": "'Noto Serif TC', Georgia, 'Times New Roman', serif",
+    "mono": "'Fira Code', 'Courier New', Consolas, Monaco, monospace"
+  },
+  "usage": {
+    "headings": "sans",
+    "body": "serif",
+    "navigation": "sans",
+    "buttons": "sans",
+    "code": "mono",
+    "quotes": "serif"
+  },
+  "weights": {
+    "sans": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    "serif": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "notes": {
+    "chinese_support": "Noto Sans TC 和 Noto Serif TC 提供完整繁體中文支援",
+    "fallback": "系統會自動 fallback 到系統預設字體",
+    "loading": "使用 font-display: swap 確保文字立即顯示"
+  }
+}

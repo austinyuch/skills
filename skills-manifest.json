@@ -6,7 +6,10 @@
   "families": {
     "spec-master": {
       "description": "Spec Master family: routing and spec-driven development",
-      "skills": ["spec-master"]
+      "skills": [
+        "spec-master",
+        "spec-driven-development"
+      ]
     },
     "code-review": {
       "description": "Code review family: review, quality, security, and testing tools",
@@ -84,7 +87,6 @@
       "skills": [
         "writer-skill",
         "doc-coauthoring",
-        "internal-comms",
         "vibe-skill",
         "kiro-skill",
         "pm-skill",
@@ -114,23 +116,8 @@
     "creative": {
       "description": "Frontend, design, and creative tools",
       "skills": [
-        "frontend-design-skill",
         "ui-skill",
-        "theme-factory",
-        "algorithmic-art",
-        "canvas-design",
-        "slack-gif-creator",
-        "web-artifacts-builder",
         "shadcn"
-      ]
-    },
-    "document": {
-      "description": "Document processing and generation",
-      "skills": [
-        "docx",
-        "pdf",
-        "pptx",
-        "xlsx"
       ]
     },
     "security-compliance": {
@@ -145,21 +132,15 @@
         "social-media-platforms",
         "social-post-generator",
         "victim-rights-news-tracker",
-        "brand-guidelines",
         "brand-guidelines-naelt",
-        
         "NPO-marketing-guide"
       ]
     },
     "tools": {
       "description": "Developer tools and integrations",
       "skills": [
-        "mcp-builder",
-        "claude-api",
         "local-llm-agent-migrator",
-        "jsm-query-skill",
-        "webapp-testing",
-        "skill-creator"
+        "jsm-query-skill"
       ]
     },
     "scrum": {

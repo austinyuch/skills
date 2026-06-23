@@ -1,0 +1,40 @@
+{
+  "created_at": "2026-03-15T18:11:12.381209",
+  "keyword_groups": {
+    "group_a_victim_rights": [
+      "受害者家屬 權益 台灣",
+      "被害者家屬 人權 新聞",
+      "victim family rights Taiwan"
+    ],
+    "group_b_judicial_injustice": [
+      "司法不公 加害者 受害者家屬",
+      "司法改革 被害人保護",
+      "judicial injustice victim family Taiwan"
+    ],
+    "group_c_human_rights_activities": [
+      "生命權平等協會 活動",
+      "被害人保護協會 新聞",
+      "victim advocacy group Taiwan"
+    ],
+    "group_d_legislation": [
+      "刑事被害人保護法 修法",
+      "司法改革 被害人訴訟參與",
+      "被害人權益 法案",
+      "犯罪被害人保護法 修正案"
+    ]
+  },
+  "search_strategy": {
+    "frequency": "daily",
+    "time_range": "past_24_hours",
+    "sources": [
+      "news",
+      "official"
+    ],
+    "language": "zh-TW"
+  },
+  "output_format": {
+    "include_metadata": true,
+    "include_tags": true,
+    "include_stance": true
+  }
+}

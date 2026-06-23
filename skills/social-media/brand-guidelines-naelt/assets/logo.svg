@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="200" height="48">
+  <rect x="0" y="4" width="40" height="40" rx="6" fill="#C53030"/>
+  <text x="20" y="32" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="24" fill="#FFFFFF">N</text>
+  <text x="52" y="24" font-family="'Noto Sans TC',Arial,sans-serif" font-weight="700" font-size="16" fill="#1A202C">NAELT</text>
+  <text x="52" y="40" font-family="'Noto Sans TC',Arial,sans-serif" font-weight="400" font-size="10" fill="#4A5568">&#x751F;&#x547D;&#x6B0A;&#x5E73;&#x7B49;&#x5354;&#x6703;</text>
+</svg>

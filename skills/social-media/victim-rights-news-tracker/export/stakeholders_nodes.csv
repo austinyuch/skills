@@ -1,0 +1,8 @@
+id,name,type,role,party,stance,description
+yang_dad,楊爸爸,person,割頸案受害者父親,,5,
+wang_wanyu,王婉諭,person,時代力量主席,時代力量,5,
+hung_meng_kai,洪孟楷,person,國民黨立委,國民黨,4,
+npp,時代力量,party,,,5,
+kmt,國民黨,party,,,3,
+child_growth_alliance,孩想陪你長大聯盟,organization,,,5,
+cutting_neck_case,割頸案,case,,,0,

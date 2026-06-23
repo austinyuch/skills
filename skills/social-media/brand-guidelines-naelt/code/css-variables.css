@@ -1,0 +1,186 @@
+/* NAELT 品牌 CSS 變數定義 */
+
+:root {
+  /* 主色調 - 紅色系 */
+  --color-primary-50: #FFF5F5;
+  --color-primary-100: #FED7D7;
+  --color-primary-200: #FEB2B2;
+  --color-primary-300: #FC8181;
+  --color-primary-400: #F56565;
+  --color-primary-500: #E53E3E;
+  --color-primary-600: #B02A2A;
+  --color-primary-700: #7A2020;
+  --color-primary-800: #651B1B;
+  --color-primary-900: #63171B;
+
+  /* 次要色調 - 灰色系 */
+  --color-secondary-50: #F7FAFC;
+  --color-secondary-100: #EDF2F7;
+  --color-secondary-200: #E2E8F0;
+  --color-secondary-300: #CBD5E0;
+  --color-secondary-400: #A0AEC0;
+  --color-secondary-500: #718096;
+  --color-secondary-600: #4A5568;
+  --color-secondary-700: #2D3748;
+  --color-secondary-800: #1A202C;
+  --color-secondary-900: #171923;
+
+  /* 強調色調 - 橙色系 */
+  --color-accent-50: #FFFAF0;
+  --color-accent-100: #FEEBC8;
+  --color-accent-200: #FBD38D;
+  --color-accent-300: #F6AD55;
+  --color-accent-400: #ED8936;
+  --color-accent-500: #DD6B20;
+  --color-accent-600: #C05621;
+  --color-accent-700: #9C4221;
+  --color-accent-800: #7B341E;
+  --color-accent-900: #652B19;
+
+  /* 語意化顏色 */
+  --color-text-primary: var(--color-secondary-800);
+  --color-text-secondary: var(--color-secondary-600);
+  --color-text-muted: var(--color-secondary-500);
+  --color-text-inverse: #FFFFFF;
+
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: var(--color-secondary-50);
+  --color-bg-tertiary: var(--color-secondary-100);
+
+  --color-border-light: var(--color-secondary-300);
+  --color-border-medium: var(--color-secondary-400);
+  --color-border-dark: var(--color-secondary-600);
+
+  /* 狀態顏色 */
+  --color-success: #28A745;
+  --color-success-bg: #D4EDDA;
+  --color-success-text: #155724;
+
+  --color-warning: #D97706;
+  --color-warning-bg: #FFF3CD;
+  --color-warning-text: #856404;
+
+  --color-error: #DC3545;
+  --color-error-bg: #F8D7DA;
+  --color-error-text: #721C24;
+
+  --color-info: #17A2B8;
+  --color-info-bg: #D1ECF1;
+  --color-info-text: #0C5460;
+
+  /* 字體家族 */
+  --font-sans: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: 'Noto Serif TC', Georgia, serif;
+  --font-mono: 'Fira Code', 'Courier New', monospace;
+
+  /* 字級 */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+
+  /* 字重 */
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+
+  /* 行高 */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+  --leading-loose: 2;
+
+  /* 間距 */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+  --spacing-4xl: 6rem;
+  --spacing-5xl: 8rem;
+
+  /* 圓角 */
+  --radius-none: 0;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* 陰影 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+  /* 轉場 */
+  --transition-fast: 150ms;
+  --transition-base: 300ms;
+  --transition-slow: 500ms;
+  --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* 使用範例 */
+.naelt-button-primary {
+  background-color: var(--color-primary-500);
+  color: var(--color-text-inverse);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-base) var(--transition-easing);
+}
+
+.naelt-button-primary:hover {
+  background-color: var(--color-primary-700);
+}
+
+.naelt-card {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.naelt-heading {
+  font-family: var(--font-sans);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-bold);
+  color: var(--color-primary-600);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--spacing-lg);
+}
+
+.naelt-body-text {
+  font-family: var(--font-serif);
+  font-size: var(--text-base);
+  font-weight: var(--font-normal);
+  color: var(--color-text-primary);
+  line-height: var(--leading-relaxed);
+}

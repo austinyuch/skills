@@ -1,0 +1,27 @@
+{
+  "secondary": {
+    "50": "#F7FAFC",
+    "100": "#EDF2F7",
+    "200": "#E2E8F0",
+    "300": "#CBD5E0",
+    "400": "#A0AEC0",
+    "500": "#718096",
+    "600": "#4A5568",
+    "700": "#2D3748",
+    "800": "#1A202C",
+    "900": "#171923"
+  },
+  "usage": {
+    "text_primary": "secondary-800",
+    "text_secondary": "secondary-600",
+    "text_muted": "secondary-500",
+    "border": "secondary-300",
+    "background_light": "secondary-50",
+    "background_medium": "secondary-100"
+  },
+  "rgb": {
+    "secondary-600": "rgb(74, 85, 104)",
+    "secondary-700": "rgb(45, 55, 72)",
+    "secondary-800": "rgb(26, 32, 44)"
+  }
+}

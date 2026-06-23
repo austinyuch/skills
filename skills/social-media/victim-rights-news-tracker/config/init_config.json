@@ -1,0 +1,77 @@
+{
+  "initialized_at": "2026-03-15T18:11:12.380610",
+  "version": "1.0.0",
+  "search_keywords": {
+    "group_a_victim_rights": [
+      "受害者家屬 權益 台灣",
+      "被害者家屬 人權 新聞",
+      "victim family rights Taiwan"
+    ],
+    "group_b_judicial_injustice": [
+      "司法不公 加害者 受害者家屬",
+      "司法改革 被害人保護",
+      "judicial injustice victim family Taiwan"
+    ],
+    "group_c_human_rights_activities": [
+      "生命權平等協會 活動",
+      "被害人保護協會 新聞",
+      "victim advocacy group Taiwan"
+    ],
+    "group_d_legislation": [
+      "刑事被害人保護法 修法",
+      "司法改革 被害人訴訟參與",
+      "被害人權益 法案",
+      "犯罪被害人保護法 修正案"
+    ]
+  },
+  "target_np_os": [
+    "生命權平等協會",
+    "被害人保護協會",
+    "犯罪被害人保護協會",
+    "司法改革基金會"
+  ],
+  "target_persons": [
+    "王婉諭",
+    "林志潔",
+    "黃國昌"
+  ],
+  "entity_resolution": {
+    "require_unique_id": true,
+    "track_aliases": true,
+    "stance_tracking_enabled": true
+  },
+  "data_sources": {
+    "web_search": {
+      "enabled": true,
+      "last_update": null,
+      "update_frequency": "daily"
+    },
+    "news_feeds": {
+      "enabled": true,
+      "sources": [
+        "中央社",
+        "聯合報",
+        "自由時報",
+        "中國時報"
+      ]
+    }
+  },
+  "stance_assessment": {
+    "scale": "5_star",
+    "criteria": {
+      "5_star": "強烈支持被害人權益",
+      "4_star": "支持被害人權益",
+      "3_star": "中立或平衡觀點",
+      "2_star": "消極或迴避",
+      "1_star": "反對或阻礙"
+    }
+  },
+  "first_collection": {
+    "date_range": {
+      "start": "2024-01-01",
+      "end": "2024-12-31"
+    },
+    "status": "completed",
+    "completed_at": "2026-03-15T18:11:12.381825"
+  }
+}

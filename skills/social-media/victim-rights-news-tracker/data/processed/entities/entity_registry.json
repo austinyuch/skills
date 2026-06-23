@@ -1,0 +1,41 @@
+{
+  "persons": [
+    {
+      "id": "wang_wanyu",
+      "name": "王婉諭",
+      "type": "person",
+      "role": "立法委員",
+      "organization": "時代力量",
+      "stance": 5,
+      "notes": "小燈泡案受害者母親"
+    }
+  ],
+  "organizations": [
+    {
+      "id": "victims_rights_assoc",
+      "name": "生命權平等協會",
+      "type": "npo",
+      "focus": "被害人權益",
+      "stance": 5
+    },
+    {
+      "id": "victim_protection_assoc",
+      "name": "犯罪被害人保護協會",
+      "type": "npo",
+      "focus": "被害人保護",
+      "stance": 4
+    }
+  ],
+  "political_parties": [
+    {
+      "id": "dpp",
+      "name": "民主進步黨",
+      "type": "party"
+    },
+    {
+      "id": "kmt",
+      "name": "中國國民黨",
+      "type": "party"
+    }
+  ]
+}

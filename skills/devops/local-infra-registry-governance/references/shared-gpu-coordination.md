@@ -61,7 +61,7 @@ Run this check from any project before starting a GPU container/process:
 
 When a giant-aero agent needs the GB10 for DoMINO/PhysicsNeMo:
 
-- The vLLM occupant is owned by **aclab-middlewares** at `/home/ac/aclab-middlewares`. Its authority is
+- The vLLM occupant is owned by **aclab-middlewares** at `<workspace-root>/aclab-middlewares`. Its authority is
   the `vsm` CLI (the `vllm-serving-manager` skill), and its stable policy is in
   `aclab-middlewares/AGENTS.md`.
 - giant-aero must **not** start its GPU job while vLLM holds the card. Coordinate by checking `vsm status`

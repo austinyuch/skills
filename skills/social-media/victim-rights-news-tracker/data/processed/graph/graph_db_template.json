@@ -1,0 +1,46 @@
+{
+  "created_at": "2026-03-15T18:11:12.381599",
+  "database_type": "sqlite",
+  "nodes": {
+    "types": [
+      "person",
+      "organization",
+      "party",
+      "official",
+      "case"
+    ],
+    "properties": {
+      "person": [
+        "name",
+        "role",
+        "organization",
+        "stance"
+      ],
+      "organization": [
+        "name",
+        "type",
+        "focus",
+        "stance"
+      ]
+    }
+  },
+  "edges": {
+    "types": [
+      "ally",
+      "oppose",
+      "interact",
+      "member_of",
+      "supports"
+    ],
+    "properties": [
+      "date",
+      "context",
+      "source_url"
+    ]
+  },
+  "example_queries": [
+    "查詢所有立場⭐⭐⭐⭐⭐的人物",
+    "查詢某組織的所有盟友",
+    "查詢人物關係網絡（2度以內）"
+  ]
+}

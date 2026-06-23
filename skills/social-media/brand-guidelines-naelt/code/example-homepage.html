@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NAELT 台灣生命權平等協會</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* 引入 NAELT CSS 變數 */
+    @import url('./css-variables.css');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-serif);
+      color: var(--color-text-primary);
+      line-height: var(--leading-relaxed);
+    }
+    
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+    }
+    
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%);
+      color: var(--color-text-inverse);
+      padding: var(--spacing-5xl) 0;
+      text-align: center;
+    }
+    
+    .hero-title {
+      font-family: var(--font-sans);
+      font-size: var(--text-6xl);
+      font-weight: var(--font-bold);
+      line-height: var(--leading-tight);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .hero-subtitle {
+      font-size: var(--text-xl);
+      font-weight: var(--font-normal);
+      margin-bottom: var(--spacing-2xl);
+      opacity: 0.9;
+    }
+    
+    .hero-cta {
+      display: inline-flex;
+      gap: var(--spacing-md);
+    }
+    
+    .btn-primary {
+      background-color: var(--color-accent-500);
+      color: var(--color-text-inverse);
+      font-family: var(--font-sans);
+      font-size: var(--text-lg);
+      font-weight: var(--font-semibold);
+      padding: var(--spacing-md) var(--spacing-2xl);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background-color var(--transition-base) var(--transition-easing);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--color-accent-600);
+    }
+    
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--color-text-inverse);
+      border: 2px solid var(--color-text-inverse);
+    }
+    
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Core Appeals Section */
+    .appeals {
+      padding: var(--spacing-4xl) 0;
+      background-color: var(--color-bg-secondary);
+    }
+    
+    .section-title {
+      font-family: var(--font-sans);
+      font-size: var(--text-4xl);
+      font-weight: var(--font-bold);
+      color: var(--color-primary-600);
+      text-align: center;
+      margin-bottom: var(--spacing-2xl);
+    }
+    
+    .appeals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-xl);
+      margin-top: var(--spacing-2xl);
+    }
+    
+    .appeal-card {
+      background-color: var(--color-bg-primary);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      box-shadow: var(--shadow-md);
+      transition: transform var(--transition-base) var(--transition-easing),
+                  box-shadow var(--transition-base) var(--transition-easing);
+    }
+    
+    .appeal-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .appeal-number {
+      font-family: var(--font-sans);
+      font-size: var(--text-3xl);
+      font-weight: var(--font-bold);
+      color: var(--color-primary-500);
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .appeal-title {
+      font-family: var(--font-sans);
+      font-size: var(--text-xl);
+      font-weight: var(--font-semibold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .appeal-description {
+      font-size: var(--text-base);
+      color: var(--color-text-secondary);
+      line-height: var(--leading-relaxed);
+    }
+    
+    /* CTA Section */
+    .cta-section {
+      background-color: var(--color-accent-50);
+      padding: var(--spacing-4xl) 0;
+      text-align: center;
+    }
+    
+    .cta-title {
+      font-family: var(--font-sans);
+      font-size: var(--text-3xl);
+      font-weight: var(--font-bold);
+      color: var(--color-primary-600);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .cta-description {
+      font-size: var(--text-lg);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-2xl);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* Footer */
+    .footer {
+      background-color: var(--color-secondary-800);
+      color: var(--color-text-inverse);
+      padding: var(--spacing-2xl) 0;
+      text-align: center;
+    }
+    
+    .footer-text {
+      font-size: var(--text-sm);
+      opacity: 0.8;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: var(--text-4xl);
+      }
+      
+      .section-title {
+        font-size: var(--text-3xl);
+      }
+      
+      .appeals-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-title">為生命權平等而戰</h1>
+      <p class="hero-subtitle">推動司法改革，保障犯罪被害人及其家屬的權益</p>
+      <div class="hero-cta">
+        <button class="btn-primary">立即捐款</button>
+        <button class="btn-primary btn-secondary">加入志工</button>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Core Appeals Section -->
+  <section class="appeals">
+    <div class="container">
+      <h2 class="section-title">九大核心訴求</h2>
+      <div class="appeals-grid">
+        <div class="appeal-card">
+          <div class="appeal-number">01</div>
+          <h3 class="appeal-title">廢除假釋制度</h3>
+          <p class="appeal-description">確保重大犯罪者服滿刑期，保障社會安全與被害人權益。</p>
+        </div>
+        
+        <div class="appeal-card">
+          <div class="appeal-number">02</div>
+          <h3 class="appeal-title">提高刑責</h3>
+          <p class="appeal-description">針對重大犯罪提高刑責，讓罪刑相當，實現真正的正義。</p>
+        </div>
+        
+        <div class="appeal-card">
+          <div class="appeal-number">03</div>
+          <h3 class="appeal-title">保障被害人權益</h3>
+          <p class="appeal-description">建立完善的被害人保護機制，提供法律、心理與經濟支援。</p>
+        </div>
+        
+        <div class="appeal-card">
+          <div class="appeal-number">04</div>
+          <h3 class="appeal-title">司法透明化</h3>
+          <p class="appeal-description">推動司法程序公開透明，讓人民監督司法，重建司法公信力。</p>
+        </div>
+        
+        <div class="appeal-card">
+          <div class="appeal-number">05</div>
+          <h3 class="appeal-title">強化犯罪預防</h3>
+          <p class="appeal-description">從源頭預防犯罪，建立社會安全網，減少悲劇發生。</p>
+        </div>
+        
+        <div class="appeal-card">
+          <div class="appeal-number">06</div>
+          <h3 class="appeal-title">完善矯正制度</h3>
+          <p class="appeal-description">改革監獄制度，確保受刑人真正悔改，降低再犯率。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <h2 class="cta-title">一起為正義發聲</h2>
+      <p class="cta-description">您的支持是我們前進的動力。無論是捐款、加入志工或分享我們的理念，都能為司法改革貢獻一份力量。</p>
+      <div class="hero-cta">
+        <button class="btn-primary">立即行動</button>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-text">© 2026 NAELT 台灣生命權平等協會 | 為生命權平等而努力</p>
+    </div>
+  </footer>
+</body>
+</html>

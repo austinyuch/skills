@@ -1,0 +1,20 @@
+{
+  "breakpoints": {
+    "sm": "640px",
+    "md": "768px",
+    "lg": "1024px",
+    "xl": "1280px",
+    "2xl": "1536px"
+  },
+  "devices": {
+    "mobile": "< 640px",
+    "tablet": "640px - 1024px",
+    "desktop": "> 1024px",
+    "wide": "> 1536px"
+  },
+  "usage": {
+    "mobile_first": "從小螢幕開始設計，逐步增強",
+    "touch_targets": "按鈕最小尺寸 44px × 44px",
+    "content_width": "最大內容寬度 1280px (xl)"
+  }
+}

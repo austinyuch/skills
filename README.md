@@ -2,6 +2,9 @@
 
 A curated collection of AI agent skills for professional software development workflows.
 
+> 🤖 **Using a coding agent?** Read [`AGENTS.md`](AGENTS.md) — it explains how to navigate this
+> collection, when to enter the **Spec Master Method**, and the routing/ownership rules the skills expect.
+
 ## Quick Start
 
 ### Install via npx (recommended)
@@ -22,26 +25,62 @@ bash scripts/install-to-opencode.sh
 
 | Category | Skills | Description |
 |----------|--------|-------------|
-| **Spec Master** | 1 | Spec routing and spec-driven development |
+| **Spec Master** | 2 | Spec routing and spec-driven development |
 | **Code Review** | 6 | Review, quality, security, and testing tools |
 | **Scrum** | 2 | Scrum and agile team workflows |
 | **Engineering** | 15 | Core software engineering workflows |
-| **Architecture** | 16 | Architecture, governance, and process design |
+| **Architecture** | 15 | Architecture, governance, and process design |
 | **DevOps** | 6 | DevOps, containers, and infrastructure |
-| **Productivity** | 9 | Productivity, writing, and collaboration |
+| **Productivity** | 8 | Productivity, writing, and collaboration |
 | **Data** | 5 | Data analysis, BI, and databases |
 | **Domain Expert** | 3 | Domain-specific expert knowledge |
-| **Creative** | 8 | Frontend, design, and creative tools |
-| **Document** | 4 | Document processing and generation |
+| **Creative** | 2 | Frontend, design, and creative tools |
 | **Security & Compliance** | 1 | Security review and compliance |
-| **Social Media** | 9 | Social media, advocacy, and marketing |
-| **Tools** | 6 | Developer tools and integrations |
+| **Social Media** | 5 | Social media, advocacy, and marketing |
+| **Tools** | 2 | Developer tools and integrations |
 | **User Experience** | 2 | User profiles, manuals, and interaction |
+| **Project Review** | 2 | Project review and executive reporting |
+| **UAT & Demo** | 1 | UAT and demo execution tools |
+
+## The Spec Master Method
+
+> **Bring DevSecOps, Scrum, and TDD into agentic workflows — without losing the truth.**
+> 把 DevSecOps、Scrum 與 TDD 帶進 agentic 工作流——而且不失真。
+
+Coding agents made *producing* code cheap but not *coordinating* it. The bottleneck moves from
+typing to deciding ownership, keeping evidence fresh, and stopping a green-looking file from lying
+about readiness. The **Spec Master Method** is an open-source family of **14 composable skills** that
+ports five proven engineering practices into a governed, inspectable agentic workflow.
+
+| Classic practice | Job it still does | Owner skill |
+|---|---|---|
+| Spec-Driven Development (SDD) | Vague intent → traceable delivery | `spec-driven-development` (inspired by [AWS Kiro](https://kiro.dev)) |
+| Test-Driven Development (TDD) | Pin behavior before code changes | `tdd-workflow` + `test-design-generator` |
+| Domain-Driven Design (DDD) | Align boundaries with business language | SDD Phase 2 (bounded contexts) |
+| Test management | Green CI → auditable risk evidence | `test-registry-manager` + `test-quality-reviewer` |
+| Refactoring | Lower cost of change after behavior is protected | `code-refactoring-advisor` |
+
+The 14 skills sit in three layers:
+
+- **Govern & route** — `spec-master` (front door), `spec-registry-manager`, `issue-log-manager`, `local-infra-registry-governance`, `shared-governance`
+- **Deliver** — `spec-driven-development` (6-phase lifecycle), `tdd-workflow`, `test-registry-manager`, `test-design-generator`
+- **Verify (left-shift)** — `code-review`, `code-refactoring-advisor`, `test-quality-reviewer`, `security-risk-reviewer`, `sonarqube-bridge`
+
+The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → spec artifacts → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md` — and derived summaries never sync back into upstream truth.
+
+**Learn more:**
+- 🟦 [`methodology.html`](./methodology.html) — bilingual EN/繁中 landing page
+- 📖 [`docs/agentic-delivery-methodology.md`](./docs/agentic-delivery-methodology.md) — the full methodology article (bilingual)
+- 🗺️ [`docs/methodology-diagram.md`](./docs/methodology-diagram.md) — handoff, evidence-flow, and practice-map diagrams
+- Deep dives: [Spec Master family page](./skills/spec-master/spec-master/index.html) · [Spec-Driven Development brief](./skills/spec-master/spec-driven-development/index.html)
+
+> `spec-driven-development` is inspired by **AWS Kiro**; the YAGNI ladder adapts **Ponytail** (MIT); it builds on **Scrum**, the **Agile Manifesto**, **TDD/DDD**, and more. Full attribution: [`CREDITS.md`](./CREDITS.md).
 
 ## Skill Families
 
 ### Spec Master
-- `spec-master` - Spec routing, governance, and spec-driven development workflow (merged)
+- `spec-master` - Spec routing, governance, and improvement classification (front door)
+- `spec-driven-development` - Systematic spec lifecycle: requirements, design, tasks, implementation, review, optimization
 
 ### Code Review
 - `code-review` - Code review with CLI tools
@@ -58,8 +97,6 @@ bash scripts/install-to-opencode.sh
 ## Skill Categories
 
 ### Engineering
-- `spec-driven-development` - Systematic development workflow
-- `spec-master` - Spec routing and governance
 - `spec-registry-manager` - Spec catalog management
 - `code-review` - Code review with CLI tools
 - `code-refactoring-advisor` - Detect code smells and suggest refactorings
@@ -110,7 +147,6 @@ bash scripts/install-to-opencode.sh
 ### Productivity
 - `writer-skill` - Professional documentation writing
 - `doc-coauthoring` - Document collaboration workflow
-- `internal-comms` - Internal communications
 - `vibe-skill` - Rapid development workflow
 - `kiro-skill` - Systematic development workflow
 - `pm-skill` - Product management assistant
@@ -131,20 +167,8 @@ bash scripts/install-to-opencode.sh
 - `microsoft-foundry` - Azure AI Foundry deployment
 
 ### Creative
-- `frontend-design-skill` - Production-grade UI/UX design
 - `ui-skill` - B2B supply chain interactive HTML
-- `theme-factory` - Artifact theming toolkit
-- `algorithmic-art` - Generative algorithmic art
-- `canvas-design` - Visual art creation
-- `slack-gif-creator` - Slack-optimized GIF creation
-- `web-artifacts-builder` - Complex web artifacts
 - `shadcn` - shadcn/ui component management
-
-### Document
-- `docx` - Word document operations
-- `pdf` - PDF operations
-- `pptx` - PowerPoint operations
-- `xlsx` - Excel spreadsheet operations
 
 ### Security & Compliance
 - `security-review` - Security review checklist
@@ -154,20 +178,12 @@ bash scripts/install-to-opencode.sh
 - `social-media-platforms` - Social media content optimization
 - `social-post-generator` - Social media post generation
 - `victim-rights-news-tracker` - News tracking for advocacy
-- `brand-guidelines` - Anthropic brand guidelines
 - `brand-guidelines-naelt` - NAELT brand guidelines
-- `brand-guideline-company` - Company brand guidelines
-- `project-review-naelt` - NAELT project review
-- `project-review-skill` - Executive project review
 - `NPO-marketing-guide` - NPO marketing guide
 
 ### Tools
-- `mcp-builder` - MCP server development
-- `claude-api` - Claude API development
 - `local-llm-agent-migrator` - Local LLM agent migration
 - `jsm-query-skill` - Jira Service Management queries
-- `webapp-testing` - Playwright web app testing
-- `skill-creator` - Skill development tool
 
 ### Scrum
 - `scrum-master-skill` - Scrum Master coordination
@@ -177,13 +193,21 @@ bash scripts/install-to-opencode.sh
 - `user-profile-skill` - User profile management
 - `user-manual-skill` - User manual generation
 
+### Project Review
+- `project-review-skill` - Executive project review
+- `project-review-naelt` - NAELT project review
+
+### UAT & Demo
+- `uat-demo-agent` - UAT/Demo plan execution
+
 ## Repository Structure
 
 ```
 .
 ├── skills/                          # Categorized skills
 │   ├── spec-master/                 # Spec Master family
-│   │   └── spec-master/
+│   │   ├── spec-master/
+│   │   └── spec-driven-development/
 │   ├── code-review/                 # Code Review family
 │   │   ├── code-review/
 │   │   ├── test-quality-reviewer/
@@ -201,15 +225,22 @@ bash scripts/install-to-opencode.sh
 │   ├── data/
 │   ├── domain-expert/
 │   ├── creative/
-│   ├── document/
 │   ├── security-compliance/
 │   ├── social-media/
 │   ├── tools/
-│   └── user-experience/
+│   ├── user-experience/
+│   ├── project-review/
+│   └── uat-demo/
+├── docs/                            # Methodology article + diagrams
+│   ├── agentic-delivery-methodology.md
+│   └── methodology-diagram.md
 ├── scripts/
 │   ├── sync-from-source.sh          # Publish from ~/.config/opencode/skills
 │   └── install-to-opencode.sh       # Install to ~/.config/opencode/skills
+├── methodology.html                 # The Spec Master Method — landing page (EN/繁中)
 ├── skills-manifest.json             # Skill catalog and categorization
+├── AGENTS.md                        # Guide for coding agents using this repo
+├── CREDITS.md                       # Attribution and upstream licenses
 ├── package.json                     # npm metadata
 ├── README.md                        # This file
 └── LICENSE                          # MIT License
@@ -240,6 +271,11 @@ cd skills
 bash scripts/install-to-opencode.sh
 ```
 
-## License
+## License & Attribution
 
-MIT License - see [LICENSE](LICENSE) file for details.
+This repository's skills, methodology, and glue are licensed **MIT** — see [LICENSE](LICENSE).
+
+> **Note:** skills derived from Anthropic's `anthropics/skills` (and the proprietary `docx`/`pdf`/`pptx`/`xlsx`)
+> have been **removed** from this collection. The methodology still credits its sources — **AWS Kiro**,
+> **Ponytail** (MIT), the **Scrum Guide**, the **Agile Manifesto**, and others — as concept influences,
+> not bundled code. Full attribution is in [**CREDITS.md**](CREDITS.md).

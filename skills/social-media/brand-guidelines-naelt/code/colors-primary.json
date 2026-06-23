@@ -1,0 +1,27 @@
+{
+  "primary": {
+    "50": "#FFF5F5",
+    "100": "#FED7D7",
+    "200": "#FEB2B2",
+    "300": "#FC8181",
+    "400": "#F56565",
+    "500": "#E53E3E",
+    "600": "#B02A2A",
+    "700": "#7A2020",
+    "800": "#651B1B",
+    "900": "#63171B"
+  },
+  "usage": {
+    "headings": "primary-600",
+    "cta_buttons": "primary-500",
+    "links": "primary-500",
+    "hover": "primary-700",
+    "background_light": "primary-50",
+    "background_medium": "primary-100"
+  },
+  "rgb": {
+    "primary-500": "rgb(229, 62, 62)",
+    "primary-600": "rgb(176, 42, 42)",
+    "primary-700": "rgb(122, 32, 32)"
+  }
+}

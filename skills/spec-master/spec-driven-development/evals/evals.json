@@ -1,0 +1,65 @@
+{
+  "skill_name": "spec-driven-development",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我們要做登入與 dashboard 專案 review。現有 Playwright E2E 主要靠 storageState 跳過登入，並用 mock helpers 回傳 /api/dashboard 回應。請用 spec-driven-development workflow 規劃 review 與補強任務，避免 project review 文件看起來通過但 live demo 失敗。",
+      "expected_output": "The skill identifies mock-heavy and auth-fixture blind spots, requires a live-demo readiness gate, and plans a real-auth or real-backend smoke path before declaring demo readiness.",
+      "files": [],
+      "expectations": [
+        "The response explicitly classifies the current E2E or demo evidence as mock-heavy, hybrid, or full-integration.",
+        "The response calls out storageState or auth fixture coupling as a live-demo risk instead of treating existing E2E success as sufficient.",
+        "The response requires at least one real-backend or real-auth smoke path before declaring live-demo readiness."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "請延續一個已進入 review 階段的 spec session。系統目前有漂亮的 project review HTML 與 manual 截圖，但截圖其實來自 fixture-backed screenshots，且 chart 只渲染 shell。請用 spec-driven-development skill 給出 review 結論與下一步。",
+      "expected_output": "The skill refuses a false-green completion, distinguishes artifact evidence from real integration evidence, and downgrades live-demo readiness until real data rendering is proven.",
+      "files": [],
+      "expectations": [
+        "The response states that fixture-backed screenshots or chart shells cannot be treated as proof of live-demo readiness.",
+        "The response produces or describes a Live-Demo Readiness result such as PASS, CONDITIONAL, or FAIL.",
+        "The response recommends concrete remediation before project review completion, not just a generic retest."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "我在 tasks planning 階段，要為一個帶 SSO、RBAC 與搜尋列表頁的功能拆任務。現況是 UI 測試很多，但多數都靠 fake provider、HAR replay 與固定 API response。請用 spec-driven-development workflow 重新規劃 tasks，讓 live demo 前能盤點並移除 false-green 風險。",
+      "expected_output": "The skill adds live-demo readiness tasks, mock inventory tasks, auth-risk tasks, and a mock-to-real migration path instead of only listing generic coding work.",
+      "files": [],
+      "expectations": [
+        "The response adds explicit tasks to inventory mocks, fixtures, HAR replay, or fake providers rather than assuming they are harmless.",
+        "The response includes an auth-related task for real SSO, token refresh, RBAC, or auth fixture verification.",
+        "The response plans a transition from mock-heavy validation toward hybrid or full-integration evidence for critical flows."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "某個 spec 在 implementation 完成後新增了兩個 integration tests，也補了一份 execution report，但 folder-level TESTS.md 還沒更新，workspace .agents/specs/TESTS.md 也落後。請用 spec-driven-development skill 說明 closeout 前應怎麼刷新這些治理 artifact。",
+      "expected_output": "The skill refreshes folder-level TESTS.md first, delegates workspace TESTS rollup refresh to test-registry-manager, and keeps review.md as the only readiness verdict authority.",
+      "files": [],
+      "expectations": [
+        "The response updates folder-level TESTS.md before any workspace rollup.",
+        "The response treats .agents/specs/TESTS.md as a derived rollup instead of row-level authority.",
+        "The response keeps readiness or acceptance verdict authority in review.md rather than moving it into TESTS.md, RTM.md, or SPECS.md."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "請替 spec-master 的核心子 skill spec-driven-development 正名，建立可以打包交付的商業價值說明與操作等級 HTML 使用手冊。內容要說明 SDD 在 coding agent 時代的價值，並連到 SDD + TDD + DDD + test management + refactor、Scrum Team、Agile Manifesto、CEO/CIO/DevSecOps 視角，以及 authority boundary。也要說明 spec governance artifacts 的商業意義與流程：ISSUE_LOG.md、TESTS.md、SPECS.md、NEXT_STEPS.md、RTM.md 的 why/how/what/when，以及 ISSUE_LOG -> spec/SDD/RTM 與 NEXT_STEPS 的生命週期。",
+      "expected_output": "The skill treats SDD as the Spec Master family delivery backbone, produces or updates packageable business and manual surfaces, and preserves evidence and readiness authority boundaries.",
+      "files": [],
+      "expectations": [
+        "The response positions spec-driven-development as a major Spec Master family child skill and delivery backbone, not a minor helper.",
+        "The response includes both business value and operational manual surfaces, with bilingual HTML if HTML output is requested.",
+        "The response connects SDD with TDD, DDD, test management, refactoring, Scrum Team, Agile Manifesto, and CEO/CIO/DevSecOps value lenses.",
+        "The response states that review.md remains readiness verdict authority and TESTS.md remains test evidence pointer authority.",
+        "The response explains the why, what, when, and how for ISSUE_LOG.md, TESTS.md, SPECS.md, NEXT_STEPS.md, and RTM.md, including the no derived-to-derived sync rule.",
+        "The response explains that ISSUE_LOG.md is a holding surface that must be folded or promoted through owner resolution before it can become SDD requirements or RTM traceability.",
+        "The response explains that NEXT_STEPS.md is a rolling operational memo for resume, handoff, blocker, and closure state, not a history log, task ledger, second registry, or issue log.",
+        "The response updates execution-facing phase or reference guidance, not only marketing README or HTML, so future SDD runs know how to maintain these artifacts."
+      ]
+    }
+  ]
+}

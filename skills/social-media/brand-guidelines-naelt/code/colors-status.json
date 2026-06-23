@@ -1,0 +1,34 @@
+{
+  "status": {
+    "success": {
+      "main": "#28A745",
+      "background": "#D4EDDA",
+      "text": "#155724",
+      "border": "#C3E6CB"
+    },
+    "warning": {
+      "main": "#D97706",
+      "background": "#FFF3CD",
+      "text": "#856404",
+      "border": "#FFEAA7"
+    },
+    "error": {
+      "main": "#DC3545",
+      "background": "#F8D7DA",
+      "text": "#721C24",
+      "border": "#F5C6CB"
+    },
+    "info": {
+      "main": "#17A2B8",
+      "background": "#D1ECF1",
+      "text": "#0C5460",
+      "border": "#BEE5EB"
+    }
+  },
+  "usage": {
+    "form_success": "success.main",
+    "form_error": "error.main",
+    "alert_warning": "warning.main",
+    "notification_info": "info.main"
+  }
+}

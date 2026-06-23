@@ -1,0 +1,7 @@
+source,target,type,interaction_type,date,description,strength,direction,verified,evidence_count,sentiment,interaction_category
+yang_dad,wang_wanyu,participate,記者會,2026-03-12,,0.7,undirected,0,1,,public_action
+yang_dad,child_growth_alliance,ally,,,,0.6,undirected,0,1,,general
+wang_wanyu,npp,hierarchy,,,,0.6,undirected,0,1,,general
+hung_meng_kai,kmt,hierarchy,,,,0.6,undirected,0,1,,general
+hung_meng_kai,cutting_neck_case,propose,修法提案,2026-03-09,,0.7,undirected,0,1,,legislative
+wang_wanyu,yang_dad,participate,陪同記者會,2026-03-12,,0.7,undirected,0,1,,public_action

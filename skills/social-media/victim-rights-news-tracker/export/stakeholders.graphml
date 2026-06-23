@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+  <key id="d0" for="node" attr.name="name" attr.type="string"/>
+  <key id="d1" for="node" attr.name="type" attr.type="string"/>
+  <key id="d2" for="node" attr.name="role" attr.type="string"/>
+  <key id="d3" for="node" attr.name="party" attr.type="string"/>
+  <key id="d4" for="node" attr.name="stance" attr.type="int"/>
+  <key id="d5" for="edge" attr.name="type" attr.type="string"/>
+  <key id="d6" for="edge" attr.name="interaction" attr.type="string"/>
+  <key id="d7" for="edge" attr.name="date" attr.type="string"/>
+  <key id="d8" for="edge" attr.name="strength" attr.type="double"/>
+  <key id="d9" for="edge" attr.name="direction" attr.type="string"/>
+  <key id="d10" for="edge" attr.name="verified" attr.type="boolean"/>
+  <key id="d11" for="edge" attr.name="evidence_count" attr.type="int"/>
+  <key id="d12" for="edge" attr.name="sentiment" attr.type="double"/>
+  <key id="d13" for="edge" attr.name="interaction_category" attr.type="string"/>
+  <graph id="G" edgedefault="undirected">
+    <node id="yang_dad">
+      <data key="d0">楊爸爸</data>
+      <data key="d1">person</data>
+      <data key="d2">割頸案受害者父親</data>
+      <data key="d4">5</data>
+    </node>
+    <node id="wang_wanyu">
+      <data key="d0">王婉諭</data>
+      <data key="d1">person</data>
+      <data key="d2">時代力量主席</data>
+      <data key="d3">時代力量</data>
+      <data key="d4">5</data>
+    </node>
+    <node id="hung_meng_kai">
+      <data key="d0">洪孟楷</data>
+      <data key="d1">person</data>
+      <data key="d2">國民黨立委</data>
+      <data key="d3">國民黨</data>
+      <data key="d4">4</data>
+    </node>
+    <node id="npp">
+      <data key="d0">時代力量</data>
+      <data key="d1">party</data>
+      <data key="d4">5</data>
+    </node>
+    <node id="kmt">
+      <data key="d0">國民黨</data>
+      <data key="d1">party</data>
+      <data key="d4">3</data>
+    </node>
+    <node id="child_growth_alliance">
+      <data key="d0">孩想陪你長大聯盟</data>
+      <data key="d1">organization</data>
+      <data key="d4">5</data>
+    </node>
+    <node id="cutting_neck_case">
+      <data key="d0">割頸案</data>
+      <data key="d1">case</data>
+      <data key="d4">0</data>
+    </node>
+    <edge id="e0" source="yang_dad" target="wang_wanyu">
+      <data key="d5">participate</data>
+      <data key="d6">記者會</data>
+      <data key="d7">2026-03-12</data>
+      <data key="d8">0.7</data>
+      <data key="d9">undirected</data>
+      <data key="d10">False</data>
+      <data key="d11">1</data>
+      <data key="d13">public_action</data>
+    </edge>
+    <edge id="e1" source="yang_dad" target="child_growth_alliance">
+      <data key="d5">ally</data>
+      <data key="d8">0.6</data>
+      <data key="d9">undirected</data>
+      <data key="d10">False</data>
+      <data key="d11">1</data>
+      <data key="d13">general</data>
+    </edge>
+    <edge id="e2" source="wang_wanyu" target="npp">
+      <data key="d5">hierarchy</data>
+      <data key="d8">0.6</data>
+      <data key="d9">undirected</data>
+      <data key="d10">False</data>
+      <data key="d11">1</data>
+      <data key="d13">general</data>
+    </edge>
+    <edge id="e3" source="hung_meng_kai" target="kmt">
+      <data key="d5">hierarchy</data>
+      <data key="d8">0.6</data>
+      <data key="d9">undirected</data>
+      <data key="d10">False</data>
+      <data key="d11">1</data>
+      <data key="d13">general</data>
+    </edge>
+    <edge id="e4" source="hung_meng_kai" target="cutting_neck_case">
+      <data key="d5">propose</data>
+      <data key="d6">修法提案</data>
+      <data key="d7">2026-03-09</data>
+      <data key="d8">0.7</data>
+      <data key="d9">undirected</data>
+      <data key="d10">False</data>
+      <data key="d11">1</data>
+      <data key="d13">legislative</data>
+    </edge>
+    <edge id="e5" source="wang_wanyu" target="yang_dad">
+      <data key="d5">participate</data>
+      <data key="d6">陪同記者會</data>
+      <data key="d7">2026-03-12</data>
+      <data key="d8">0.7</data>
+      <data key="d9">undirected</data>
+      <data key="d10">False</data>
+      <data key="d11">1</data>
+      <data key="d13">public_action</data>
+    </edge>
+  </graph>
+</graphml>
