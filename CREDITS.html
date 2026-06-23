@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CREDITS · aclab Skills</title>
+<!-- Generated from CREDITS.md by scripts/render-docs.py — edit the markdown, then re-run. -->
+<style>
+:root{--bg:#07111e;--line:#27344d;--text:#eef4ff;--muted:#b7c4dc;--blue:#4ea1ff;--teal:#43d6c2;--max:880px}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top left,rgba(78,161,255,.14),transparent 32%),radial-gradient(circle at top right,rgba(67,214,194,.12),transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.65}
+a{color:var(--blue)}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(7,17,30,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .crumb{color:var(--muted);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar a{text-decoration:none;border:1px solid rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;font-size:.85rem;white-space:nowrap}
+main{max-width:var(--max);margin:0 auto;padding:32px 22px 80px}
+h1,h2,h3,h4{line-height:1.25;margin:1.6em 0 .5em}
+h1{font-size:2rem;margin-top:.2em}h2{font-size:1.5rem;border-bottom:1px solid var(--line);padding-bottom:.3em}h3{font-size:1.2rem}
+p,li{color:#dbe4f3}
+blockquote{margin:1em 0;padding:.4em 1em;border-left:4px solid var(--blue);background:rgba(78,161,255,.07);border-radius:0 8px 8px 0;color:var(--muted)}
+code{background:rgba(78,161,255,.12);border:1px solid rgba(78,161,255,.18);padding:1px 6px;border-radius:6px;font-size:.86em;color:#dceaff}
+pre{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto}
+pre code{background:none;border:0;padding:0;color:#cfe0f5}
+table{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:.95rem}
+th,td{padding:10px 11px;border:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:rgba(255,255,255,.04);color:#dfe8ff}
+td{color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+img{max-width:100%}
+.mermaid{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:16px;margin:1.2em 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="crumb">CREDITS.md</span>
+  <span style="display:flex;gap:8px">
+    <a href="CREDITS.md">Raw .md</a><a href="methodology.html">Methodology →</a>
+  </span>
+</div>
+<main>
+<h1>Credits &amp; Attribution / 致謝與出處</h1>
+<p>This collection stands on the work of others. Where a skill was derived from, inspired by, or references an upstream project, that source is credited below. If you find an attribution that is missing or wrong, please open an issue — corrections are welcome.</p>
+<p>本合集建立在許多前人的成果之上。凡是衍生自、啟發自或引用了上游專案的 skill，其來源都列於下方。 若發現遺漏或錯誤的出處，歡迎開 issue 指正。</p>
+<blockquote>This repository (the original skills, the methodology, and the glue) is licensed <strong>MIT</strong> — see <a href="./LICENSE"><code>LICENSE</code></a>. Individual upstream components retain <strong>their own licenses</strong>, reproduced in each skill's <code>LICENSE.txt</code>. The MIT license of this repo does <strong>not</strong> relicense those components.</blockquote>
+<h2>⭐ Recommended upstream sources</h2>
+<p>If you want skills we reference, removed, or built upon, get them from the original authors:</p>
+<table><thead><tr><th>Source</th><th>GitHub / Link</th><th>License</th><th>What to get there</th></tr></thead><tbody><tr><td><strong>Anthropic Agent Skills</strong></td><td>&lt;https://github.com/anthropics/skills&gt;</td><td>Apache-2.0 + proprietary</td><td><code>docx</code>, <code>pdf</code>, <code>pptx</code>, <code>xlsx</code>, <code>canvas-design</code>, <code>mcp-builder</code>, <code>skill-creator</code>, <code>brand-guidelines</code>, … (removed from this repo)</td></tr><tr><td><strong>Everything Claude Code</strong></td><td>&lt;https://github.com/affaan-m/everything-claude-code&gt;</td><td>MIT</td><td>instinct/continuous-learning system, agents, rules, memory hooks</td></tr><tr><td><strong>Ponytail</strong></td><td>&lt;https://github.com/DietrichGebert/ponytail&gt;</td><td>MIT</td><td>the YAGNI "ladder" minimal-implementation discipline</td></tr><tr><td><strong>gstack</strong> (Garry Tan)</td><td>&lt;https://github.com/garrytan/gstack&gt;</td><td>MIT</td><td>CEO/eng review depth, cognitive patterns (<code>plan-ceo-review</code>, <code>plan-eng-review</code>, <code>office-hours</code>, ETHOS)</td></tr><tr><td><strong>mattpocock/skills</strong></td><td>&lt;https://github.com/mattpocock/skills&gt;</td><td>MIT</td><td>requirement "grilling", <code>codebase-design</code>, <code>domain-modeling</code></td></tr><tr><td><strong>AWS Kiro</strong></td><td>&lt;https://kiro.dev&gt; · &lt;https://github.com/kirodotdev&gt;</td><td>product</td><td>the spec-driven workflow that inspired <code>spec-driven-development</code></td></tr></tbody></table>
+<hr>
+<h2>1. Anthropic skills — removed from this collection</h2>
+<p>Skills derived from <strong>Anthropic's <code>anthropics/skills</code></strong> (Apache-2.0) and Anthropic's proprietary Claude-bundled document skills have been <strong>removed</strong> from this repository to keep it cleanly self-owned and free of third-party redistribution constraints.</p>
+<p>Removed (Apache-2.0, <code>anthropics/skills</code>): <code>algorithmic-art</code>, <code>canvas-design</code>, <code>frontend-design-skill</code>, <code>theme-factory</code>, <code>web-artifacts-builder</code>, <code>slack-gif-creator</code>, <code>internal-comms</code>, <code>brand-guidelines</code>, <code>mcp-builder</code>, <code>claude-api</code>, <code>skill-creator</code>, <code>webapp-testing</code>.</p>
+<p>Removed (proprietary, <code>© 2025 Anthropic, PBC</code>): <code>docx</code>, <code>pdf</code>, <code>pptx</code>, <code>xlsx</code>.</p>
+<blockquote>If you want any of these, install them directly from <a href="https://github.com/anthropics/skills"><code>anthropics/skills</code></a> under their original licenses. <code>brand-guidelines-naelt</code> (kept) is an original organization-specific work; its structure was historically informed by Anthropic's <code>brand-guidelines</code> but ships no Anthropic-licensed content.</blockquote>
+<h2>3. Everything Claude Code (ECC) — MIT</h2>
+<p>The continuous-learning skills derive from <strong>Everything Claude Code</strong> by Affaan Mustafa (&lt;https://github.com/affaan-m/everything-claude-code&gt;), used under the <strong>MIT License</strong> ("OSS stays free. This repo is MIT-licensed forever.").</p>
+<table><thead><tr><th>Skill (in this repo)</th><th>Source concept</th></tr></thead><tbody><tr><td><code>continuous-learning</code></td><td>session-pattern extraction → learned skills</td></tr><tr><td><code>continuous-learning-v2</code></td><td>instinct-based learning with confidence scoring → evolve into skills</td></tr></tbody></table>
+<p>Broader skill-authoring conventions (SKILL.md frontmatter, <code>references/</code>, <code>evals/</code>, install scripts) across this collection were also informed by the wider Claude Code community.</p>
+<h2>4. Methodology &amp; concept sources (The Spec Master Method)</h2>
+<p>The <code>spec-master</code> + <code>spec-driven-development</code> family operationalizes established engineering practice. Credit to the originators:</p>
+<table><thead><tr><th>Concept</th><th>Source / Author</th><th>Used in</th></tr></thead><tbody><tr><td><strong>Spec-driven development workflow</strong></td><td><strong>AWS Kiro</strong> (&lt;https://kiro.dev&gt;) — <code>spec-driven-development</code> is inspired by Kiro's requirements → design → tasks spec flow</td><td><code>spec-driven-development</code></td></tr><tr><td><strong>YAGNI "Ponytail" Ladder</strong></td><td><strong>Ponytail</strong> by Dietrich Gebert (&lt;https://github.com/DietrichGebert/ponytail&gt;), <strong>MIT License</strong> — adapted as the minimal-implementation ladder</td><td><code>spec-driven-development/references/ponytail-yagni-ladder.md</code></td></tr><tr><td><strong>CEO/eng review depth &amp; cognitive patterns</strong></td><td><strong>gstack</strong> by Garry Tan (&lt;https://github.com/garrytan/gstack&gt;), <strong>MIT License</strong> — <code>plan-ceo-review</code>, <code>plan-eng-review</code>, <code>office-hours</code>, <code>ETHOS</code> (selected subset)</td><td><code>spec-master/references/requirement-interview-depth.md</code>, <code>spec-driven-development/references/architecture-design-depth.md</code>, <code>project-review-skill</code></td></tr><tr><td><strong>Requirement "grilling" &amp; design modeling</strong></td><td><strong>mattpocock/skills</strong> (&lt;https://github.com/mattpocock/skills&gt;), <strong>MIT License</strong> — <code>grill-me</code>/<code>grilling</code>, <code>codebase-design</code>, <code>domain-modeling</code></td><td><code>spec-master</code> &amp; <code>spec-driven-development</code> interview/design-depth references</td></tr><tr><td><strong>Scrum</strong></td><td>The <strong>Scrum Guide</strong>, Ken Schwaber &amp; Jeff Sutherland (&lt;https://scrumguides.org&gt;)</td><td>family Scrum-role mapping</td></tr><tr><td><strong>Agile values</strong></td><td><strong>Manifesto for Agile Software Development</strong> (&lt;https://agilemanifesto.org&gt;)</td><td>family Agile mapping</td></tr><tr><td><strong>Test-Driven Development</strong></td><td>Kent Beck — <em>Test-Driven Development: By Example</em></td><td><code>tdd-workflow</code>, SDD Phase 4</td></tr><tr><td><strong>Domain-Driven Design</strong></td><td>Eric Evans — <em>Domain-Driven Design</em></td><td>SDD Phase 2 (bounded contexts)</td></tr><tr><td><strong>Refactoring &amp; Test Pyramid</strong></td><td>Martin Fowler (&lt;https://martinfowler.com&gt;)</td><td><code>code-refactoring-advisor</code>, test strategy</td></tr><tr><td><strong>EARS requirement syntax</strong></td><td>Alistair Mavin (&lt;https://alistairmavin.com/ears/&gt;)</td><td>SDD Phase 1 acceptance criteria</td></tr><tr><td><strong>OWASP Top 10 / CWE</strong></td><td>OWASP Foundation (&lt;https://owasp.org&gt;)</td><td><code>security-risk-reviewer</code></td></tr><tr><td><strong>Responsible AI</strong></td><td>NIST AI RMF (&lt;https://www.nist.gov/itl/ai-risk-management-framework&gt;), OECD AI Principles (&lt;https://oecd.ai/en/ai-principles&gt;), ISO/IEC 42001 (&lt;https://www.iso.org/standard/42001&gt;)</td><td>family Responsible-AI alignment</td></tr></tbody></table>
+<hr>
+<h2>How attribution is kept in-tree</h2>
+<ul><li><strong>Concept sources</strong> are cited inline where used (e.g. the Ponytail header in</li></ul>
+<p>  <code>ponytail-yagni-ladder.md</code>, the References sections of the family <code>index.html</code> pages).</p>
+<ul><li>This file is the <strong>single index</strong> that ties those attributions together.</li></ul>
+</main>
+
+</body>
+</html>

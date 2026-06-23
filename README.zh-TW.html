@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>README.zh-TW · aclab Skills</title>
+<!-- Generated from README.zh-TW.md by scripts/render-docs.py — edit the markdown, then re-run. -->
+<style>
+:root{--bg:#07111e;--line:#27344d;--text:#eef4ff;--muted:#b7c4dc;--blue:#4ea1ff;--teal:#43d6c2;--max:880px}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top left,rgba(78,161,255,.14),transparent 32%),radial-gradient(circle at top right,rgba(67,214,194,.12),transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.65}
+a{color:var(--blue)}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(7,17,30,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .crumb{color:var(--muted);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar a{text-decoration:none;border:1px solid rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;font-size:.85rem;white-space:nowrap}
+main{max-width:var(--max);margin:0 auto;padding:32px 22px 80px}
+h1,h2,h3,h4{line-height:1.25;margin:1.6em 0 .5em}
+h1{font-size:2rem;margin-top:.2em}h2{font-size:1.5rem;border-bottom:1px solid var(--line);padding-bottom:.3em}h3{font-size:1.2rem}
+p,li{color:#dbe4f3}
+blockquote{margin:1em 0;padding:.4em 1em;border-left:4px solid var(--blue);background:rgba(78,161,255,.07);border-radius:0 8px 8px 0;color:var(--muted)}
+code{background:rgba(78,161,255,.12);border:1px solid rgba(78,161,255,.18);padding:1px 6px;border-radius:6px;font-size:.86em;color:#dceaff}
+pre{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto}
+pre code{background:none;border:0;padding:0;color:#cfe0f5}
+table{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:.95rem}
+th,td{padding:10px 11px;border:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:rgba(255,255,255,.04);color:#dfe8ff}
+td{color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+img{max-width:100%}
+.mermaid{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:16px;margin:1.2em 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="crumb">README.zh-TW.md</span>
+  <span style="display:flex;gap:8px">
+    <a href="README.zh-TW.md">Raw .md</a><a href="methodology.html">Methodology →</a>
+  </span>
+</div>
+<main>
+<h1>aclab Skills（技能合集）</h1>
+<p><strong>aclab</strong> 精選的 AI agent 技能合集，專注於專業軟體開發工作流。這是一套 <strong>agent-agnostic（不綁單一廠商）</strong> 的合集——這些技能可在 <strong>OpenCode</strong>、<strong>Claude Code</strong> 與 <strong>Codex</strong>（以及其他相容 runtime）上執行，不限單一平台。</p>
+<p>🌐 <strong>語言：</strong> <a href="README.html">English</a> · <a href="README.zh-TW.html">繁體中文</a></p>
+<blockquote>🤖 <strong>使用程式代理人嗎？</strong> 請先讀 <a href="AGENTS.html"><code>AGENTS.md</code></a> — 它說明如何在本合集中導航、何時進入 <strong>Spec Master Method</strong>，以及這些技能預期的路由／責任歸屬規則。</blockquote>
+<h2>快速開始</h2>
+<pre><code>git clone https://github.com/austinyuch/skills.git
+cd skills</code></pre>
+<p>用通用安裝器把技能安裝到你的 agent skill home：</p>
+<pre><code>bash scripts/install.sh opencode   # → ~/.config/opencode/skills/
+bash scripts/install.sh claude     # → ~/.claude/skills/
+bash scripts/install.sh codex      # → ~/.codex/skills/
+bash scripts/install.sh kiro       # → ~/.kiro/skills/
+
+# 或指定任意路徑：
+SKILLS_TARGET=/path/to/skills bash scripts/install.sh</code></pre>
+<p>每個技能會安裝成 <code>&lt;skill-home&gt;/&lt;skill-name&gt;/</code>，agent 會自動載入。OpenCode 使用者也可用 npx 安裝： <code>npx skills@latest add austinyuch/skills</code>。</p>
+<h2>內容總覽</h2>
+<table><thead><tr><th>分類</th><th>技能數</th><th>說明</th></tr></thead><tbody><tr><td><strong>Spec Master</strong></td><td>2</td><td>規格路由與規格驅動開發</td></tr><tr><td><strong>Code Review</strong></td><td>6</td><td>複核、品質、安全與測試工具</td></tr><tr><td><strong>Scrum</strong></td><td>2</td><td>Scrum 與敏捷團隊工作流</td></tr><tr><td><strong>Engineering</strong></td><td>15</td><td>核心軟體工程工作流</td></tr><tr><td><strong>Architecture</strong></td><td>15</td><td>架構、治理與流程設計</td></tr><tr><td><strong>DevOps</strong></td><td>6</td><td>DevOps、容器與基礎設施</td></tr><tr><td><strong>Productivity</strong></td><td>7</td><td>生產力、寫作與協作</td></tr><tr><td><strong>Data</strong></td><td>4</td><td>數據分析、BI 與資料庫</td></tr><tr><td><strong>Domain Expert</strong></td><td>1</td><td>領域專家知識</td></tr><tr><td><strong>Creative</strong></td><td>2</td><td>前端、設計與創意工具</td></tr><tr><td><strong>Security &amp; Compliance</strong></td><td>1</td><td>安全複核與合規</td></tr><tr><td><strong>Social Media</strong></td><td>5</td><td>社群媒體、倡議與行銷</td></tr><tr><td><strong>Tools</strong></td><td>1</td><td>開發者工具與整合</td></tr><tr><td><strong>User Experience</strong></td><td>1</td><td>使用者檔案、手冊與互動</td></tr><tr><td><strong>Project Review</strong></td><td>2</td><td>專案複核與高管報告</td></tr><tr><td><strong>UAT &amp; Demo</strong></td><td>1</td><td>UAT 與 demo 執行工具</td></tr></tbody></table>
+<h2>Spec Master Method（開發方法）</h2>
+<blockquote><strong>把 DevSecOps、Scrum 與 TDD 帶進 agentic 工作流——而且不失真。</strong></blockquote>
+<p>程式代理人讓「產生程式碼」變便宜，卻沒讓「協調程式碼」變便宜。瓶頸從打字轉移到決定責任歸屬、維持證據新鮮， 以及阻止一個看似綠燈的檔案謊報 readiness。<strong>Spec Master Method</strong> 是一套由 <strong>14 個可組合技能</strong>組成的開源家族， 把五種已驗證的工程實踐移植成一個受治理、可檢視的 agentic 工作流。</p>
+<table><thead><tr><th>經典實踐</th><th>它依然負責的任務</th><th>Owner 技能</th></tr></thead><tbody><tr><td>規格驅動開發 (SDD)</td><td>模糊意圖 → 可追溯交付</td><td><code>spec-driven-development</code>（啟發自 <a href="https://kiro.dev">AWS Kiro</a>）</td></tr><tr><td>測試驅動開發 (TDD)</td><td>改程式前先釘住行為</td><td><code>tdd-workflow</code> + <code>test-design-generator</code></td></tr><tr><td>領域驅動設計 (DDD)</td><td>讓邊界對齊業務語言</td><td>SDD Phase 2（bounded contexts）</td></tr><tr><td>測試管理</td><td>CI 綠燈 → 可稽核的風險證據</td><td><code>test-registry-manager</code> + <code>test-quality-reviewer</code></td></tr><tr><td>重構</td><td>在行為被保護後降低變更成本</td><td><code>code-refactoring-advisor</code></td></tr></tbody></table>
+<p>14 個技能分三層：</p>
+<ul><li><strong>治理與路由</strong> — <code>spec-master</code>（前門）、<code>spec-registry-manager</code>、<code>issue-log-manager</code>、<code>local-infra-registry-governance</code>、<code>shared-governance</code></li><li><strong>交付</strong> — <code>spec-driven-development</code>（六階段生命週期）、<code>tdd-workflow</code>、<code>test-registry-manager</code>、<code>test-design-generator</code></li><li><strong>驗證（左移）</strong> — <code>code-review</code>、<code>code-refactoring-advisor</code>、<code>test-quality-reviewer</code>、<code>security-risk-reviewer</code>、<code>sonarqube-bridge</code></li></ul>
+<p>防止假綠燈的核心規則：<strong>證據單向流動</strong> — <code>ISSUE_LOG → spec 工件 → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md</code> — 衍生摘要永不反向同步回上游真相。</p>
+<p><strong>深入閱讀：</strong></p>
+<ul><li>🟦 <a href="./methodology.html"><code>methodology.html</code></a> — 雙語 EN/繁中 landing page</li><li>📖 <a href="./docs/agentic-delivery-methodology.html"><code>docs/agentic-delivery-methodology.md</code></a> — 完整方法論文章（雙語）</li><li>🗺️ <a href="./docs/methodology-diagram.html"><code>docs/methodology-diagram.md</code></a> — 交棒、證據流與實踐對照圖</li><li>深入：<a href="./skills/spec-master/index.html">Spec Master + SDD 說帖</a> · <a href="./skills/code-review/index.html">Code Review 家族說帖</a></li></ul>
+<blockquote><code>spec-driven-development</code> 啟發自 <strong>AWS Kiro</strong>；YAGNI 階梯改編自 <strong>Ponytail</strong>（MIT）；它建立在 <strong>Scrum</strong>、<strong>Agile Manifesto</strong>、<strong>TDD/DDD</strong> 等之上。完整出處：<a href="./CREDITS.html"><code>CREDITS.md</code></a>。</blockquote>
+<h2>技能家族</h2>
+<h3>Spec Master</h3>
+<ul><li><code>spec-master</code> - 規格路由、治理與改善項分類（前門）</li><li><code>spec-driven-development</code> - 系統化規格生命週期：需求、設計、任務、實作、複核、優化</li></ul>
+<h3>Code Review</h3>
+<ul><li><code>code-review</code> - 以 CLI 工具進行程式複核</li><li><code>test-quality-reviewer</code> - 評估測試有效性</li><li><code>code-refactoring-advisor</code> - 偵測程式異味並建議重構</li><li><code>test-design-generator</code> - 生成具體測試案例</li><li><code>security-risk-reviewer</code> - OWASP 安全掃描</li><li><code>sonarqube-bridge</code> - SonarQube 整合</li></ul>
+<h3>Scrum</h3>
+<ul><li><code>scrum-master-skill</code> - Scrum Master 協調</li><li><code>scrum-developer-skill</code> - Scrum 開發者執行</li></ul>
+<h2>技能分類</h2>
+<h3>Engineering（工程）</h3>
+<ul><li><code>spec-registry-manager</code> - 規格目錄管理</li><li><code>code-review</code> - 以 CLI 工具進行程式複核</li><li><code>code-refactoring-advisor</code> - 偵測程式異味並建議重構</li><li><code>code-summarizer</code> - 檔案層級程式摘要</li><li><code>test-quality-reviewer</code> - 評估測試有效性</li><li><code>test-design-generator</code> - 生成具體測試案例</li><li><code>test-registry-manager</code> - 測試目錄治理</li><li><code>tdd-workflow</code> - 測試驅動開發</li><li><code>verification-loop</code> - 實作後驗證</li><li><code>eval-harness</code> - 評估框架</li><li><code>backend-patterns</code> - 後端架構模式</li><li><code>frontend-patterns</code> - 前端開發模式</li><li><code>coding-standards</code> - 通用程式規範</li><li><code>golang-patterns</code> - 慣用 Go 模式</li><li><code>golang-testing</code> - Go 測試模式</li><li><code>go-rust-optimizer</code> - 以 Rust 優化 Go 效能</li><li><code>node-rust-optimizer</code> - 以 Rust 優化 Node.js 效能</li><li><code>python-rust-optimizer</code> - 以 Rust 優化 Python 效能</li><li><code>sonarqube-bridge</code> - SonarQube 整合</li><li><code>capability-mapper</code> - 將程式對應到業務能力</li></ul>
+<h3>Architecture（架構）</h3>
+<ul><li><code>agentic-scrum-governance</code> - Agentic Scrum 治理</li><li><code>shared-governance</code> - 共用治理規則</li><li><code>committee-decision-making</code> - 多 LLM 決策</li><li><code>strategic-compact</code> - 上下文壓縮策略</li><li><code>iterative-retrieval</code> - 漸進式上下文檢索</li><li><code>epic-breakdown-skill</code> - Epic 拆解</li><li><code>requirements-workflow-skill</code> - 需求管理工作流</li><li><code>workflow-skill-creator</code> - Workflow 技能產生器</li><li><code>continuous-learning</code> - 從 session 萃取模式</li><li><code>continuous-learning-v2</code> - 基於 instinct 的學習</li><li><code>skill-migration-workflow</code> - 技能遷移與比較</li><li><code>cross-agents-symlink-bridge</code> - 跨 agent 橋接設定</li><li><code>issue-log-manager</code> - Issue log 治理</li><li><code>uat-demo-agent</code> - UAT/Demo 計畫執行</li><li><code>uat-demo-agent-packaging</code> - 技能打包</li><li><code>uat-demo-target-governance-template</code> - 治理範本</li></ul>
+<h3>DevOps</h3>
+<ul><li><code>devops-container-orchestration</code> - 容器編排模式</li><li><code>podman-rootless</code> - Podman rootless 開發</li><li><code>k8s-security-patterns</code> - Kubernetes 安全</li><li><code>local-infra-registry-governance</code> - 本地基礎設施註冊</li><li><code>container-image-janitor</code> - 容器映像清理</li><li><code>cross-platform-dev-scripts</code> - 跨平台開發腳本</li></ul>
+<h3>Productivity（生產力）</h3>
+<ul><li><code>writer-skill</code> - 專業文件寫作</li><li><code>vibe-skill</code> - 快速開發工作流</li><li><code>kiro-skill</code> - 系統化開發工作流</li><li><code>pm-skill</code> - 產品管理助手</li><li><code>prd-skill</code> - PRD 文件生成</li><li><code>name-skill</code> - 程式命名助手</li><li><code>find-skills</code> - 技能探索</li></ul>
+<h3>Data（數據）</h3>
+<ul><li><code>clickhouse-io</code> - ClickHouse 資料庫模式</li><li><code>postgres-patterns</code> - PostgreSQL 模式</li><li><code>database-modernization-strangler</code> - 遺留資料庫現代化</li><li><code>taiwan-civic-budget-tracker</code> - 政府預算追蹤</li></ul>
+<h3>Domain Expert（領域專家）</h3>
+<ul><li><code>microsoft-foundry</code> - Azure AI Foundry 部署</li></ul>
+<h3>Creative（創意）</h3>
+<ul><li><code>ui-skill</code> - B2B 供應鏈互動 HTML</li><li><code>shadcn</code> - shadcn/ui 元件管理</li></ul>
+<h3>Security &amp; Compliance（安全與合規）</h3>
+<ul><li><code>security-review</code> - 安全複核檢查清單</li><li><code>security-risk-reviewer</code> - OWASP 安全掃描</li></ul>
+<h3>Social Media（社群媒體）</h3>
+<ul><li><code>social-media-platforms</code> - 社群媒體內容優化</li><li><code>social-post-generator</code> - 社群貼文生成</li><li><code>victim-rights-news-tracker</code> - 倡議新聞追蹤</li><li><code>brand-guidelines-naelt</code> - NAELT 品牌指南</li><li><code>NPO-marketing-guide</code> - NPO 行銷指南</li></ul>
+<h3>Tools（工具）</h3>
+<ul><li><code>local-llm-agent-migrator</code> - 本地 LLM agent 遷移</li></ul>
+<h3>Scrum</h3>
+<ul><li><code>scrum-master-skill</code> - Scrum Master 協調</li><li><code>scrum-developer-skill</code> - Scrum 開發者執行</li></ul>
+<h3>User Experience（使用者體驗）</h3>
+<ul><li><code>user-manual-skill</code> - 使用者手冊生成</li></ul>
+<h3>Project Review（專案複核）</h3>
+<ul><li><code>project-review-skill</code> - 高管專案複核</li><li><code>project-review-naelt</code> - NAELT 專案複核</li></ul>
+<h3>UAT &amp; Demo</h3>
+<ul><li><code>uat-demo-agent</code> - UAT/Demo 計畫執行</li></ul>
+<h2>授權與致謝</h2>
+<p>本 repository 的技能、方法論與整合程式以 <strong>MIT</strong> 授權 — 見 <a href="LICENSE">LICENSE</a>。</p>
+<blockquote><strong>注意：</strong> 取材自 Anthropic <code>anthropics/skills</code>（以及專有的 <code>docx</code>/<code>pdf</code>/<code>pptx</code>/<code>xlsx</code>）與 Giant 公司資產的技能， 已<strong>自本合集移除</strong>。方法論仍以概念影響的形式致謝其來源——<strong>AWS Kiro</strong>、<strong>Ponytail</strong>（MIT）、<strong>gstack</strong>（MIT）、 <strong>mattpocock/skills</strong>（MIT）、<strong>Everything Claude Code</strong>（MIT）、<strong>Scrum Guide</strong>、<strong>Agile Manifesto</strong> 等。 完整出處與推薦上游連結見 <a href="CREDITS.html"><strong>CREDITS.md</strong></a>。</blockquote>
+</main>
+
+</body>
+</html>

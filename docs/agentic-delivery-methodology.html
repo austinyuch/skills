@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>agentic-delivery-methodology · aclab Skills</title>
+<!-- Generated from docs/agentic-delivery-methodology.md by scripts/render-docs.py — edit the markdown, then re-run. -->
+<style>
+:root{--bg:#07111e;--line:#27344d;--text:#eef4ff;--muted:#b7c4dc;--blue:#4ea1ff;--teal:#43d6c2;--max:880px}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top left,rgba(78,161,255,.14),transparent 32%),radial-gradient(circle at top right,rgba(67,214,194,.12),transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.65}
+a{color:var(--blue)}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(7,17,30,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .crumb{color:var(--muted);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar a{text-decoration:none;border:1px solid rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;font-size:.85rem;white-space:nowrap}
+main{max-width:var(--max);margin:0 auto;padding:32px 22px 80px}
+h1,h2,h3,h4{line-height:1.25;margin:1.6em 0 .5em}
+h1{font-size:2rem;margin-top:.2em}h2{font-size:1.5rem;border-bottom:1px solid var(--line);padding-bottom:.3em}h3{font-size:1.2rem}
+p,li{color:#dbe4f3}
+blockquote{margin:1em 0;padding:.4em 1em;border-left:4px solid var(--blue);background:rgba(78,161,255,.07);border-radius:0 8px 8px 0;color:var(--muted)}
+code{background:rgba(78,161,255,.12);border:1px solid rgba(78,161,255,.18);padding:1px 6px;border-radius:6px;font-size:.86em;color:#dceaff}
+pre{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto}
+pre code{background:none;border:0;padding:0;color:#cfe0f5}
+table{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:.95rem}
+th,td{padding:10px 11px;border:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:rgba(255,255,255,.04);color:#dfe8ff}
+td{color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+img{max-width:100%}
+.mermaid{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:16px;margin:1.2em 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="crumb">docs/agentic-delivery-methodology.md</span>
+  <span style="display:flex;gap:8px">
+    <a href="agentic-delivery-methodology.md">Raw .md</a><a href="../methodology.html">Methodology →</a>
+  </span>
+</div>
+<main>
+<h1>Porting DevSecOps + Scrum + TDD into Agentic Workflows</h1>
+<h3>How a 14-skill open-source family — <em>The Spec Master Method</em> — keeps coding agents honest</h3>
+<blockquote><strong>TL;DR</strong> — Coding agents made <em>producing</em> code cheap. They did not make <em>coordinating</em> it cheap. The bottleneck moved from typing to deciding ownership, keeping evidence fresh, and stopping a green-looking file from lying about readiness. The Spec Master Method ports five proven engineering practices — <strong>SDD, TDD, DDD, test management, and refactoring</strong> — into a governed, inspectable agentic workflow built from 14 composable, open-source skills.</blockquote>
+<p><em>A 繁體中文版本在本文末尾 → <a href="#中文版">中文版</a>.</em></p>
+<hr>
+<h2>1. The problem agents created</h2>
+<p>In a classic team, work moves through people in a roughly linear handoff: a PM writes a story, a dev builds it, a reviewer checks it, CI gates it. Each handoff is slow enough that a human re-reads the context and notices when something is off.</p>
+<p>Agentic teams break that assumption. An agent can produce text, mutate files, call tools, and hand work to <em>another</em> agent faster than any human can re-establish context. So the scarce resource is no longer output — it's <strong>decision quality and boundary control</strong>:</p>
+<ul><li><strong>Ownership drift</strong> — two agents route the same request to two different workflows, and the team pays the clarification cost twice.</li><li><strong>Authority collisions</strong> — <code>SPECS.md</code>, <code>NEXT_STEPS.md</code>, <code>RTM.md</code>, <code>TESTS.md</code>, and <code>review.md</code> start competing to be "the truth," so handoffs get fragile.</li><li><strong>False green</strong> — a mock-heavy test stays green while the underlying evidence is stale, and confidence rises faster than signal.</li><li><strong>Runtime leakage</strong> — ports, local stacks, and demo state leak into spec files and start masquerading as authority.</li></ul>
+<p>The instinct to "just let the agent figure it out" is exactly what produces these failures at scale. The fix is not <em>less</em> process — it's process that gets <strong>stricter about ownership, evidence, and boundaries</strong>, while staying cheap enough that agents can actually follow it.</p>
+<h2>2. The thesis: port, don't abandon</h2>
+<p>SDD, TDD, DDD, test management, and refactoring already solve these problems — for humans. The method's claim is that each one keeps its job in an agentic team, but needs an explicit <strong>owner skill</strong> so an agent always knows <em>who</em> is responsible for <em>what</em>.</p>
+<table><thead><tr><th>Classic practice</th><th>The job it still does</th><th>Owner skill in the family</th></tr></thead><tbody><tr><td><strong>Spec-Driven Development (SDD)</strong></td><td>Turn vague intent into traceable delivery</td><td><code>spec-driven-development</code></td></tr><tr><td><strong>Test-Driven Development (TDD)</strong></td><td>Pin behavior before code changes; make refactoring safe</td><td><code>tdd-workflow</code> + <code>test-design-generator</code></td></tr><tr><td><strong>Domain-Driven Design (DDD)</strong></td><td>Align boundaries with business language</td><td>SDD Phase 2 (bounded contexts &amp; contracts)</td></tr><tr><td><strong>Test Management</strong></td><td>Turn green CI into auditable risk evidence</td><td><code>test-registry-manager</code> + <code>test-quality-reviewer</code></td></tr><tr><td><strong>Refactoring</strong></td><td>Lower cost of change — <em>after</em> behavior is protected</td><td><code>code-refactoring-advisor</code></td></tr><tr><td><strong>Security left-shift</strong></td><td>Catch injection/secrets/weak crypto in review</td><td><code>security-risk-reviewer</code> + <code>code-review</code></td></tr></tbody></table>
+<p>These are not separate slogans. <strong>SDD decides what to build, TDD proves it safely, DDD keeps the boundary language honest, test management keeps the evidence fresh, and refactoring stops cost-of-change from compounding.</strong></p>
+<blockquote><strong>Lineage.</strong> <code>spec-driven-development</code> is inspired by <a href="https://kiro.dev">AWS Kiro</a>'s requirements → design → tasks spec flow; the YAGNI ladder adapts <a href="https://github.com/DietrichGebert/ponytail">Ponytail</a> (MIT). Full attribution is in <a href="../CREDITS.html"><code>CREDITS.md</code></a>.</blockquote>
+<h2>3. The shape: route first, then deliver, then verify</h2>
+<p>The 14 skills sit in three layers.</p>
+<p><strong>Layer 1 — Govern &amp; route.</strong> <code>spec-master</code> is the front door. Its only job is to decide <em>who owns this</em> before any file is edited — route by authority surface, not by whichever file got mentioned first. Around it sit the governance owners: <code>spec-registry-manager</code> (the <code>SPECS.md</code> lifecycle), <code>issue-log-manager</code> (a holding pen for unresolved work that has no safe owner yet), <code>local-infra-registry-governance</code> (runtime allocation), and <code>shared-governance</code> (git/worktree and ownership guardrails shared across families).</p>
+<p><strong>Layer 2 — Deliver.</strong> <code>spec-driven-development</code> runs the six-phase lifecycle. <code>tdd-workflow</code> and <code>test-design-generator</code> supply Phase 4's red/green/refactor discipline; <code>test-registry-manager</code> owns the <code>TESTS.md</code> evidence catalog.</p>
+<p><strong>Layer 3 — Verify (left-shift).</strong> The <code>code-review</code> family — <code>code-refactoring-advisor</code>, <code>test-quality-reviewer</code>, <code>security-risk-reviewer</code>, <code>sonarqube-bridge</code> — is pulled into Phase 4/5 as <em>detection</em>, catching smells, weak tests, and security risk before the review verdict is written.</p>
+<p>See <a href="./methodology-diagram.html"><code>methodology-diagram.md</code></a> for the full handoff, evidence-flow, and practice-mapping diagrams.</p>
+<h2>4. The six phases, and where each practice lands</h2>
+<ol><li><strong>Requirements</strong> — EARS-style acceptance criteria. The <em>Ponytail YAGNI Ladder</em> Rung 1 filters speculative needs (<code>deferred</code> / <code>out-of-scope</code>) before they pollute the requirement matrix.</li><li><strong>Design &amp; contracts</strong> — DDD shows up here: bounded contexts, contracts, data models, impact analysis. Rungs 2–4 force <em>stdlib → native platform → existing dependency</em> before any new dependency is justified.</li><li><strong>Tasks &amp; traceability</strong> — mirror the authority boundary and plan explicit closeout for <code>TESTS.md</code>, <code>RTM.md</code>, <code>SPECS.md</code>, CR closure, and issue disposition. Governance becomes executable, not aspirational.</li><li><strong>Implementation</strong> — TDD's red → green → refactor with evidence reports. Folder-level <code>TESTS.md</code> is updated <em>before</em> any workspace rollup. Rungs 5–6 keep the implementation to "the minimum that works."</li><li><strong>Review verdict</strong> — <code>review.md</code> owns readiness. The code-review family runs left-shift detection; new dependencies without a ladder record and unreasoned abstractions get flagged as <code>over-engineering risk</code>.</li><li><strong>Optimization</strong> — repeated findings become a local lesson, an issue-log item, a CR fold-back, or a promoted skill/process change. Review pain becomes process improvement.</li></ol>
+<h2>5. The one rule that prevents false-green</h2>
+<blockquote><strong>Evidence flows one way.</strong> <code>ISSUE_LOG → spec artifacts &amp; reports → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md</code>. Derived summaries <strong>never</strong> sync back into upstream truth.</blockquote>
+<p>This single constraint is what separates "looks done" from "is done." <code>review.md</code> owns the readiness verdict; <code>TESTS.md</code> owns the test catalog and evidence pointers; <code>SPECS.md</code> and <code>RTM.md</code> are <em>derived</em> and may never overwrite the upstream artifacts they summarize. A beautiful green dashboard generated from a stale rollup is, structurally, not allowed to be the source of confidence.</p>
+<h2>6. How it maps to Scrum, DevSecOps, and Responsible AI</h2>
+<ul><li><strong>Scrum</strong> — the method strengthens boundary management rather than replacing ceremonies. The Product Owner routes ownership before the backlog hardens; the Scrum Master holds routing discipline and clarification cadence; Developers execute through the right downstream skill so implementation never contaminates governance.</li><li><strong>DevSecOps</strong> — test evidence, review verdict, and demo readiness live on <em>separate</em> authority surfaces, so mock-heavy green CI cannot masquerade as production-ready. Security review is left-shifted into Phase 5 instead of bolted on before release.</li><li><strong>Responsible AI</strong> — human oversight via phase gates, accountability via separate owners, transparency via authority-surface routing and recorded handoff reasons. This aligns with the <a href="https://www.nist.gov/itl/ai-risk-management-framework">NIST AI RMF</a>, <a href="https://oecd.ai/en/ai-principles">OECD AI Principles</a>, and <a href="https://www.iso.org/standard/42001">ISO/IEC 42001</a>.</li></ul>
+<h2>7. Try it</h2>
+<ol><li>Read the <a href="../skills/spec-master/index.html">Spec Master family page</a> for routing and authority surfaces.</li><li>Read the <a href="../skills/spec-master/index.html">Spec-Driven Development brief</a> for the lifecycle and artifacts.</li><li>Install the skills (see the <a href="../README.html">README</a>) and point your coding agent at <code>spec-master</code> as the front door.</li></ol>
+<p>All 14 skills are open-source under MIT. The family root is <code>skills/spec-master/</code>; downstream members install as sibling skill folders.</p>
+<blockquote><strong>Claim boundary.</strong> This article explains a methodology and a skill family. It does not claim that any consuming repository is demo-ready or production-ready — those claims must come from that repo's own <code>review.md</code>, test evidence, and runtime registry state.</blockquote>
+<hr>
+<a name="中文版"></a>
+<h1>中文版：把 DevSecOps + Scrum + TDD 移植到 Agentic 工作流</h1>
+<h3>一套 14 個 skills 的開源家族——<em>Spec Master 開發方法</em>——如何讓程式代理人保持誠實</h3>
+<blockquote><strong>一句話總結</strong>：程式代理人讓「產生程式碼」變便宜了，卻沒讓「協調程式碼」變便宜。瓶頸從打字轉移到決定責任歸屬、維持證據新鮮，以及阻止一個看似綠燈的檔案謊報 readiness。Spec Master 開發方法把五種已驗證的工程實踐——<strong>SDD、TDD、DDD、測試管理與重構</strong>——移植成一個由 14 個可組合開源 skills 構成、受治理且可檢視的 agentic 工作流。</blockquote>
+<h2>1. 代理人製造的新問題</h2>
+<p>在傳統團隊裡，工作大致是線性地在人之間交棒：PM 寫故事、工程師實作、審查者複核、CI 把關。每次交棒都夠慢，慢到人能重讀上下文、察覺哪裡不對。</p>
+<p>代理人團隊打破了這個前提。代理人產生文字、變更檔案、呼叫工具、把工作交給<em>另一個</em>代理人的速度，快過任何人重建上下文的速度。因此稀缺資源不再是產出，而是<strong>決策品質與邊界控制</strong>：</p>
+<ul><li><strong>責任漂移</strong>——兩個代理人把同一請求路由到兩條工作流，團隊付兩次澄清成本。</li><li><strong>權威衝突</strong>——<code>SPECS.md</code>、<code>NEXT_STEPS.md</code>、<code>RTM.md</code>、<code>TESTS.md</code>、<code>review.md</code> 開始競爭「誰才是真相」，交棒變脆弱。</li><li><strong>假綠燈</strong>——mock-heavy 測試保持綠燈，底層證據卻過期，信心上升得比訊號還快。</li><li><strong>執行環境滲漏</strong>——port、本地 stack、demo 狀態滲進 spec 檔案，開始假扮權威。</li></ul>
+<p>「讓代理人自己搞定」的直覺，正是這些失敗在規模化時的成因。解法不是<em>更少</em>流程，而是對<strong>責任、證據與邊界更嚴格</strong>、同時又便宜到代理人真的能遵循的流程。</p>
+<h2>2. 論點：移植，而非丟棄</h2>
+<p>SDD、TDD、DDD、測試管理與重構，早就為人類解決了這些問題。此方法主張：每一項在代理人團隊裡都保有它的職責，但需要一個明確的 <strong>owner skill</strong>，讓代理人永遠知道<em>誰</em>負責<em>什麼</em>。</p>
+<table><thead><tr><th>經典實踐</th><th>它依然負責的任務</th><th>家族中的 owner skill</th></tr></thead><tbody><tr><td><strong>規格驅動開發 (SDD)</strong></td><td>把模糊意圖轉成可追溯交付</td><td><code>spec-driven-development</code></td></tr><tr><td><strong>測試驅動開發 (TDD)</strong></td><td>改程式前先釘住行為；讓重構安全</td><td><code>tdd-workflow</code> + <code>test-design-generator</code></td></tr><tr><td><strong>領域驅動設計 (DDD)</strong></td><td>讓邊界對齊業務語言</td><td>SDD Phase 2（bounded context 與契約）</td></tr><tr><td><strong>測試管理</strong></td><td>把 CI 綠燈變成可稽核的風險證據</td><td><code>test-registry-manager</code> + <code>test-quality-reviewer</code></td></tr><tr><td><strong>重構</strong></td><td>降低變更成本——在行為被保護<em>之後</em></td><td><code>code-refactoring-advisor</code></td></tr><tr><td><strong>安全左移</strong></td><td>在審查階段抓出注入／機密／弱加密</td><td><code>security-risk-reviewer</code> + <code>code-review</code></td></tr></tbody></table>
+<p>這些不是分離的口號。<strong>SDD 決定要做什麼，TDD 安全地證明它，DDD 維持邊界語言誠實，測試管理讓證據保持新鮮，重構則避免變更成本持續累積。</strong></p>
+<blockquote><strong>淵源</strong>：<code>spec-driven-development</code> 啟發自 <a href="https://kiro.dev">AWS Kiro</a> 的 requirements → design → tasks 規格流程；YAGNI 階梯改編自 <a href="https://github.com/DietrichGebert/ponytail">Ponytail</a>（MIT）。完整出處見 <a href="../CREDITS.html"><code>CREDITS.md</code></a>。</blockquote>
+<h2>3. 形狀：先路由、再交付、後驗證</h2>
+<p>14 個 skills 分三層。</p>
+<p><strong>第一層——治理與路由。</strong> <code>spec-master</code> 是前門，唯一職責是在任何檔案被編輯前，先決定<em>誰擁有這件事</em>——依權威面路由，而不是依「哪個檔案先被提到」。圍繞它的是治理 owner：<code>spec-registry-manager</code>（<code>SPECS.md</code> 生命週期）、<code>issue-log-manager</code>（尚無安全 owner 的未解決工作的暫存區）、<code>local-infra-registry-governance</code>（執行環境配置）、<code>shared-governance</code>（跨家族共用的 git/worktree 與責任護欄）。</p>
+<p><strong>第二層——交付。</strong> <code>spec-driven-development</code> 跑六階段生命週期；<code>tdd-workflow</code> 與 <code>test-design-generator</code> 供應 Phase 4 的紅/綠/重構紀律；<code>test-registry-manager</code> 擁有 <code>TESTS.md</code> 證據目錄。</p>
+<p><strong>第三層——驗證（左移）。</strong> <code>code-review</code> 家族——<code>code-refactoring-advisor</code>、<code>test-quality-reviewer</code>、<code>security-risk-reviewer</code>、<code>sonarqube-bridge</code>——在 Phase 4/5 作為<em>偵測</em>被引入，在 review verdict 寫下前抓出異味、弱測試與安全風險。</p>
+<p>完整的交棒圖、證據流圖與實踐對照圖見 <a href="./methodology-diagram.html"><code>methodology-diagram.md</code></a>。</p>
+<h2>4. 六階段，以及每項實踐落在哪裡</h2>
+<ol><li><strong>需求</strong>——EARS 式驗收標準。<em>Ponytail YAGNI Ladder</em> Rung 1 在投機需求污染需求矩陣前先過濾（<code>deferred</code> / <code>out-of-scope</code>）。</li><li><strong>設計與契約</strong>——DDD 在此登場：bounded context、契約、資料模型、影響分析。Rung 2–4 強制<em>標準函式庫 → 原生平台 → 現有依賴</em>，再決定是否引入新依賴。</li><li><strong>任務與追溯</strong>——鏡射權威邊界，並為 <code>TESTS.md</code>、<code>RTM.md</code>、<code>SPECS.md</code>、CR 收尾與 issue disposition 規劃明確收尾任務。治理變得可執行，而非口號。</li><li><strong>實作</strong>——TDD 的紅 → 綠 → 重構，附證據報告。folder-level <code>TESTS.md</code> 在任何 workspace rollup <em>之前</em>更新。Rung 5–6 讓實作維持在「最小可用」。</li><li><strong>複核裁決</strong>——<code>review.md</code> 擁有 readiness。code-review 家族跑左移偵測；沒有 ladder 紀錄的新依賴與未經思考的抽象被標記為 <code>over-engineering risk</code>。</li><li><strong>優化</strong>——重複發現轉成 local lesson、issue-log 項目、CR fold-back，或升級的 skill／流程變更。把 review 痛點轉成流程改善。</li></ol>
+<h2>5. 防止假綠燈的那一條規則</h2>
+<blockquote><strong>證據單向流動。</strong> <code>ISSUE_LOG → spec 工件與報告 → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md</code>。衍生摘要<strong>永不</strong>反向同步回上游真相。</blockquote>
+<p>這條單一約束，把「看起來完成」和「真的完成」分開。<code>review.md</code> 擁有 readiness verdict；<code>TESTS.md</code> 擁有測試 catalog 與 evidence pointer；<code>SPECS.md</code> 與 <code>RTM.md</code> 是<em>衍生</em>的，永遠不能覆寫它們所摘要的上游工件。一個由過期 rollup 生成的漂亮綠色儀表板，在結構上就不被允許成為信心來源。</p>
+<h2>6. 如何對應 Scrum、DevSecOps 與 Responsible AI</h2>
+<ul><li><strong>Scrum</strong>——此方法強化邊界管理，而非取代儀式。Product Owner 在 backlog 寫死前先路由責任；Scrum Master 維持路由紀律與澄清節奏；Developers 透過正確的下游 skill 執行，讓實作永不污染治理。</li><li><strong>DevSecOps</strong>——測試證據、review verdict 與 demo readiness 分屬<em>不同</em>權威面，讓 mock-heavy 綠燈 CI 無法假扮成可上線。安全審查左移進 Phase 5，而不是上線前才硬接。</li><li><strong>Responsible AI</strong>——以 phase gate 做人類監督、以分離 owner 做問責、以權威面路由與記錄交棒理由做透明。對齊 <a href="https://www.nist.gov/itl/ai-risk-management-framework">NIST AI RMF</a>、<a href="https://oecd.ai/en/ai-principles">OECD AI Principles</a> 與 <a href="https://www.iso.org/standard/42001">ISO/IEC 42001</a>。</li></ul>
+<h2>7. 試試看</h2>
+<ol><li>閱讀 <a href="../skills/spec-master/index.html">Spec Master 家族頁</a>，了解路由與權威面。</li><li>閱讀 <a href="../skills/spec-master/index.html">規格驅動開發說帖</a>，了解生命週期與工件。</li><li>安裝 skills（見 <a href="../README.html">README</a>），並讓你的程式代理人以 <code>spec-master</code> 作為前門。</li></ol>
+<p>14 個 skills 全部以 MIT 開源。家族根目錄是 <code>skills/spec-master/</code>；下游成員作為並列 skill 資料夾安裝。</p>
+<blockquote><strong>宣稱邊界</strong>：本文說明一套方法論與 skill 家族，不宣稱任何使用中的 repository 已可示範或可上線——這些宣稱必須來自該 repo 自己的 <code>review.md</code>、測試證據與執行環境註冊狀態。</blockquote>
+</main>
+
+</body>
+</html>

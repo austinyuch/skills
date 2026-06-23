@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>methodology-diagram · aclab Skills</title>
+<!-- Generated from docs/methodology-diagram.md by scripts/render-docs.py — edit the markdown, then re-run. -->
+<style>
+:root{--bg:#07111e;--line:#27344d;--text:#eef4ff;--muted:#b7c4dc;--blue:#4ea1ff;--teal:#43d6c2;--max:880px}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top left,rgba(78,161,255,.14),transparent 32%),radial-gradient(circle at top right,rgba(67,214,194,.12),transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.65}
+a{color:var(--blue)}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(7,17,30,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .crumb{color:var(--muted);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar a{text-decoration:none;border:1px solid rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;font-size:.85rem;white-space:nowrap}
+main{max-width:var(--max);margin:0 auto;padding:32px 22px 80px}
+h1,h2,h3,h4{line-height:1.25;margin:1.6em 0 .5em}
+h1{font-size:2rem;margin-top:.2em}h2{font-size:1.5rem;border-bottom:1px solid var(--line);padding-bottom:.3em}h3{font-size:1.2rem}
+p,li{color:#dbe4f3}
+blockquote{margin:1em 0;padding:.4em 1em;border-left:4px solid var(--blue);background:rgba(78,161,255,.07);border-radius:0 8px 8px 0;color:var(--muted)}
+code{background:rgba(78,161,255,.12);border:1px solid rgba(78,161,255,.18);padding:1px 6px;border-radius:6px;font-size:.86em;color:#dceaff}
+pre{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto}
+pre code{background:none;border:0;padding:0;color:#cfe0f5}
+table{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:.95rem}
+th,td{padding:10px 11px;border:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:rgba(255,255,255,.04);color:#dfe8ff}
+td{color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+img{max-width:100%}
+.mermaid{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:16px;margin:1.2em 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="crumb">docs/methodology-diagram.md</span>
+  <span style="display:flex;gap:8px">
+    <a href="methodology-diagram.md">Raw .md</a><a href="../methodology.html">Methodology →</a>
+  </span>
+</div>
+<main>
+<h1>The Spec Master Method — Methodology Diagram / 方法論圖</h1>
+<blockquote>Renders on GitHub automatically. The skills are color-grouped into the three layers of the method: <strong>govern &amp; route</strong>, <strong>deliver</strong>, and <strong>verify (left-shift)</strong>. 在 GitHub 上會自動渲染。skills 依方法的三層上色：<strong>治理與路由</strong>、<strong>交付</strong>、<strong>驗證（左移）</strong>。</blockquote>
+<h2>1. Skill handoff across the six SDD phases / 六階段中的 skill 交棒</h2>
+<div class="mermaid">flowchart TD
+    REQ["Request / 請求"] --&gt; SM["spec-master&lt;br/&gt;route by authority surface&lt;br/&gt;依權威面路由"]
+
+    SM --&gt;|"new feature / complex fix&lt;br/&gt;新功能 / 複雜修復"| P1
+    SM --&gt;|"unresolved, no safe owner&lt;br/&gt;未解決、無安全 owner"| IL["issue-log-manager&lt;br/&gt;ISSUE_LOG.md"]
+    SM --&gt;|"registry sync&lt;br/&gt;註冊同步"| SR["spec-registry-manager&lt;br/&gt;SPECS.md"]
+    SM --&gt;|"runtime alloc&lt;br/&gt;執行環境配置"| LI["local-infra-registry-governance"]
+
+    subgraph SDD["spec-driven-development — 6 phases / 六階段"]
+        direction TB
+        P1["Phase 1 · Requirements&lt;br/&gt;EARS AC · YAGNI Rung 1"]
+        P2["Phase 2 · Design&lt;br/&gt;DDD bounded contexts · Rung 2-4"]
+        P3["Phase 3 · Tasks&lt;br/&gt;plan closeout &amp; traceability"]
+        P4["Phase 4 · Implementation&lt;br/&gt;TDD red/green/refactor · Rung 5-6"]
+        P5["Phase 5 · Review&lt;br/&gt;review.md verdict"]
+        P6["Phase 6 · Optimization"]
+        P1 --&gt; P2 --&gt; P3 --&gt; P4 --&gt; P5 --&gt; P6
+    end
+
+    P4 -.-&gt;|red/green/refactor| TDD["tdd-workflow"]
+    P4 -.-&gt;|test cases| TDG["test-design-generator"]
+    P4 -.-&gt;|rows &amp; evidence| TR["test-registry-manager&lt;br/&gt;TESTS.md"]
+
+    P5 -.-&gt;|left-shift detection| CR["code-review family&lt;br/&gt;refactoring-advisor · test-quality-reviewer&lt;br/&gt;security-risk-reviewer · sonarqube-bridge"]
+
+    P6 --&gt; IL
+    P6 --&gt; SR
+
+    classDef govern fill:#284d8f,stroke:#cdd9f0,color:#fff;
+    classDef deliver fill:#116b5f,stroke:#bfeee6,color:#fff;
+    classDef verify fill:#9a4d14,stroke:#ffd9b8,color:#fff;
+
+    class SM,SR,IL,LI govern;
+    class P1,P2,P3,P4,P5,P6,TDD,TDG,TR deliver;
+    class CR verify;</div>
+<h2>2. One-way evidence flow / 單向證據流</h2>
+<p>The method's core anti-false-green rule: evidence only flows <strong>up</strong> into derived summaries; derived summaries <strong>never</strong> sync back into upstream truth.</p>
+<p>此方法防止 false-green 的核心規則：證據只<strong>向上</strong>流入衍生摘要；衍生摘要<strong>永不</strong>反向同步回上游真相。</p>
+<div class="mermaid">flowchart LR
+    A["ISSUE_LOG.md&lt;br/&gt;unresolved / 未解決"] --&gt; B["spec artifacts &amp; reports&lt;br/&gt;requirements · design · tasks · code"]
+    B --&gt; C["folder-level TESTS.md&lt;br/&gt;rows &amp; evidence refs"]
+    C --&gt; D["workspace test rollup"]
+    D --&gt; E["RTM.md&lt;br/&gt;requirement traceability"]
+    E --&gt; F["SPECS.md&lt;br/&gt;stable registry summary"]
+
+    R["review.md&lt;br/&gt;readiness verdict — authority"] -.owns.-&gt; READY(("demo / release&lt;br/&gt;readiness"))
+
+    F -. "must NOT sync back / 禁止反向同步" .-&gt; B
+    linkStyle 6 stroke:#c0392b,stroke-width:2px,color:#c0392b;</div>
+<h2>3. Practice → owner skill map / 實踐 → owner skill 對照</h2>
+<div class="mermaid">flowchart TB
+    subgraph Practices["Classic practices / 經典實踐"]
+        SDDp["SDD"]
+        TDDp["TDD"]
+        DDDp["DDD"]
+        TMp["Test Management / 測試管理"]
+        RFp["Refactoring / 重構"]
+        SECp["Security left-shift / 安全左移"]
+    end
+
+    SDDp --&gt; s1["spec-driven-development"]
+    TDDp --&gt; s2["tdd-workflow + test-design-generator"]
+    DDDp --&gt; s3["SDD Phase 2 design"]
+    TMp --&gt; s4["test-registry-manager + test-quality-reviewer"]
+    RFp --&gt; s5["code-refactoring-advisor"]
+    SECp --&gt; s6["security-risk-reviewer + code-review"]</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark',securityLevel:'loose'});</script>
+
+</body>
+</html>

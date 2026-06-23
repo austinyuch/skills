@@ -10,13 +10,28 @@ Never edit an HTML page as the primary source — its markdown counterpart is ca
 ## Generation order
 
 ```
-markdown (source of truth)  ──►  index.html / *.html (generated view)
+markdown (source of truth)  ──►  *.html (generated, browsable twin)
+```
+
+Every listed markdown doc has a static **`.html` twin** next to it (e.g.
+`agentic-delivery-methodology.md` → `agentic-delivery-methodology.html`). The twins are plain static
+HTML — browsable directly on GitHub Pages **and** over `file://`, with no server and no fetch. Mermaid
+diagrams render via a CDN script only on pages that contain them.
+
+Regenerate the twins after editing any markdown:
+
+```bash
+python3 scripts/render-docs.py
 ```
 
 When content changes:
-1. Edit the markdown source below.
-2. Regenerate the matching HTML so the two stay in sync.
-3. Keep every HTML **bilingual EN/繁中** (each `data-en` needs a matching `data-zh`).
+1. Edit the markdown source (it is the source of truth).
+2. Run `scripts/render-docs.py` to regenerate the `.html` twins.
+3. For the hand-built bilingual landing pages (`methodology.html`, the family `index.html`), keep both
+   languages in sync (each `data-en` needs a matching `data-zh`).
+
+> The landing pages link to the `.html` twins (not the raw `.md`) so a browser never lands on raw
+> markdown. Each twin's top bar still offers a **Raw .md** link back to the source.
 
 ## Source ↔ rendered map
 

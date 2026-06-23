@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>README · aclab Skills</title>
+<!-- Generated from docs/README.md by scripts/render-docs.py — edit the markdown, then re-run. -->
+<style>
+:root{--bg:#07111e;--line:#27344d;--text:#eef4ff;--muted:#b7c4dc;--blue:#4ea1ff;--teal:#43d6c2;--max:880px}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top left,rgba(78,161,255,.14),transparent 32%),radial-gradient(circle at top right,rgba(67,214,194,.12),transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.65}
+a{color:var(--blue)}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(7,17,30,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .crumb{color:var(--muted);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar a{text-decoration:none;border:1px solid rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;font-size:.85rem;white-space:nowrap}
+main{max-width:var(--max);margin:0 auto;padding:32px 22px 80px}
+h1,h2,h3,h4{line-height:1.25;margin:1.6em 0 .5em}
+h1{font-size:2rem;margin-top:.2em}h2{font-size:1.5rem;border-bottom:1px solid var(--line);padding-bottom:.3em}h3{font-size:1.2rem}
+p,li{color:#dbe4f3}
+blockquote{margin:1em 0;padding:.4em 1em;border-left:4px solid var(--blue);background:rgba(78,161,255,.07);border-radius:0 8px 8px 0;color:var(--muted)}
+code{background:rgba(78,161,255,.12);border:1px solid rgba(78,161,255,.18);padding:1px 6px;border-radius:6px;font-size:.86em;color:#dceaff}
+pre{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto}
+pre code{background:none;border:0;padding:0;color:#cfe0f5}
+table{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:.95rem}
+th,td{padding:10px 11px;border:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:rgba(255,255,255,.04);color:#dfe8ff}
+td{color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+img{max-width:100%}
+.mermaid{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:16px;margin:1.2em 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="crumb">docs/README.md</span>
+  <span style="display:flex;gap:8px">
+    <a href="README.md">Raw .md</a><a href="../methodology.html">Methodology →</a>
+  </span>
+</div>
+<main>
+<h1>docs/ — methodology &amp; family briefs (markdown-first)</h1>
+<p>This folder is the <strong>source of truth</strong> for the project's explanatory material. The rule here is <strong>markdown-first</strong>: write/update the markdown, then (re)generate the HTML landing page from it. Never edit an HTML page as the primary source — its markdown counterpart is canonical.</p>
+<blockquote>本資料夾是專案說明文件的<strong>單一事實來源</strong>。規則是 <strong>markdown-first</strong>：先寫／改 markdown，再由它 產生 HTML landing page。HTML 不是來源，對應的 markdown 才是。</blockquote>
+<h2>Generation order</h2>
+<pre><code>markdown (source of truth)  ──►  *.html (generated, browsable twin)</code></pre>
+<p>Every listed markdown doc has a static <strong><code>.html</code> twin</strong> next to it (e.g. <code>agentic-delivery-methodology.md</code> → <code>agentic-delivery-methodology.html</code>). The twins are plain static HTML — browsable directly on GitHub Pages <strong>and</strong> over <code>file://</code>, with no server and no fetch. Mermaid diagrams render via a CDN script only on pages that contain them.</p>
+<p>Regenerate the twins after editing any markdown:</p>
+<pre><code>python3 scripts/render-docs.py</code></pre>
+<p>When content changes:</p>
+<ol><li>Edit the markdown source (it is the source of truth).</li><li>Run <code>scripts/render-docs.py</code> to regenerate the <code>.html</code> twins.</li><li>For the hand-built bilingual landing pages (<code>methodology.html</code>, the family <code>index.html</code>), keep both</li></ol>
+<p>   languages in sync (each <code>data-en</code> needs a matching <code>data-zh</code>).</p>
+<blockquote>The landing pages link to the <code>.html</code> twins (not the raw <code>.md</code>) so a browser never lands on raw markdown. Each twin's top bar still offers a <strong>Raw .md</strong> link back to the source.</blockquote>
+<h2>Source ↔ rendered map</h2>
+<table><thead><tr><th>Markdown source (canonical)</th><th>Rendered HTML (generated)</th><th>Topic</th></tr></thead><tbody><tr><td><a href="agentic-delivery-methodology.html"><code>agentic-delivery-methodology.md</code></a></td><td><a href="../methodology.html"><code>../methodology.html</code></a></td><td>The Spec Master Method (whole 14-skill methodology)</td></tr><tr><td><a href="methodology-diagram.html"><code>methodology-diagram.md</code></a></td><td><em>(rendered inline by GitHub)</em></td><td>Handoff / evidence-flow / practice-map diagrams</td></tr><tr><td><a href="../skills/spec-master/README.html"><code>../skills/spec-master/README.md</code></a></td><td><a href="../skills/spec-master/index.html"><code>../skills/spec-master/index.html</code></a></td><td>Spec Master + Spec-Driven Development (merged family brief)</td></tr><tr><td><a href="../skills/code-review/README.html"><code>../skills/code-review/README.md</code></a></td><td><a href="../skills/code-review/index.html"><code>../skills/code-review/index.html</code></a></td><td>Code Review family (deep brief)</td></tr></tbody></table>
+<h2>Conventions</h2>
+<ul><li><strong>Bilingual HTML.</strong> Every rendered page carries an EN/繁中 toggle; markdown sources are</li></ul>
+<p>  English-primary with a 繁中 section or bilingual tables where it helps.</p>
+<ul><li><strong>One brief per family.</strong> The Spec Master router (<code>spec-master</code>) and the lifecycle</li></ul>
+<p>  (<code>spec-driven-development</code>) share <strong>one</strong> merged brief — do not split them again.</p>
+<ul><li><strong>Attribution travels with the doc.</strong> External influences are credited in</li></ul>
+<p>  <a href="../CREDITS.html"><code>../CREDITS.md</code></a> and inline where used.</p>
+</main>
+
+</body>
+</html>

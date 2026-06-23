@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>README · aclab Skills</title>
+<!-- Generated from skills/spec-master/README.md by scripts/render-docs.py — edit the markdown, then re-run. -->
+<style>
+:root{--bg:#07111e;--line:#27344d;--text:#eef4ff;--muted:#b7c4dc;--blue:#4ea1ff;--teal:#43d6c2;--max:880px}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top left,rgba(78,161,255,.14),transparent 32%),radial-gradient(circle at top right,rgba(67,214,194,.12),transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.65}
+a{color:var(--blue)}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(7,17,30,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .crumb{color:var(--muted);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar a{text-decoration:none;border:1px solid rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;font-size:.85rem;white-space:nowrap}
+main{max-width:var(--max);margin:0 auto;padding:32px 22px 80px}
+h1,h2,h3,h4{line-height:1.25;margin:1.6em 0 .5em}
+h1{font-size:2rem;margin-top:.2em}h2{font-size:1.5rem;border-bottom:1px solid var(--line);padding-bottom:.3em}h3{font-size:1.2rem}
+p,li{color:#dbe4f3}
+blockquote{margin:1em 0;padding:.4em 1em;border-left:4px solid var(--blue);background:rgba(78,161,255,.07);border-radius:0 8px 8px 0;color:var(--muted)}
+code{background:rgba(78,161,255,.12);border:1px solid rgba(78,161,255,.18);padding:1px 6px;border-radius:6px;font-size:.86em;color:#dceaff}
+pre{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto}
+pre code{background:none;border:0;padding:0;color:#cfe0f5}
+table{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:.95rem}
+th,td{padding:10px 11px;border:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:rgba(255,255,255,.04);color:#dfe8ff}
+td{color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+img{max-width:100%}
+.mermaid{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:16px;margin:1.2em 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="crumb">skills/spec-master/README.md</span>
+  <span style="display:flex;gap:8px">
+    <a href="README.md">Raw .md</a><a href="../../methodology.html">Methodology →</a>
+  </span>
+</div>
+<main>
+<h1>Spec Master + Spec-Driven Development</h1>
+<blockquote><strong>One front door for routing, one backbone for delivery — kept as two skills on purpose.</strong> 一個路由前門、一個交付主幹——刻意維持成兩個技能。</blockquote>
+<p>This is the <strong>single, merged brief</strong> for the two core skills of the Spec Master family. It is the <strong>canonical source</strong> for <a href="index.html"><code>index.html</code></a> (generated from this — edit markdown first), and it replaces the two former per-skill landing pages.</p>
+<ul><li><strong><code>spec-master/</code></strong> — the <strong>front-door router</strong> and improvement classifier. Its only job is to decide</li></ul>
+<p>  <em>who should own this</em> before any file is edited.</p>
+<ul><li><strong><code>spec-driven-development/</code></strong> — the <strong>6-phase delivery backbone</strong>. It runs the lifecycle from vague</li></ul>
+<p>  intent to traceable, reviewable change.</p>
+<p>For the wider 14-skill methodology these two anchor, see <a href="../../methodology.html">The Spec Master Method</a>.</p>
+<h2>Why two skills, not one</h2>
+<p>It is tempting to merge the router into the workflow. Don't — the merge raises intake cost, because then <em>every ambiguous request drags a full lifecycle with it</em>. Keeping them separate means:</p>
+<ul><li><code>spec-master</code> stays cheap to enter: classify the request, decide the owner, hand off. No artifacts</li></ul>
+<p>  are written just to find out where work belongs.</p>
+<ul><li><code>spec-driven-development</code> stays a real lifecycle: it can preserve traceability across phases without</li></ul>
+<p>  pretending to also be a router.</p>
+<p>They are <strong>one family, two responsibilities</strong>: decide ownership first, then deliver.</p>
+<h2><code>spec-master</code> — route by authority surface</h2>
+<p>When a request touches specs, registries, tests, issue-holding, runtime, or shared governance and the owner is unclear, enter here first. Route by <em>authority surface</em>, not by whichever file was mentioned first.</p>
+<table><thead><tr><th>The request is about…</th><th>Route to</th></tr></thead><tbody><tr><td>New feature / complex fix / design / tasks / review / optimization</td><td><code>spec-driven-development</code></td></tr><tr><td><code>SPECS.md</code> lifecycle, CR summary, registry wording</td><td><code>spec-registry-manager</code></td></tr><tr><td><code>TESTS.md</code> rows, stale evidence, traceability</td><td><code>test-registry-manager</code></td></tr><tr><td>Unresolved improvement with no safe owner yet</td><td><code>issue-log-manager</code></td></tr><tr><td>Local dev / UAT / E2E runtime allocation</td><td><code>local-infra-registry-governance</code></td></tr><tr><td>Cross-lane git/worktree ownership &amp; writeback safety</td><td><code>shared-governance</code></td></tr></tbody></table>
+<p><code>spec-master</code> also classifies continuous-improvement requests (review rejections, retro findings, tech debt, known issues, CR follow-ups): does this <em>continue an active spec</em>, become a <em>CR against a completed spec</em>, go to the <em>issue log</em>, or justify a <em>new spec</em>? Deciding that wrong is what creates fragmented, half-owned governance.</p>
+<h2><code>spec-driven-development</code> — the six phases</h2>
+<table><thead><tr><th>Phase</th><th>What happens</th><th>Practice in play</th></tr></thead><tbody><tr><td>1 · Requirements</td><td>EARS-style acceptance criteria; YAGNI Rung 1 filters speculative needs</td><td>SDD intake</td></tr><tr><td>2 · Design &amp; contracts</td><td>Bounded contexts, contracts, data models, impact analysis; Rungs 2–4 justify dependencies</td><td>DDD</td></tr><tr><td>3 · Tasks &amp; traceability</td><td>Mirror the authority boundary; plan closeout for TESTS.md, RTM, SPECS, CR, issue disposition</td><td>planning</td></tr><tr><td>4 · Implementation</td><td>Red → green → refactor with evidence reports; folder-level TESTS.md before rollups; Rungs 5–6 keep it minimal</td><td>TDD</td></tr><tr><td>5 · Review verdict</td><td><code>review.md</code> owns readiness; left-shift detection (code-review family) flags smells, weak tests, security risk; over-engineering check</td><td>review</td></tr><tr><td>6 · Optimization</td><td>Convert repeated findings into bounded improvements or promoted process changes</td><td>retro</td></tr></tbody></table>
+<h2>The one rule that prevents false-green</h2>
+<blockquote><strong>Evidence flows one way:</strong> <code>ISSUE_LOG → spec artifacts &amp; reports → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md</code>. Derived summaries (<code>SPECS.md</code>, <code>RTM.md</code>) never overwrite the upstream artifacts they summarize, and <code>review.md</code> — not a green dashboard — owns the readiness verdict.</blockquote>
+<p>This is the spine of the whole family: layered evidence, with a clean static or summary view never allowed to masquerade as runtime readiness.</p>
+<h2>Scrum, DevSecOps &amp; Responsible AI (condensed)</h2>
+<ul><li><strong>Scrum</strong> — strengthens boundary management, not ceremonies: PO routes ownership before the backlog</li></ul>
+<p>  hardens; SM holds routing discipline; Developers execute via the right downstream skill so   implementation never contaminates governance.</p>
+<ul><li><strong>DevSecOps</strong> — test evidence, review verdict, and demo readiness live on separate authority</li></ul>
+<p>  surfaces, so mock-heavy green CI can't pose as production-ready; security review is left-shifted into   Phase 5.</p>
+<ul><li><strong>Responsible AI</strong> — human oversight via phase gates, accountability via separate owners,</li></ul>
+<p>  transparency via authority-surface routing. Aligns with NIST AI RMF, OECD AI Principles, ISO/IEC 42001.</p>
+<h2>The rest of the family</h2>
+<p><code>spec-registry-manager</code> (SPECS.md lifecycle), <code>test-registry-manager</code> (TESTS.md catalog &amp; freshness), <code>issue-log-manager</code> (holding surface for unresolved work), <code>local-infra-registry-governance</code> (dev/UAT/E2E runtime allocation), and <code>shared-governance</code> (git/worktree &amp; ownership guardrails) each own one authority surface so stale evidence, planning gaps, and runtime state never blur together. See <a href="../../methodology.html">the methodology</a> for the full 14-skill picture.</p>
+<h2>繁中摘要</h2>
+<p>這是 Spec Master 家族兩個核心技能的<strong>單一合併說明</strong>，也是 <a href="index.html"><code>index.html</code></a> 的<strong>正本來源</strong> （先改 markdown），取代原本兩份各自的 landing page。</p>
+<ul><li><strong><code>spec-master</code></strong> 是<strong>前門路由器</strong>與改善項分類器：在動任何檔案前先決定<em>誰該擁有這件事</em>。依<strong>權威面</strong></li></ul>
+<p>  路由，而不是依「哪個檔案先被提到」。</p>
+<ul><li><strong><code>spec-driven-development</code></strong> 是<strong>六階段交付主幹</strong>：需求 → 設計 → 任務 → 實作 → 複核 → 優化。</li></ul>
+<p><strong>為何分成兩個</strong>：把 router 併進 workflow 會抬高 intake 成本，因為每個含糊請求都會拖著完整生命週期。 分開後，<code>spec-master</code> 進入成本低（分類、決定 owner、交棒），<code>spec-driven-development</code> 維持真正的生命週期 與跨階段追溯。一個家族、兩種責任：先決定歸屬，再交付。</p>
+<p><strong>防止假綠燈的核心規則</strong>：證據單向流動 <code>ISSUE_LOG → spec 工件 → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md</code>；衍生摘要永不覆寫上游，<code>review.md</code>（而非綠色儀表板）擁有 readiness。</p>
+<h2>Attribution</h2>
+<p><code>spec-driven-development</code> is <strong>inspired by <a href="https://kiro.dev">AWS Kiro</a></strong> (requirements → design → tasks). The YAGNI ladder adapts <strong><a href="https://github.com/DietrichGebert/ponytail">Ponytail</a></strong> (MIT). Review-depth and CEO/eng cognitive patterns adapt <strong><a href="https://github.com/garrytan/gstack">gstack</a></strong> (MIT) and <strong><a href="https://github.com/mattpocock/skills">mattpocock/skills</a></strong> (MIT). Full attribution: <a href="../../CREDITS.html"><code>../../CREDITS.md</code></a>.</p>
+</main>
+
+</body>
+</html>

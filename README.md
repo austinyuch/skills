@@ -240,6 +240,7 @@ The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → sp
 │   └── methodology-diagram.md
 ├── scripts/
 │   ├── install.sh                   # Generic installer (opencode|claude|codex|kiro)
+│   ├── render-docs.py               # Generate browsable .html twins from markdown
 │   ├── sync-from-source.sh          # Publish from ~/.config/opencode/skills
 │   └── install-to-opencode.sh       # Legacy OpenCode-only installer
 ├── methodology.html                 # The Spec Master Method — landing page (EN/繁中)

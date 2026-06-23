@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>README · aclab Skills</title>
+<!-- Generated from skills/code-review/README.md by scripts/render-docs.py — edit the markdown, then re-run. -->
+<style>
+:root{--bg:#07111e;--line:#27344d;--text:#eef4ff;--muted:#b7c4dc;--blue:#4ea1ff;--teal:#43d6c2;--max:880px}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top left,rgba(78,161,255,.14),transparent 32%),radial-gradient(circle at top right,rgba(67,214,194,.12),transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.65}
+a{color:var(--blue)}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(7,17,30,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .crumb{color:var(--muted);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar a{text-decoration:none;border:1px solid rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;font-size:.85rem;white-space:nowrap}
+main{max-width:var(--max);margin:0 auto;padding:32px 22px 80px}
+h1,h2,h3,h4{line-height:1.25;margin:1.6em 0 .5em}
+h1{font-size:2rem;margin-top:.2em}h2{font-size:1.5rem;border-bottom:1px solid var(--line);padding-bottom:.3em}h3{font-size:1.2rem}
+p,li{color:#dbe4f3}
+blockquote{margin:1em 0;padding:.4em 1em;border-left:4px solid var(--blue);background:rgba(78,161,255,.07);border-radius:0 8px 8px 0;color:var(--muted)}
+code{background:rgba(78,161,255,.12);border:1px solid rgba(78,161,255,.18);padding:1px 6px;border-radius:6px;font-size:.86em;color:#dceaff}
+pre{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto}
+pre code{background:none;border:0;padding:0;color:#cfe0f5}
+table{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:.95rem}
+th,td{padding:10px 11px;border:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:rgba(255,255,255,.04);color:#dfe8ff}
+td{color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+img{max-width:100%}
+.mermaid{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:16px;margin:1.2em 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="crumb">skills/code-review/README.md</span>
+  <span style="display:flex;gap:8px">
+    <a href="README.md">Raw .md</a><a href="../../methodology.html">Methodology →</a>
+  </span>
+</div>
+<main>
+<h1>The Code Review Family</h1>
+<blockquote><strong>Make review deterministic about evidence — not just more verbose about opinions.</strong> 讓複核對「證據」是確定性的——而不是對「意見」更囉嗦。</blockquote>
+<p>This README is the <strong>canonical source</strong> for the family's landing page (<a href="index.html"><code>index.html</code></a> is generated from it — edit this first).</p>
+<p><code>code-review</code> is the orchestrator; five sibling skills turn the vague instruction "review this properly" into <strong>deterministic, ranked, actionable findings</strong>. They are the <em>verify (left-shift)</em> layer of <a href="../../methodology.html">The Spec Master Method</a> — pulled into SDD Phase 4/5 so smells, weak tests, and security risk are caught <strong>before</strong> the readiness verdict is written.</p>
+<h2>Why a family, not one reviewer</h2>
+<p>A single "review the code" prompt produces opinions that vary run to run, bury the dangerous finding under style nits, and can't say <em>what to fix first</em>. In an agentic team that is expensive: reviews stop being trustworthy evidence. This family fixes that with two principles:</p>
+<ol><li><strong>Deterministic-first, LLM-optional.</strong> Each helper ships a deterministic detector that is the</li></ol>
+<p>   <strong>source of truth</strong>, needs no provider, and is safe in CI. An optional <code>--explain</code> / LLM pass only    <em>calibrates severity</em> and writes developer-actionable reasoning — it never invents findings.</p>
+<ol><li><strong>Risk-based triage.</strong> Findings are ranked (e.g. severity × confidence × blast-radius) so review</li></ol>
+<p>   effort goes to the highest-impact issue first. <em>What to review is judgement, not generation.</em></p>
+<h2>Family members</h2>
+<table><thead><tr><th>Skill</th><th>Question it answers</th><th>What it owns</th></tr></thead><tbody><tr><td><code>code-review</code></td><td>"What does this code <em>look like</em> — structure, dependencies, impact, bounded context?"</td><td>The orchestrator + program-graph / GraphRAG static analysis; folds in every sibling's findings. CLI binary (<code>review-cli-&lt;os&gt;-&lt;arch&gt;</code>) with an MCP runtime surface.</td></tr><tr><td><code>code-refactoring-advisor</code></td><td>"What should I <em>change</em>, and what test net must exist first?"</td><td>Deterministic Fowler smell detection → a <strong>named refactoring move</strong> + the <strong>test safety-net</strong> it requires before the move is safe.</td></tr><tr><td><code>test-quality-reviewer</code></td><td>"Are these tests <em>any good</em> — would a real defect survive them?"</td><td>Judges existing tests: assertion roulette, mystery guest, fragile/conditional tests, FIRST violations, test-pyramid inversion. "Green only means it ran."</td></tr><tr><td><code>test-design-generator</code></td><td>"<em>What should I test</em> — what are the real edge cases?"</td><td>Generates boundary-value, equivalence-partition, and pairwise cases from a parameter description; recommends an oracle strategy (property-based / metamorphic) when outputs can't be enumerated.</td></tr><tr><td><code>security-risk-reviewer</code></td><td>"Is this <em>secure</em> — where's the injection / secret / weak crypto?"</td><td>Deterministic OWASP Top-10 scan, <strong>ranked by risk score</strong> so the dangerous lines surface first. Each finding mapped to OWASP/CWE.</td></tr><tr><td><code>sonarqube-bridge</code></td><td>"Pull in our <em>SonarQube</em> findings and rank them with everything else."</td><td>An <strong>adapter, not a scanner</strong>: ingests Sonar findings and enriches each with code-graph blast-radius, business capability, and the project's remediation vocabulary. Never scans, never gates.</td></tr></tbody></table>
+<h2>How they compose</h2>
+<ul><li><code>code-review</code> builds the <strong>inventory</strong> ("what exists") — the program graph, capability/requirement</li></ul>
+<p>  traceability, bounded context. On its own it answers <em>structure</em>, not <em>quality</em>.</p>
+<ul><li>The helpers extend that inventory from "what exists" to <strong>"what should improve"</strong>:</li><li><code>code-refactoring-advisor</code> says <em>what to change</em>; <code>test-quality-reviewer</code> checks *the net you</li></ul>
+<p>    change it against*. They are natural partners.</p>
+<ul><li><code>test-design-generator</code> is the "what should I test?" complement to <code>test-quality-reviewer</code>'s</li></ul>
+<p>    "are these tests good?" — where a thin test is flagged, this produces the missing cases.</p>
+<ul><li><code>security-risk-reviewer</code> makes the orchestrator's prose security guidance <strong>executable</strong> — it</li></ul>
+<p>    finds the actual lines and prioritizes them.</p>
+<ul><li><code>sonarqube-bridge</code> is the connective tissue when the team already runs Sonar: Sonar owns the</li></ul>
+<p>    broad SAST and the <strong>blocking Quality Gate</strong>; this family adds Sonar's blind spots (program-graph     impact, capability traceability, refactoring/test vocabulary) and fuses both into one ranked report.</p>
+<h2>Scope boundary (read this)</h2>
+<p>This family is <strong>static analysis + review evidence</strong>, <em>not</em> a runtime readiness authority.</p>
+<ul><li>✅ Use it to answer: "What's the structure / impact?", "What should improve?", "Are the tests</li></ul>
+<p>  effective?", "What's the security risk, ranked?"</p>
+<ul><li>❌ Do <strong>not</strong> use it alone to answer: "Is the feature live-demo ready?" Authoritative</li></ul>
+<p>  <code>PASS / CONDITIONAL / FAIL</code> for runtime or live-demo readiness still comes from runtime-backed   review artifacts (<code>review.md</code>). Static green ≠ shipped.</p>
+<p>This is the same anti-false-green discipline as the rest of the method: evidence is layered, and a clean static report is not allowed to masquerade as readiness.</p>
+<h2>Relationship to the Spec Master Method</h2>
+<p>In <a href="../../docs/agentic-delivery-methodology.html">the six-phase flow</a>, this family is <strong>Phase 4/5 left-shift detection</strong>. <code>spec-driven-development</code> runs the lifecycle; when it reaches implementation and review, it pulls these skills in as <em>capability-gated inputs</em> (they don't need to be vendored into every workspace — once published to the skill home, they're available). <code>review.md</code> still owns the verdict; this family makes that verdict rest on deterministic evidence instead of one-shot opinion.</p>
+<h2>繁中摘要</h2>
+<p><code>code-review</code> 是協調者，五個 sibling skills 把「好好複核一下」變成<strong>確定性、可排序、可執行</strong>的發現， 是 <a href="../../methodology.html">Spec Master Method</a> 的<strong>驗證（左移）</strong>層（SDD Phase 4/5）。</p>
+<p>兩個核心原則：(1) <strong>deterministic-first、LLM-optional</strong> — 每個 helper 的確定性偵測器是事實來源， CI 安全、不需 provider；可選的 <code>--explain</code> 只校準嚴重度，不會無中生有。(2) <strong>risk-based triage</strong> — 依風險排序，先看最危險的；「要複核什麼」是判斷，不是生成。</p>
+<p>家族成員：<code>code-review</code>（程式圖／GraphRAG 靜態分析與協調）、<code>code-refactoring-advisor</code>（Fowler 異味 → 具名重構手法 + 必要測試安全網）、<code>test-quality-reviewer</code>（既有測試夠不夠好、真缺陷會不會存活）、 <code>test-design-generator</code>（該測哪些邊界／等價／pairwise 案例）、<code>security-risk-reviewer</code>（OWASP Top-10 依風險分數排序）、<code>sonarqube-bridge</code>（<strong>adapter 而非 scanner</strong>，融合 Sonar 發現與程式圖 blast-radius）。</p>
+<p><strong>邊界</strong>：這是靜態分析與複核證據，<strong>不是</strong> runtime readiness 權威；live-demo 的 <code>PASS / CONDITIONAL / FAIL</code> 仍由 runtime-backed 的 <code>review.md</code> 決定。靜態綠燈 ≠ 已交付。</p>
+<hr>
+<p><em>Attribution: this family is original work in this repository. Concept grounding (Fowler refactorings, FIRST, the test pyramid, OWASP/CWE) is credited in <a href="../../CREDITS.html"><code>../../CREDITS.md</code></a>.</em></p>
+</main>
+
+</body>
+</html>

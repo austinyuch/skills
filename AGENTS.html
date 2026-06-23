@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AGENTS · aclab Skills</title>
+<!-- Generated from AGENTS.md by scripts/render-docs.py — edit the markdown, then re-run. -->
+<style>
+:root{--bg:#07111e;--line:#27344d;--text:#eef4ff;--muted:#b7c4dc;--blue:#4ea1ff;--teal:#43d6c2;--max:880px}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top left,rgba(78,161,255,.14),transparent 32%),radial-gradient(circle at top right,rgba(67,214,194,.12),transparent 28%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.65}
+a{color:var(--blue)}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(7,17,30,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .crumb{color:var(--muted);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar a{text-decoration:none;border:1px solid rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;font-size:.85rem;white-space:nowrap}
+main{max-width:var(--max);margin:0 auto;padding:32px 22px 80px}
+h1,h2,h3,h4{line-height:1.25;margin:1.6em 0 .5em}
+h1{font-size:2rem;margin-top:.2em}h2{font-size:1.5rem;border-bottom:1px solid var(--line);padding-bottom:.3em}h3{font-size:1.2rem}
+p,li{color:#dbe4f3}
+blockquote{margin:1em 0;padding:.4em 1em;border-left:4px solid var(--blue);background:rgba(78,161,255,.07);border-radius:0 8px 8px 0;color:var(--muted)}
+code{background:rgba(78,161,255,.12);border:1px solid rgba(78,161,255,.18);padding:1px 6px;border-radius:6px;font-size:.86em;color:#dceaff}
+pre{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto}
+pre code{background:none;border:0;padding:0;color:#cfe0f5}
+table{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:.95rem}
+th,td{padding:10px 11px;border:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:rgba(255,255,255,.04);color:#dfe8ff}
+td{color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+img{max-width:100%}
+.mermaid{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:16px;margin:1.2em 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="crumb">AGENTS.md</span>
+  <span style="display:flex;gap:8px">
+    <a href="AGENTS.md">Raw .md</a><a href="methodology.html">Methodology →</a>
+  </span>
+</div>
+<main>
+<h1>AGENTS.md — Guide for coding agents working in this repository</h1>
+<p>This is <strong>aclab's collection of Agent Skills</strong> for coding agents (OpenCode, Claude Code, Codex, Kiro, and compatible runtimes). It is not an application — it is the skills, their docs, a methodology, and the glue that catalogs and installs them. It is <strong>agent-agnostic</strong>: install with <code>scripts/install.sh &lt;opencode|claude|codex|kiro&gt;</code>. Read this before editing.</p>
+<blockquote>本 repo 是給程式代理人使用的 <strong>Agent Skills 合集</strong>；以下規則同時適用於人類與 agent。</blockquote>
+<hr>
+<h2>1. What lives here</h2>
+<table><thead><tr><th>Path</th><th>What it is</th></tr></thead><tbody><tr><td><code>skills/&lt;category&gt;/&lt;skill&gt;/</code></td><td>One skill per folder; each has a <code>SKILL.md</code> (the contract) plus optional <code>references/</code>, <code>scripts/</code>, <code>evals/</code>, <code>phases/</code>, <code>index.html</code>.</td></tr><tr><td><code>skills-manifest.json</code></td><td>The <strong>authoritative catalog</strong>: families, categories, and which skill names belong where. Keep it in sync with the filesystem.</td></tr><tr><td><code>methodology.html</code></td><td>Bilingual EN/繁中 landing page for <strong>The Spec Master Method</strong>.</td></tr><tr><td><code>docs/</code></td><td>Methodology article (<code>agentic-delivery-methodology.md</code>) and Mermaid diagrams.</td></tr><tr><td><code>CREDITS.md</code></td><td>Upstream attribution and per-component licenses.</td></tr><tr><td><code>README.md</code></td><td>Human-facing index.</td></tr><tr><td><code>scripts/</code></td><td><code>sync-from-source.sh</code> (publish from <code>~/.config/opencode/skills</code>) and <code>install-to-opencode.sh</code>.</td></tr></tbody></table>
+<h2>2. The Spec Master Method (use this for non-trivial work)</h2>
+<p>When a task is a real feature, complex fix, or any spec/governance work, <strong>do not freelance</strong> — enter the family through its front door. The 14 skills sit in three layers:</p>
+<ul><li><strong>Govern &amp; route</strong> — <code>spec-master</code> (front door + improvement classifier), <code>spec-registry-manager</code>,</li></ul>
+<p>  <code>issue-log-manager</code>, <code>local-infra-registry-governance</code>, <code>shared-governance</code></p>
+<ul><li><strong>Deliver</strong> — <code>spec-driven-development</code> (6-phase lifecycle), <code>tdd-workflow</code>, <code>test-registry-manager</code>,</li></ul>
+<p>  <code>test-design-generator</code></p>
+<ul><li><strong>Verify (left-shift)</strong> — <code>code-review</code>, <code>code-refactoring-advisor</code>, <code>test-quality-reviewer</code>,</li></ul>
+<p>  <code>security-risk-reviewer</code>, <code>sonarqube-bridge</code></p>
+<p><strong>Routing rule:</strong> route by <em>authority surface</em>, not by whichever file was mentioned first.</p>
+<table><thead><tr><th>The request is about…</th><th>Go to</th></tr></thead><tbody><tr><td>New feature / complex fix / design / tasks / review / optimization</td><td><code>spec-driven-development</code></td></tr><tr><td><code>SPECS.md</code> lifecycle, CR summary, registry wording</td><td><code>spec-registry-manager</code></td></tr><tr><td><code>TESTS.md</code> rows, stale evidence, traceability</td><td><code>test-registry-manager</code></td></tr><tr><td>Unresolved improvement with no safe owner yet</td><td><code>issue-log-manager</code></td></tr><tr><td>Local dev / UAT / E2E runtime allocation</td><td><code>local-infra-registry-governance</code></td></tr><tr><td>Cross-lane git/worktree ownership &amp; writeback safety</td><td><code>shared-governance</code></td></tr><tr><td>Owner unclear / "who should own this?"</td><td><code>spec-master</code> (it decides, then hands off)</td></tr></tbody></table>
+<p><strong>The one rule that prevents false-green:</strong> evidence flows <strong>one way</strong> — <code>ISSUE_LOG → spec artifacts → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md</code>. Derived summaries (<code>SPECS.md</code>, <code>RTM.md</code>) must <strong>never</strong> overwrite the upstream artifacts they summarize, and <code>review.md</code> — not a green dashboard — owns the readiness verdict.</p>
+<p>Full narrative: <a href="methodology.html"><code>methodology.html</code></a> · <a href="docs/agentic-delivery-methodology.html"><code>docs/agentic-delivery-methodology.md</code></a>.</p>
+<h2>3. Editing or adding a skill</h2>
+<ol><li>A skill is <strong>self-contained in its own folder</strong>. It may reference <em>other skills by name</em> (the</li></ol>
+<p>   runtime resolves them from the installed skill homes), but it must not depend on files outside the    repo or on a contributor's machine-specific paths. Use placeholders like <code>&lt;workspace-root&gt;</code> instead    of absolute paths such as <code>/home/&lt;user&gt;/...</code>.</p>
+<ol><li>Every skill needs a <code>SKILL.md</code> with valid frontmatter (<code>name</code>, <code>description</code>). The <code>description</code></li></ol>
+<p>   is what triggers the skill — keep it specific about <em>when to use</em> and <em>when not to</em>.</p>
+<ol><li>After adding/removing/renaming a skill, <strong>update <code>skills-manifest.json</code></strong> (the right family/category</li></ol>
+<p>   list) and the matching list + counts in <code>README.md</code>. Keep the manifest and the filesystem in sync —    no manifest entry should point at a missing folder, and no installed skill should be absent from the    manifest.</p>
+<ol><li>Install paths like <code>~/.config/opencode/skills/</code>, <code>~/.claude/skills/</code>, <code>~/.kiro/skills/</code> inside</li></ol>
+<p>   skill docs are <strong>intentional</strong> — they are the cross-agent install homes, not broken references.</p>
+<h2>4. Licensing &amp; attribution (do not regress)</h2>
+<ul><li>This repository is <strong>MIT</strong> (see <code>LICENSE</code>). Keep it that way.</li><li><strong>Do not re-introduce Anthropic-owned skills.</strong> Skills derived from <code>anthropics/skills</code> (Apache-2.0)</li></ul>
+<p>  and Anthropic's proprietary <code>docx</code>/<code>pdf</code>/<code>pptx</code>/<code>xlsx</code> were <strong>removed</strong> on purpose. If you need that   functionality, install from upstream separately — do not vendor it back into this MIT repo.</p>
+<ul><li>When you add anything inspired by or derived from an external source, <strong>credit it in <code>CREDITS.md</code></strong>.</li></ul>
+<p>  Current concept sources include <strong>AWS Kiro</strong> (spec-driven workflow), <strong>Ponytail</strong> (MIT, YAGNI ladder),   the <strong>Scrum Guide</strong>, the <strong>Agile Manifesto</strong>, <strong>TDD/DDD</strong>, Martin Fowler, EARS, OWASP, and NIST/OECD/ISO.</p>
+<ul><li>Also credit external sources that informed concrete skills: <strong>everything-claude-code</strong> (MIT, the</li></ul>
+<p>  <code>continuous-learning</code> skills), <strong>gstack</strong> (MIT), <strong>mattpocock/skills</strong> (MIT). Giant-proprietary   assets and Anthropic skills have also been purged from git history — do not re-add them.</p>
+<h2>5. House conventions</h2>
+<ul><li><strong>Markdown-first.</strong> Each explanatory landing page has a canonical <code>README.md</code>/<code>.md</code> source and a</li></ul>
+<p>  <strong>generated</strong> <code>index.html</code>/<code>.html</code>. Edit the markdown first, then regenerate the HTML. The   source↔rendered map and the rule live in <a href="docs/README.html"><code>docs/README.md</code></a>.</p>
+<ul><li><strong>Bilingual HTML.</strong> The family <code>index.html</code> pages and <code>methodology.html</code> are <strong>EN + 繁中</strong>. Keep both</li></ul>
+<p>  languages in sync (every <code>data-en</code> needs a matching <code>data-zh</code>).</p>
+<ul><li><strong>One brief per family.</strong> <code>spec-master</code> + <code>spec-driven-development</code> share <strong>one</strong> merged brief at</li></ul>
+<p>  <code>skills/spec-master/</code> — do not split them into separate landing pages again. The code-review family   has its single brief at <code>skills/code-review/</code>.</p>
+<ul><li>Prefer the dedicated skill for a job over re-deriving it inline — that is the whole point of routing.</li><li>Don't overstate readiness. A change is "done" only when its evidence (tests, <code>review.md</code>) says so.</li></ul>
+<h2>6. Quick checks before you commit</h2>
+<ul><li><code>skills-manifest.json</code> ⇄ filesystem: no missing folders, no unlisted skills.</li><li>README counts/lists match the manifest.</li><li>No new absolute machine paths (<code>/home/&lt;user&gt;/...</code>) introduced into skills.</li><li>New external influences credited in <code>CREDITS.md</code>.</li><li>Bilingual HTML still balanced.</li></ul>
+</main>
+
+</body>
+</html>
