@@ -1,8 +1,9 @@
 # AGENTS.md — Guide for coding agents working in this repository
 
-This repo is a **collection of Agent Skills** for coding agents (OpenCode, Claude Code, Codex, Kiro,
+This is **aclab's collection of Agent Skills** for coding agents (OpenCode, Claude Code, Codex, Kiro,
 and compatible runtimes). It is not an application — it is the skills, their docs, a methodology, and
-the glue that catalogs and installs them. Read this before editing.
+the glue that catalogs and installs them. It is **agent-agnostic**: install with
+`scripts/install.sh <opencode|claude|codex|kiro>`. Read this before editing.
 
 > 本 repo 是給程式代理人使用的 **Agent Skills 合集**；以下規則同時適用於人類與 agent。
 

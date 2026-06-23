@@ -86,7 +86,6 @@
       "description": "Productivity, writing, and collaboration",
       "skills": [
         "writer-skill",
-        "doc-coauthoring",
         "vibe-skill",
         "kiro-skill",
         "pm-skill",
@@ -98,7 +97,6 @@
     "data": {
       "description": "Data analysis, BI, and databases",
       "skills": [
-        "bi-analyst-skill",
         "clickhouse-io",
         "postgres-patterns",
         "database-modernization-strangler",
@@ -108,8 +106,6 @@
     "domain-expert": {
       "description": "Domain-specific expert knowledge",
       "skills": [
-        "mes-domain-expert-skill",
-        "aws-agent-solution-architect",
         "microsoft-foundry"
       ]
     },
@@ -139,8 +135,7 @@
     "tools": {
       "description": "Developer tools and integrations",
       "skills": [
-        "local-llm-agent-migrator",
-        "jsm-query-skill"
+        "local-llm-agent-migrator"
       ]
     },
     "scrum": {
@@ -153,7 +148,6 @@
     "user-experience": {
       "description": "User profiles, manuals, and interaction",
       "skills": [
-        "user-profile-skill",
         "user-manual-skill"
       ]
     },

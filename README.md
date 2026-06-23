@@ -1,25 +1,35 @@
-# OpenCode Skills Collection
+# aclab Skills
 
-A curated collection of AI agent skills for professional software development workflows.
+**aclab's** curated collection of AI agent skills for professional software development workflows.
+This is an **agent-agnostic** collection — the skills run on **OpenCode**, **Claude Code**, and
+**Codex** (and other compatible runtimes), not just one vendor.
+
+🌐 **Languages:** [English](README.md) · [繁體中文](README.zh-TW.md)
 
 > 🤖 **Using a coding agent?** Read [`AGENTS.md`](AGENTS.md) — it explains how to navigate this
 > collection, when to enter the **Spec Master Method**, and the routing/ownership rules the skills expect.
 
 ## Quick Start
 
-### Install via npx (recommended)
-
-```bash
-npx skills@latest add austinyuch/skills
-```
-
-Or install directly to OpenCode:
-
 ```bash
 git clone https://github.com/austinyuch/skills.git
 cd skills
-bash scripts/install-to-opencode.sh
 ```
+
+Install into your agent's skill home with the generic installer:
+
+```bash
+bash scripts/install.sh opencode   # → ~/.config/opencode/skills/
+bash scripts/install.sh claude     # → ~/.claude/skills/
+bash scripts/install.sh codex      # → ~/.codex/skills/
+bash scripts/install.sh kiro       # → ~/.kiro/skills/
+
+# or pick any path:
+SKILLS_TARGET=/path/to/skills bash scripts/install.sh
+```
+
+Each skill installs as `<skill-home>/<skill-name>/` and is picked up by the agent automatically.
+Install via npx is also available for OpenCode users: `npx skills@latest add austinyuch/skills`.
 
 ## What's Inside
 
@@ -31,14 +41,14 @@ bash scripts/install-to-opencode.sh
 | **Engineering** | 15 | Core software engineering workflows |
 | **Architecture** | 15 | Architecture, governance, and process design |
 | **DevOps** | 6 | DevOps, containers, and infrastructure |
-| **Productivity** | 8 | Productivity, writing, and collaboration |
-| **Data** | 5 | Data analysis, BI, and databases |
-| **Domain Expert** | 3 | Domain-specific expert knowledge |
+| **Productivity** | 7 | Productivity, writing, and collaboration |
+| **Data** | 4 | Data analysis, BI, and databases |
+| **Domain Expert** | 1 | Domain-specific expert knowledge |
 | **Creative** | 2 | Frontend, design, and creative tools |
 | **Security & Compliance** | 1 | Security review and compliance |
 | **Social Media** | 5 | Social media, advocacy, and marketing |
-| **Tools** | 2 | Developer tools and integrations |
-| **User Experience** | 2 | User profiles, manuals, and interaction |
+| **Tools** | 1 | Developer tools and integrations |
+| **User Experience** | 1 | User profiles, manuals, and interaction |
 | **Project Review** | 2 | Project review and executive reporting |
 | **UAT & Demo** | 1 | UAT and demo execution tools |
 
@@ -146,7 +156,6 @@ The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → sp
 
 ### Productivity
 - `writer-skill` - Professional documentation writing
-- `doc-coauthoring` - Document collaboration workflow
 - `vibe-skill` - Rapid development workflow
 - `kiro-skill` - Systematic development workflow
 - `pm-skill` - Product management assistant
@@ -155,15 +164,12 @@ The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → sp
 - `find-skills` - Skill discovery
 
 ### Data
-- `bi-analyst-skill` - Business intelligence analysis
 - `clickhouse-io` - ClickHouse database patterns
 - `postgres-patterns` - PostgreSQL patterns
 - `database-modernization-strangler` - Legacy database modernization
 - `taiwan-civic-budget-tracker` - Government budget tracking
 
 ### Domain Expert
-- `mes-domain-expert-skill` - Manufacturing execution systems
-- `aws-agent-solution-architect` - AWS AI agent architecture
 - `microsoft-foundry` - Azure AI Foundry deployment
 
 ### Creative
@@ -183,14 +189,12 @@ The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → sp
 
 ### Tools
 - `local-llm-agent-migrator` - Local LLM agent migration
-- `jsm-query-skill` - Jira Service Management queries
 
 ### Scrum
 - `scrum-master-skill` - Scrum Master coordination
 - `scrum-developer-skill` - Scrum developer execution
 
 ### User Experience
-- `user-profile-skill` - User profile management
 - `user-manual-skill` - User manual generation
 
 ### Project Review
@@ -235,14 +239,15 @@ The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → sp
 │   ├── agentic-delivery-methodology.md
 │   └── methodology-diagram.md
 ├── scripts/
+│   ├── install.sh                   # Generic installer (opencode|claude|codex|kiro)
 │   ├── sync-from-source.sh          # Publish from ~/.config/opencode/skills
-│   └── install-to-opencode.sh       # Install to ~/.config/opencode/skills
+│   └── install-to-opencode.sh       # Legacy OpenCode-only installer
 ├── methodology.html                 # The Spec Master Method — landing page (EN/繁中)
 ├── skills-manifest.json             # Skill catalog and categorization
 ├── AGENTS.md                        # Guide for coding agents using this repo
 ├── CREDITS.md                       # Attribution and upstream licenses
-├── package.json                     # npm metadata
-├── README.md                        # This file
+├── README.md                        # This file (English)
+├── README.zh-TW.md                  # 繁體中文版
 └── LICENSE                          # MIT License
 ```
 

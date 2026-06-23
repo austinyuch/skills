@@ -11,6 +11,19 @@ missing or wrong, please open an issue — corrections are welcome.
 > [`LICENSE`](./LICENSE). Individual upstream components retain **their own licenses**, reproduced
 > in each skill's `LICENSE.txt`. The MIT license of this repo does **not** relicense those components.
 
+## ⭐ Recommended upstream sources
+
+If you want skills we reference, removed, or built upon, get them from the original authors:
+
+| Source | GitHub / Link | License | What to get there |
+|---|---|---|---|
+| **Anthropic Agent Skills** | <https://github.com/anthropics/skills> | Apache-2.0 + proprietary | `docx`, `pdf`, `pptx`, `xlsx`, `canvas-design`, `mcp-builder`, `skill-creator`, `brand-guidelines`, … (removed from this repo) |
+| **Everything Claude Code** | <https://github.com/affaan-m/everything-claude-code> | MIT | instinct/continuous-learning system, agents, rules, memory hooks |
+| **Ponytail** | <https://github.com/DietrichGebert/ponytail> | MIT | the YAGNI "ladder" minimal-implementation discipline |
+| **gstack** (Garry Tan) | <https://github.com/garrytan/gstack> | MIT | CEO/eng review depth, cognitive patterns (`plan-ceo-review`, `plan-eng-review`, `office-hours`, ETHOS) |
+| **mattpocock/skills** | <https://github.com/mattpocock/skills> | MIT | requirement "grilling", `codebase-design`, `domain-modeling` |
+| **AWS Kiro** | <https://kiro.dev> · <https://github.com/kirodotdev> | product | the spec-driven workflow that inspired `spec-driven-development` |
+
 ---
 
 ## 1. Anthropic skills — removed from this collection
@@ -30,13 +43,19 @@ Removed (proprietary, `© 2025 Anthropic, PBC`): `docx`, `pdf`, `pptx`, `xlsx`.
 > `brand-guidelines-naelt` (kept) is an original organization-specific work; its structure was
 > historically informed by Anthropic's `brand-guidelines` but ships no Anthropic-licensed content.
 
-## 3. Claude Code ecosystem — community resources
+## 3. Everything Claude Code (ECC) — MIT
 
-Patterns, conventions, and skill-authoring ideas across this collection were informed by the wider
-**Claude Code** community, including the **"Everything Claude Code"** community knowledge resource
-and the broader collection of Claude Code skills, hooks, and agent recipes shared publicly. These
-shaped *how* skills are structured (SKILL.md frontmatter, references/, evals/, install scripts)
-rather than providing copied content.
+The continuous-learning skills derive from **Everything Claude Code** by Affaan Mustafa
+(<https://github.com/affaan-m/everything-claude-code>), used under the **MIT License**
+("OSS stays free. This repo is MIT-licensed forever.").
+
+| Skill (in this repo) | Source concept |
+|---|---|
+| `continuous-learning` | session-pattern extraction → learned skills |
+| `continuous-learning-v2` | instinct-based learning with confidence scoring → evolve into skills |
+
+Broader skill-authoring conventions (SKILL.md frontmatter, `references/`, `evals/`, install scripts)
+across this collection were also informed by the wider Claude Code community.
 
 ## 4. Methodology & concept sources (The Spec Master Method)
 
@@ -47,6 +66,8 @@ practice. Credit to the originators:
 |---|---|---|
 | **Spec-driven development workflow** | **AWS Kiro** (<https://kiro.dev>) — `spec-driven-development` is inspired by Kiro's requirements → design → tasks spec flow | `spec-driven-development` |
 | **YAGNI "Ponytail" Ladder** | **Ponytail** by Dietrich Gebert (<https://github.com/DietrichGebert/ponytail>), **MIT License** — adapted as the minimal-implementation ladder | `spec-driven-development/references/ponytail-yagni-ladder.md` |
+| **CEO/eng review depth & cognitive patterns** | **gstack** by Garry Tan (<https://github.com/garrytan/gstack>), **MIT License** — `plan-ceo-review`, `plan-eng-review`, `office-hours`, `ETHOS` (selected subset) | `spec-master/references/requirement-interview-depth.md`, `spec-driven-development/references/architecture-design-depth.md`, `project-review-skill` |
+| **Requirement "grilling" & design modeling** | **mattpocock/skills** (<https://github.com/mattpocock/skills>), **MIT License** — `grill-me`/`grilling`, `codebase-design`, `domain-modeling` | `spec-master` & `spec-driven-development` interview/design-depth references |
 | **Scrum** | The **Scrum Guide**, Ken Schwaber & Jeff Sutherland (<https://scrumguides.org>) | family Scrum-role mapping |
 | **Agile values** | **Manifesto for Agile Software Development** (<https://agilemanifesto.org>) | family Agile mapping |
 | **Test-Driven Development** | Kent Beck — *Test-Driven Development: By Example* | `tdd-workflow`, SDD Phase 4 |
