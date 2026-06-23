@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Code Review Family</title>
+  <!-- Generated from README.md — edit the markdown first (markdown-first). -->
+  <style>
+    :root{
+      --bg:#07111e; --panel:#0f1a2c; --panel-2:#152238; --line:#27344d;
+      --text:#eef4ff; --muted:#b7c4dc; --blue:#4ea1ff; --teal:#43d6c2; --amber:#ffb34d;
+      --shadow:0 20px 52px rgba(0,0,0,.32); --radius-sm:12px; --max:1160px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:
+        radial-gradient(circle at top left, rgba(78,161,255,.16), transparent 30%),
+        radial-gradient(circle at top right, rgba(67,214,194,.14), transparent 26%),var(--bg);
+      color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}
+    a{color:var(--blue)}
+    .wrap{max-width:var(--max);margin:0 auto;padding:28px 20px 64px}
+    .hero{padding:32px;border:1px solid rgba(255,255,255,.08);border-radius:20px;
+      background:linear-gradient(180deg,rgba(15,26,44,.98),rgba(15,26,44,.86));box-shadow:var(--shadow);display:grid;gap:18px;position:relative}
+    .lang-switch{position:absolute;top:16px;right:16px;display:flex;gap:8px}
+    .lang-switch button{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--text);padding:7px 12px;border-radius:999px;cursor:pointer;font:inherit}
+    .lang-switch button.active{background:rgba(78,161,255,.2);border-color:rgba(78,161,255,.4)}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+    .eyebrow::before{content:"";width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg,var(--blue),var(--teal))}
+    h1,h2,h3,p{margin:0}
+    h1{font-size:clamp(2rem,4.2vw,3.5rem);line-height:1.05;max-width:18ch}
+    .lede{color:var(--muted);font-size:1.05rem;max-width:80ch}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:4px}
+    .stat{padding:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm)}
+    .stat b{display:block;font-size:1.5rem;margin-bottom:6px}
+    .stat span{color:var(--muted);font-size:.9rem}
+    .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+    .cta a{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:.95rem}
+    .cta a.primary{background:linear-gradient(135deg,var(--blue),var(--teal));color:#06121f}
+    .cta a.ghost{border:1px solid rgba(255,255,255,.16);color:var(--text)}
+    .section{margin-top:24px;padding:24px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:18px}
+    .section h2{font-size:1.35rem;margin-bottom:6px}
+    .section .sub{color:var(--muted);margin-bottom:14px}
+    .grid{display:grid;gap:14px}
+    .cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .card{padding:16px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--panel)}
+    .card h3{margin-bottom:8px;font-size:1rem}
+    .card p,.card li{color:var(--muted);font-size:.96rem}
+    code{background:rgba(78,161,255,.12);border:1px solid rgba(78,161,255,.18);padding:1px 6px;border-radius:6px;font-size:.85em;color:#dceaff}
+    table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
+    th,td{padding:12px 11px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}
+    th{color:#dfe8ff;font-size:.9rem}
+    td{color:var(--muted);font-size:.95rem}
+    .warn{color:#fff1d2;background:rgba(255,179,77,.08);border:1px solid rgba(255,179,77,.18);border-radius:12px;padding:14px 16px}
+    .footer{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:22px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:.92rem}
+    @media (max-width:980px){.stats,.cols-2,.cols-3{grid-template-columns:1fr}.wrap{padding:16px}.hero,.section{padding:18px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="lang-switch" aria-label="Language switch">
+        <button type="button" data-lang="en" class="active">EN</button>
+        <button type="button" data-lang="zh">繁中</button>
+      </div>
+      <div class="eyebrow" data-en="The Code Review Family" data-zh="Code Review 家族">The Code Review Family</div>
+      <h1 data-en="Make review deterministic about evidence — not just verbose about opinions" data-zh="讓複核對證據是確定性的 — 而不只是對意見更囉嗦">Make review deterministic about evidence — not just verbose about opinions</h1>
+      <p class="lede" data-en="A single 'review this' prompt gives opinions that vary run to run and bury the dangerous finding under style nits. This family turns 'review it properly' into deterministic, risk-ranked, actionable findings — the verify (left-shift) layer of The Spec Master Method." data-zh="單一句「複核一下」會給出每次都不同、還把危險問題埋在風格細節下的意見。這個家族把「好好複核」變成確定性、依風險排序、可執行的發現——是 Spec Master Method 的驗證（左移）層。">A single "review this" prompt gives opinions that vary run to run and bury the dangerous finding under style nits. This family turns "review it properly" into deterministic, risk-ranked, actionable findings — the verify (left-shift) layer of The Spec Master Method.</p>
+      <div class="stats">
+        <div class="stat"><b>6</b><span data-en="composable review skills" data-zh="個可組合複核技能">composable review skills</span></div>
+        <div class="stat"><b>1</b><span data-en="orchestrator (code-review) folds in the rest" data-zh="個協調者（code-review）整合其餘">orchestrator (code-review) folds in the rest</span></div>
+        <div class="stat"><b>0</b><span data-en="providers required — deterministic core is CI-safe" data-zh="不需 provider — 確定性核心 CI 安全">providers required — deterministic core is CI-safe</span></div>
+        <div class="stat"><b>0</b><span data-en="runtime-readiness claims (static ≠ shipped)" data-zh="個 runtime readiness 宣稱（靜態 ≠ 已交付）">runtime-readiness claims (static ≠ shipped)</span></div>
+      </div>
+      <div class="cta">
+        <a class="primary" href="../../methodology.html" data-en="The Spec Master Method →" data-zh="Spec Master Method →">The Spec Master Method →</a>
+        <a class="ghost" href="../spec-master/index.html" data-en="Spec Master + SDD brief →" data-zh="Spec Master + SDD 說帖 →">Spec Master + SDD brief →</a>
+        <a class="ghost" href="README.md" data-en="Read the markdown source →" data-zh="閱讀 markdown 來源 →">Read the markdown source →</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Why a family, not one reviewer" data-zh="為什麼是家族，而非單一複核者">Why a family, not one reviewer</h2>
+      <p class="sub" data-en="Two principles make reviews trustworthy evidence instead of variable opinion." data-zh="兩個原則讓複核成為可信證據，而非浮動意見。">Two principles make reviews trustworthy evidence instead of variable opinion.</p>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3 data-en="Deterministic-first, LLM-optional" data-zh="Deterministic-first、LLM-optional">Deterministic-first, LLM-optional</h3>
+          <p data-en="Each helper ships a deterministic detector that is the source of truth, needs no provider, and is safe in CI. An optional --explain / LLM pass only calibrates severity and writes reasoning — it never invents findings." data-zh="每個 helper 的確定性偵測器是事實來源，不需 provider、CI 安全。可選的 --explain / LLM pass 只校準嚴重度與寫理由，不會無中生有。">Each helper ships a deterministic detector that is the source of truth, needs no provider, and is safe in CI. An optional <code>--explain</code> / LLM pass only calibrates severity and writes reasoning — it never invents findings.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="Risk-based triage" data-zh="依風險分流">Risk-based triage</h3>
+          <p data-en="Findings are ranked (e.g. severity × confidence × blast-radius) so review effort goes to the highest-impact issue first. What to review is judgement, not generation." data-zh="發現會被排序（例如 嚴重度 × 信心 × blast-radius），讓複核精力先投到最高影響的問題。要複核什麼是判斷，不是生成。">Findings are ranked (e.g. severity × confidence × blast-radius) so review effort goes to the highest-impact issue first. What to review is judgement, not generation.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Family members" data-zh="家族成員">Family members</h2>
+      <table>
+        <thead>
+          <tr>
+            <th data-en="Skill" data-zh="技能">Skill</th>
+            <th data-en="Question it answers" data-zh="回答的問題">Question it answers</th>
+            <th data-en="What it owns" data-zh="它負責什麼">What it owns</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>code-review</code></td><td data-en="What does this code look like — structure, dependencies, impact, bounded context?" data-zh="這段程式長什麼樣——結構、相依、影響、bounded context？">What does this code look like — structure, dependencies, impact, bounded context?</td><td data-en="Orchestrator + program-graph / GraphRAG static analysis; folds in every sibling's findings. CLI binary with an MCP runtime surface." data-zh="協調者 + 程式圖 / GraphRAG 靜態分析；整合每個 sibling 的發現。CLI binary，含 MCP runtime surface。">Orchestrator + program-graph / GraphRAG static analysis; folds in every sibling's findings. CLI binary with an MCP runtime surface.</td></tr>
+          <tr><td><code>code-refactoring-advisor</code></td><td data-en="What should I change, and what test net must exist first?" data-zh="我該改什麼，而且要先有什麼測試網？">What should I change, and what test net must exist first?</td><td data-en="Deterministic Fowler smell detection → a named refactoring move + the test safety-net required before the move is safe." data-zh="確定性 Fowler 異味偵測 → 具名重構手法 + 動手前必須存在的測試安全網。">Deterministic Fowler smell detection → a named refactoring move + the test safety-net required before the move is safe.</td></tr>
+          <tr><td><code>test-quality-reviewer</code></td><td data-en="Are these tests any good — would a real defect survive them?" data-zh="這些測試夠好嗎——真缺陷會不會存活下來？">Are these tests any good — would a real defect survive them?</td><td data-en="Judges existing tests: assertion roulette, mystery guest, fragile/conditional tests, FIRST violations, pyramid inversion. Green only means it ran." data-zh="評估既有測試：assertion roulette、mystery guest、脆弱／條件式測試、FIRST 違規、金字塔倒置。綠燈只代表它跑過。">Judges existing tests: assertion roulette, mystery guest, fragile/conditional tests, FIRST violations, pyramid inversion. Green only means it ran.</td></tr>
+          <tr><td><code>test-design-generator</code></td><td data-en="What should I test — what are the real edge cases?" data-zh="我該測什麼——真正的邊界在哪？">What should I test — what are the real edge cases?</td><td data-en="Generates boundary-value, equivalence-partition, and pairwise cases from a parameter description; recommends an oracle strategy when outputs can't be enumerated." data-zh="由參數描述生成 boundary-value、等價分割與 pairwise 案例；輸出無法窮舉時建議 oracle 策略。">Generates boundary-value, equivalence-partition, and pairwise cases from a parameter description; recommends an oracle strategy when outputs can't be enumerated.</td></tr>
+          <tr><td><code>security-risk-reviewer</code></td><td data-en="Is this secure — where's the injection / secret / weak crypto?" data-zh="這安全嗎——注入／機密／弱加密在哪？">Is this secure — where's the injection / secret / weak crypto?</td><td data-en="Deterministic OWASP Top-10 scan, ranked by risk score so the dangerous lines surface first. Each finding mapped to OWASP/CWE." data-zh="確定性 OWASP Top-10 掃描，依風險分數排序讓危險行先浮現。每個發現對應 OWASP/CWE。">Deterministic OWASP Top-10 scan, ranked by risk score so the dangerous lines surface first. Each finding mapped to OWASP/CWE.</td></tr>
+          <tr><td><code>sonarqube-bridge</code></td><td data-en="Pull in our SonarQube findings and rank them with everything else." data-zh="把我們的 SonarQube 發現拉進來，和其他一起排序。">Pull in our SonarQube findings and rank them with everything else.</td><td data-en="An adapter, not a scanner: ingests Sonar findings and enriches each with code-graph blast-radius, business capability, and remediation vocabulary. Never scans, never gates." data-zh="是 adapter 而非 scanner：吸收 Sonar 發現並以程式圖 blast-radius、業務能力與修復詞彙加值。不掃描、不 gate。">An adapter, not a scanner: ingests Sonar findings and enriches each with code-graph blast-radius, business capability, and remediation vocabulary. Never scans, never gates.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2 data-en="How they compose" data-zh="它們如何組合">How they compose</h2>
+      <div class="grid cols-3">
+        <div class="card">
+          <h3 data-en="Inventory → improvement" data-zh="盤點 → 改善">Inventory → improvement</h3>
+          <p data-en="code-review builds the inventory ('what exists') — the program graph, traceability, bounded context. The helpers extend it to 'what should improve'." data-zh="code-review 建立盤點（「有什麼」）——程式圖、追溯性、bounded context。helpers 把它延伸到「該改什麼」。">code-review builds the inventory ("what exists") — the program graph, traceability, bounded context. The helpers extend it to "what should improve".</p>
+        </div>
+        <div class="card">
+          <h3 data-en="Change ↔ safety net" data-zh="變更 ↔ 安全網">Change ↔ safety net</h3>
+          <p data-en="code-refactoring-advisor says what to change; test-quality-reviewer checks the net you change it against; test-design-generator produces the missing cases when a test is thin." data-zh="code-refactoring-advisor 說該改什麼；test-quality-reviewer 檢查你動手所依靠的測試網；測試太薄時 test-design-generator 補上缺的案例。">code-refactoring-advisor says what to change; test-quality-reviewer checks the net you change it against; test-design-generator produces the missing cases when a test is thin.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="Executable security + Sonar" data-zh="可執行的安全 + Sonar">Executable security + Sonar</h3>
+          <p data-en="security-risk-reviewer makes prose security guidance executable. sonarqube-bridge is connective tissue: Sonar owns the blocking Quality Gate; this family adds Sonar's blind spots and fuses both into one ranked report." data-zh="security-risk-reviewer 讓文字版安全指引變得可執行。sonarqube-bridge 是連結組織：Sonar 擁有 blocking Quality Gate；這家族補上 Sonar 盲點並把兩者融成一份排序報告。">security-risk-reviewer makes prose security guidance executable. sonarqube-bridge is connective tissue: Sonar owns the blocking Quality Gate; this family adds Sonar's blind spots and fuses both into one ranked report.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Scope boundary" data-zh="範圍邊界">Scope boundary</h2>
+      <div class="warn" data-en="This family is static analysis + review evidence, NOT a runtime readiness authority. Use it for structure, impact, what-should-improve, test effectiveness, and ranked security risk. Do NOT use it alone to claim a feature is live-demo ready — authoritative PASS / CONDITIONAL / FAIL still comes from runtime-backed review.md. Static green ≠ shipped." data-zh="這家族是靜態分析 + 複核證據，不是 runtime readiness 權威。用它看結構、影響、該改什麼、測試有效性、依風險排序的安全問題。不要單用它宣稱功能 live-demo ready——權威的 PASS / CONDITIONAL / FAIL 仍來自 runtime-backed 的 review.md。靜態綠燈 ≠ 已交付。">This family is static analysis + review evidence, NOT a runtime readiness authority. Use it for structure, impact, what-should-improve, test effectiveness, and ranked security risk. Do NOT use it alone to claim a feature is live-demo ready — authoritative PASS / CONDITIONAL / FAIL still comes from runtime-backed review.md. Static green ≠ shipped.</div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Place in the method" data-zh="在方法中的位置">Place in the method</h2>
+      <p data-en="In the six-phase flow this family is Phase 4/5 left-shift detection. spec-driven-development runs the lifecycle and pulls these skills in as capability-gated inputs at implementation and review. review.md still owns the verdict — this family makes that verdict rest on deterministic evidence instead of one-shot opinion." data-zh="在六階段流程中，這家族是 Phase 4/5 的左移偵測。spec-driven-development 跑生命週期，並在實作與複核階段把這些技能當作 capability-gated 輸入拉進來。review.md 仍擁有 verdict——這家族讓 verdict 立基於確定性證據，而非一次性意見。">In the six-phase flow this family is Phase 4/5 left-shift detection. <code>spec-driven-development</code> runs the lifecycle and pulls these skills in as capability-gated inputs at implementation and review. <code>review.md</code> still owns the verdict — this family makes that verdict rest on deterministic evidence instead of one-shot opinion.</p>
+    </section>
+
+    <div class="footer">
+      <span data-en="Source of truth: README.md (this page is generated from it)" data-zh="事實來源：README.md（本頁由它生成）">Source of truth: <code>README.md</code> (this page is generated from it)</span>
+      <span data-en="Attribution: CREDITS.md" data-zh="出處：CREDITS.md">Attribution: <a href="../../CREDITS.md">CREDITS.md</a></span>
+    </div>
+  </main>
+  <script>
+    const storageKey='code-review-family-lang';
+    const buttons=Array.from(document.querySelectorAll('.lang-switch button'));
+    const nodes=Array.from(document.querySelectorAll('[data-en][data-zh]'));
+    function setLang(lang){
+      document.documentElement.lang=lang==='zh'?'zh-Hant':'en';
+      document.title=lang==='zh'?'Code Review 家族':'The Code Review Family';
+      localStorage.setItem(storageKey,lang);
+      buttons.forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+      nodes.forEach(node=>{if(node.querySelector('[data-en],[data-zh]'))return;node.textContent=lang==='zh'?node.dataset.zh:node.dataset.en;});
+    }
+    buttons.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+    setLang(localStorage.getItem(storageKey)||'en');
+  </script>
+</body>
+</html>

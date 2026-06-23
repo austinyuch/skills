@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spec Master + Spec-Driven Development</title>
+  <!-- Generated from README.md — edit the markdown first (markdown-first). Merges the two former per-skill pages. -->
+  <style>
+    :root{--bg:#07111e;--panel:#0f1a2c;--panel-2:#152238;--line:#27344d;--text:#eef4ff;--muted:#b7c4dc;--blue:#4ea1ff;--teal:#43d6c2;--shadow:0 20px 52px rgba(0,0,0,.32);--radius-sm:12px;--max:1160px}
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at top left,rgba(78,161,255,.16),transparent 30%),radial-gradient(circle at top right,rgba(67,214,194,.14),transparent 26%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}
+    a{color:var(--blue)}
+    .wrap{max-width:var(--max);margin:0 auto;padding:28px 20px 64px}
+    .hero{padding:32px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:linear-gradient(180deg,rgba(15,26,44,.98),rgba(15,26,44,.86));box-shadow:var(--shadow);display:grid;gap:18px;position:relative}
+    .lang-switch{position:absolute;top:16px;right:16px;display:flex;gap:8px}
+    .lang-switch button{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--text);padding:7px 12px;border-radius:999px;cursor:pointer;font:inherit}
+    .lang-switch button.active{background:rgba(78,161,255,.2);border-color:rgba(78,161,255,.4)}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+    .eyebrow::before{content:"";width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg,var(--blue),var(--teal))}
+    h1,h2,h3,p{margin:0}
+    h1{font-size:clamp(2rem,4.2vw,3.5rem);line-height:1.05;max-width:20ch}
+    .lede{color:var(--muted);font-size:1.05rem;max-width:80ch}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:4px}
+    .stat{padding:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm)}
+    .stat b{display:block;font-size:1.5rem;margin-bottom:6px}
+    .stat span{color:var(--muted);font-size:.9rem}
+    .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+    .cta a{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:.95rem}
+    .cta a.primary{background:linear-gradient(135deg,var(--blue),var(--teal));color:#06121f}
+    .cta a.ghost{border:1px solid rgba(255,255,255,.16);color:var(--text)}
+    .section{margin-top:24px;padding:24px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:18px}
+    .section h2{font-size:1.35rem;margin-bottom:6px}
+    .section .sub{color:var(--muted);margin-bottom:14px}
+    .grid{display:grid;gap:14px}
+    .cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .card{padding:16px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--panel)}
+    .card h3{margin-bottom:8px;font-size:1rem}
+    .card p,.card li{color:var(--muted);font-size:.96rem}
+    code{background:rgba(78,161,255,.12);border:1px solid rgba(78,161,255,.18);padding:1px 6px;border-radius:6px;font-size:.85em;color:#dceaff}
+    table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
+    th,td{padding:12px 11px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}
+    th{color:#dfe8ff;font-size:.9rem}
+    td{color:var(--muted);font-size:.95rem}
+    .flow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+    .flow-step{padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel-2);min-height:150px}
+    .flow-step b{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:999px;margin-bottom:10px;background:rgba(78,161,255,.16);color:#e8f3ff;font-size:.84rem}
+    .flow-step h3{font-size:.96rem;margin-bottom:6px}
+    .flow-step p{color:var(--muted);font-size:.86rem}
+    .warn{color:#fff1d2;background:rgba(255,179,77,.08);border:1px solid rgba(255,179,77,.18);border-radius:12px;padding:14px 16px}
+    .footer{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:22px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:.92rem}
+    @media (max-width:980px){.stats,.cols-2,.cols-3,.flow{grid-template-columns:1fr}.wrap{padding:16px}.hero,.section{padding:18px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="lang-switch" aria-label="Language switch">
+        <button type="button" data-lang="en" class="active">EN</button>
+        <button type="button" data-lang="zh">繁中</button>
+      </div>
+      <div class="eyebrow" data-en="Spec Master + Spec-Driven Development" data-zh="Spec Master + 規格驅動開發">Spec Master + Spec-Driven Development</div>
+      <h1 data-en="One front door for routing, one backbone for delivery" data-zh="一個路由前門，一個交付主幹">One front door for routing, one backbone for delivery</h1>
+      <p class="lede" data-en="This is the single merged brief for the two core skills of the Spec Master family: spec-master decides WHO should own a request before any file is edited; spec-driven-development runs the 6-phase lifecycle that turns vague intent into traceable, reviewable change. Kept as two skills on purpose." data-zh="這是 Spec Master 家族兩個核心技能的單一合併說明：spec-master 在動任何檔案前先決定請求該由誰擁有；spec-driven-development 跑六階段生命週期，把模糊意圖變成可追溯、可複核的變更。刻意維持成兩個技能。">This is the single merged brief for the two core skills of the Spec Master family: <code>spec-master</code> decides WHO should own a request before any file is edited; <code>spec-driven-development</code> runs the 6-phase lifecycle that turns vague intent into traceable, reviewable change. Kept as two skills on purpose.</p>
+      <div class="stats">
+        <div class="stat"><b>1</b><span data-en="front-door router (spec-master)" data-zh="個前門路由器（spec-master）">front-door router (spec-master)</span></div>
+        <div class="stat"><b>6</b><span data-en="delivery phases (spec-driven-development)" data-zh="個交付階段（spec-driven-development）">delivery phases (spec-driven-development)</span></div>
+        <div class="stat"><b>1</b><span data-en="one-way evidence rule prevents false-green" data-zh="條單向證據規則防止假綠燈">one-way evidence rule prevents false-green</span></div>
+        <div class="stat"><b>0</b><span data-en="unearned readiness claims" data-zh="個未經證據的 readiness 宣稱">unearned readiness claims</span></div>
+      </div>
+      <div class="cta">
+        <a class="primary" href="../../methodology.html" data-en="The Spec Master Method (14 skills) →" data-zh="Spec Master Method（14 技能）→">The Spec Master Method (14 skills) →</a>
+        <a class="ghost" href="../code-review/index.html" data-en="Code Review family →" data-zh="Code Review 家族 →">Code Review family →</a>
+        <a class="ghost" href="README.md" data-en="Markdown source →" data-zh="Markdown 來源 →">Markdown source →</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Why two skills, not one" data-zh="為什麼是兩個技能，而非一個">Why two skills, not one</h2>
+      <p class="sub" data-en="Merging the router into the workflow raises intake cost — every ambiguous request would drag a full lifecycle with it." data-zh="把 router 併進 workflow 會抬高 intake 成本——每個含糊請求都會拖著完整生命週期。">Merging the router into the workflow raises intake cost — every ambiguous request would drag a full lifecycle with it.</p>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3 data-en="spec-master — decide ownership" data-zh="spec-master — 決定歸屬">spec-master — decide ownership</h3>
+          <p data-en="Cheap to enter: classify the request, decide the owner, hand off. No artifacts are written just to find out where work belongs. It also classifies improvement requests: continue an active spec, CR against a completed one, issue-log it, or open a new spec." data-zh="進入成本低：分類請求、決定 owner、交棒。不會只為了找出歸屬就寫 artifact。它也分類改善請求：續做 active spec、對已完成的開 CR、進 issue log，或開新 spec。">Cheap to enter: classify the request, decide the owner, hand off. No artifacts are written just to find out where work belongs. It also classifies improvement requests: continue an active spec, CR against a completed one, issue-log it, or open a new spec.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="spec-driven-development — deliver" data-zh="spec-driven-development — 交付">spec-driven-development — deliver</h3>
+          <p data-en="A real lifecycle that preserves traceability across phases without pretending to also be a router. One family, two responsibilities: decide ownership first, then deliver." data-zh="一個維持跨階段追溯的真實生命週期，不會假裝同時是 router。一個家族、兩種責任：先決定歸屬，再交付。">A real lifecycle that preserves traceability across phases without pretending to also be a router. One family, two responsibilities: decide ownership first, then deliver.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="spec-master — route by authority surface" data-zh="spec-master — 依權威面路由">spec-master — route by authority surface</h2>
+      <p class="sub" data-en="Route by the authority surface a request touches, not by whichever file was mentioned first." data-zh="依請求觸及的權威面路由，而不是依「哪個檔案先被提到」。">Route by the authority surface a request touches, not by whichever file was mentioned first.</p>
+      <table>
+        <thead><tr><th data-en="The request is about…" data-zh="請求是關於…">The request is about…</th><th data-en="Route to" data-zh="路由到">Route to</th></tr></thead>
+        <tbody>
+          <tr><td data-en="New feature / complex fix / design / tasks / review / optimization" data-zh="新功能／複雜修復／設計／任務／複核／優化">New feature / complex fix / design / tasks / review / optimization</td><td><code>spec-driven-development</code></td></tr>
+          <tr><td data-en="SPECS.md lifecycle, CR summary, registry wording" data-zh="SPECS.md 生命週期、CR 摘要、registry 文字">SPECS.md lifecycle, CR summary, registry wording</td><td><code>spec-registry-manager</code></td></tr>
+          <tr><td data-en="TESTS.md rows, stale evidence, traceability" data-zh="TESTS.md 列、過期證據、追溯">TESTS.md rows, stale evidence, traceability</td><td><code>test-registry-manager</code></td></tr>
+          <tr><td data-en="Unresolved improvement with no safe owner yet" data-zh="尚無安全 owner 的未解改善">Unresolved improvement with no safe owner yet</td><td><code>issue-log-manager</code></td></tr>
+          <tr><td data-en="Local dev / UAT / E2E runtime allocation" data-zh="本地 dev／UAT／E2E runtime 配置">Local dev / UAT / E2E runtime allocation</td><td><code>local-infra-registry-governance</code></td></tr>
+          <tr><td data-en="Cross-lane git/worktree ownership & writeback safety" data-zh="跨 lane 的 git/worktree 歸屬與回寫安全">Cross-lane git/worktree ownership &amp; writeback safety</td><td><code>shared-governance</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2 data-en="spec-driven-development — the six phases" data-zh="spec-driven-development — 六階段">spec-driven-development — the six phases</h2>
+      <div class="flow">
+        <div class="flow-step"><b>1</b><h3 data-en="Requirements" data-zh="需求">Requirements</h3><p data-en="EARS acceptance criteria; YAGNI Rung 1 filters speculative needs." data-zh="EARS 驗收標準；YAGNI Rung 1 過濾投機需求。">EARS acceptance criteria; YAGNI Rung 1 filters speculative needs.</p></div>
+        <div class="flow-step"><b>2</b><h3 data-en="Design & contracts" data-zh="設計與契約">Design &amp; contracts</h3><p data-en="Bounded contexts, contracts, data models, impact (DDD); Rungs 2–4." data-zh="Bounded context、契約、資料模型、影響（DDD）；Rung 2–4。">Bounded contexts, contracts, data models, impact (DDD); Rungs 2–4.</p></div>
+        <div class="flow-step"><b>3</b><h3 data-en="Tasks & traceability" data-zh="任務與追溯">Tasks &amp; traceability</h3><p data-en="Plan closeout for TESTS.md, RTM, SPECS, CR, issue disposition." data-zh="規劃 TESTS.md、RTM、SPECS、CR、issue 的收尾。">Plan closeout for TESTS.md, RTM, SPECS, CR, issue disposition.</p></div>
+        <div class="flow-step"><b>4</b><h3 data-en="Implementation" data-zh="實作">Implementation</h3><p data-en="Red → green → refactor with evidence; folder TESTS.md first; Rungs 5–6." data-zh="紅→綠→重構附證據；先 folder TESTS.md；Rung 5–6。">Red → green → refactor with evidence; folder TESTS.md first; Rungs 5–6.</p></div>
+        <div class="flow-step"><b>5</b><h3 data-en="Review verdict" data-zh="複核裁決">Review verdict</h3><p data-en="review.md owns readiness; code-review family left-shift detection." data-zh="review.md 擁有 readiness；code-review 家族左移偵測。">review.md owns readiness; code-review family left-shift detection.</p></div>
+        <div class="flow-step"><b>6</b><h3 data-en="Optimization" data-zh="優化">Optimization</h3><p data-en="Repeated findings → bounded improvements or promoted process changes." data-zh="重複發現 → 有界改善或升級的流程變更。">Repeated findings → bounded improvements or promoted process changes.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="The one rule that prevents false-green" data-zh="防止假綠燈的那一條規則">The one rule that prevents false-green</h2>
+      <div class="warn" data-en="Evidence flows one way: ISSUE_LOG → spec artifacts & reports → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md. Derived summaries (SPECS.md, RTM.md) never overwrite the upstream artifacts they summarize, and review.md — not a green dashboard — owns the readiness verdict." data-zh="證據單向流動：ISSUE_LOG → spec 工件與報告 → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md。衍生摘要（SPECS.md、RTM.md）永不覆寫它們摘要的上游工件，而 review.md（而非綠色儀表板）擁有 readiness verdict。">Evidence flows one way: ISSUE_LOG → spec artifacts &amp; reports → folder-level TESTS.md → workspace rollup → RTM.md → SPECS.md. Derived summaries (SPECS.md, RTM.md) never overwrite the upstream artifacts they summarize, and review.md — not a green dashboard — owns the readiness verdict.</div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Scrum · DevSecOps · Responsible AI" data-zh="Scrum · DevSecOps · Responsible AI">Scrum · DevSecOps · Responsible AI</h2>
+      <div class="grid cols-3">
+        <div class="card"><h3 data-en="Scrum" data-zh="Scrum">Scrum</h3><p data-en="Strengthens boundary management, not ceremonies: PO routes ownership before the backlog hardens; SM holds routing discipline; Developers execute via the right downstream skill." data-zh="強化邊界管理而非儀式：PO 在 backlog 寫死前先路由歸屬；SM 維持路由紀律；Developers 透過正確下游技能執行。">Strengthens boundary management, not ceremonies: PO routes ownership before the backlog hardens; SM holds routing discipline; Developers execute via the right downstream skill.</p></div>
+        <div class="card"><h3 data-en="DevSecOps" data-zh="DevSecOps">DevSecOps</h3><p data-en="Test evidence, review verdict, and demo readiness live on separate authority surfaces, so mock-heavy green CI can't pose as production-ready. Security review is left-shifted into Phase 5." data-zh="測試證據、review verdict 與 demo readiness 分屬不同權威面，讓 mock-heavy 綠燈 CI 無法假扮可上線。安全審查左移進 Phase 5。">Test evidence, review verdict, and demo readiness live on separate authority surfaces, so mock-heavy green CI can't pose as production-ready. Security review is left-shifted into Phase 5.</p></div>
+        <div class="card"><h3 data-en="Responsible AI" data-zh="Responsible AI">Responsible AI</h3><p data-en="Human oversight via phase gates, accountability via separate owners, transparency via authority-surface routing. Aligns with NIST AI RMF, OECD AI Principles, ISO/IEC 42001." data-zh="以 phase gate 做人類監督、以分離 owner 做問責、以權威面路由做透明。對齊 NIST AI RMF、OECD AI Principles、ISO/IEC 42001。">Human oversight via phase gates, accountability via separate owners, transparency via authority-surface routing. Aligns with NIST AI RMF, OECD AI Principles, ISO/IEC 42001.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Credits & lineage" data-zh="致謝與淵源">Credits &amp; lineage</h2>
+      <p data-en="spec-driven-development is inspired by AWS Kiro (requirements → design → tasks). The YAGNI ladder adapts Ponytail (MIT); review-depth and CEO/eng cognitive patterns adapt gstack (MIT) and mattpocock/skills (MIT). Full attribution: CREDITS.md." data-zh="spec-driven-development 啟發自 AWS Kiro（requirements → design → tasks）。YAGNI 階梯改編自 Ponytail（MIT）；review 深度與 CEO/eng 認知模式改編自 gstack（MIT）與 mattpocock/skills（MIT）。完整出處：CREDITS.md。">spec-driven-development is inspired by <a href="https://kiro.dev">AWS Kiro</a> (requirements → design → tasks). The YAGNI ladder adapts <a href="https://github.com/DietrichGebert/ponytail">Ponytail</a> (MIT); review-depth and CEO/eng cognitive patterns adapt <a href="https://github.com/garrytan/gstack">gstack</a> (MIT) and <a href="https://github.com/mattpocock/skills">mattpocock/skills</a> (MIT). Full attribution: <a href="../../CREDITS.md">CREDITS.md</a>.</p>
+    </section>
+
+    <div class="footer">
+      <span data-en="Source of truth: README.md (this page is generated from it; it merges the two former per-skill pages)" data-zh="事實來源：README.md（本頁由它生成；合併原本兩份各自的頁面）">Source of truth: <code>README.md</code> (this page is generated from it; it merges the two former per-skill pages)</span>
+      <span data-en="Whole method: ../../methodology.html" data-zh="完整方法：../../methodology.html">Whole method: <a href="../../methodology.html">methodology.html</a></span>
+    </div>
+  </main>
+  <script>
+    const storageKey='spec-master-family-lang';
+    const buttons=Array.from(document.querySelectorAll('.lang-switch button'));
+    const nodes=Array.from(document.querySelectorAll('[data-en][data-zh]'));
+    function setLang(lang){
+      document.documentElement.lang=lang==='zh'?'zh-Hant':'en';
+      document.title=lang==='zh'?'Spec Master + 規格驅動開發':'Spec Master + Spec-Driven Development';
+      localStorage.setItem(storageKey,lang);
+      buttons.forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+      nodes.forEach(node=>{if(node.querySelector('[data-en],[data-zh]'))return;node.textContent=lang==='zh'?node.dataset.zh:node.dataset.en;});
+    }
+    buttons.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+    setLang(localStorage.getItem(storageKey)||'en');
+  </script>
+</body>
+</html>

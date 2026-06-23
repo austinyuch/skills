@@ -79,7 +79,7 @@ SKILLS_TARGET=/path/to/skills bash scripts/install.sh
 - 🟦 [`methodology.html`](./methodology.html) — 雙語 EN/繁中 landing page
 - 📖 [`docs/agentic-delivery-methodology.md`](./docs/agentic-delivery-methodology.md) — 完整方法論文章（雙語）
 - 🗺️ [`docs/methodology-diagram.md`](./docs/methodology-diagram.md) — 交棒、證據流與實踐對照圖
-- 深入：[Spec Master 家族頁](./skills/spec-master/spec-master/index.html) · [規格驅動開發說帖](./skills/spec-master/spec-driven-development/index.html)
+- 深入：[Spec Master + SDD 說帖](./skills/spec-master/index.html) · [Code Review 家族說帖](./skills/code-review/index.html)
 
 > `spec-driven-development` 啟發自 **AWS Kiro**；YAGNI 階梯改編自 **Ponytail**（MIT）；它建立在 **Scrum**、**Agile Manifesto**、**TDD/DDD** 等之上。完整出處：[`CREDITS.md`](./CREDITS.md)。
 

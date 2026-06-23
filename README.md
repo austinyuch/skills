@@ -82,7 +82,7 @@ The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → sp
 - 🟦 [`methodology.html`](./methodology.html) — bilingual EN/繁中 landing page
 - 📖 [`docs/agentic-delivery-methodology.md`](./docs/agentic-delivery-methodology.md) — the full methodology article (bilingual)
 - 🗺️ [`docs/methodology-diagram.md`](./docs/methodology-diagram.md) — handoff, evidence-flow, and practice-map diagrams
-- Deep dives: [Spec Master family page](./skills/spec-master/spec-master/index.html) · [Spec-Driven Development brief](./skills/spec-master/spec-driven-development/index.html)
+- Deep dives: [Spec Master + SDD brief](./skills/spec-master/index.html) · [Code Review family brief](./skills/code-review/index.html)
 
 > `spec-driven-development` is inspired by **AWS Kiro**; the YAGNI ladder adapts **Ponytail** (MIT); it builds on **Scrum**, the **Agile Manifesto**, **TDD/DDD**, and more. Full attribution: [`CREDITS.md`](./CREDITS.md).
 

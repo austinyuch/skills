@@ -77,10 +77,20 @@ Full narrative: [`methodology.html`](methodology.html) · [`docs/agentic-deliver
   Current concept sources include **AWS Kiro** (spec-driven workflow), **Ponytail** (MIT, YAGNI ladder),
   the **Scrum Guide**, the **Agile Manifesto**, **TDD/DDD**, Martin Fowler, EARS, OWASP, and NIST/OECD/ISO.
 
+- Also credit external sources that informed concrete skills: **everything-claude-code** (MIT, the
+  `continuous-learning` skills), **gstack** (MIT), **mattpocock/skills** (MIT). Giant-proprietary
+  assets and Anthropic skills have also been purged from git history — do not re-add them.
+
 ## 5. House conventions
 
-- Bilingual artifacts: the family `index.html` pages and `methodology.html` are **EN + 繁中**. If you
-  edit them, keep both languages in sync (every `data-en` needs a matching `data-zh`).
+- **Markdown-first.** Each explanatory landing page has a canonical `README.md`/`.md` source and a
+  **generated** `index.html`/`.html`. Edit the markdown first, then regenerate the HTML. The
+  source↔rendered map and the rule live in [`docs/README.md`](docs/README.md).
+- **Bilingual HTML.** The family `index.html` pages and `methodology.html` are **EN + 繁中**. Keep both
+  languages in sync (every `data-en` needs a matching `data-zh`).
+- **One brief per family.** `spec-master` + `spec-driven-development` share **one** merged brief at
+  `skills/spec-master/` — do not split them into separate landing pages again. The code-review family
+  has its single brief at `skills/code-review/`.
 - Prefer the dedicated skill for a job over re-deriving it inline — that is the whole point of routing.
 - Don't overstate readiness. A change is "done" only when its evidence (tests, `review.md`) says so.
 
