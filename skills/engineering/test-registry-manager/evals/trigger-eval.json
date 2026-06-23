@@ -1,0 +1,66 @@
+[
+  {
+    "query": "請幫我更新 web/src/test/TESTS.md，補上新 integration tests 的 Requirement / AC Trace 與 canonical command。",
+    "should_trigger": true
+  },
+  {
+    "query": "這次 spec closeout 前，先幫我刷新 folder-level TESTS.md 跟 workspace .agents/specs/TESTS.md。",
+    "should_trigger": true
+  },
+  {
+    "query": "幫我盤點這個 repo 的 TESTS.md，有沒有 duplicate test IDs、stale rows、或 missing evidence refs。",
+    "should_trigger": true
+  },
+  {
+    "query": "有幾個 critical e2e tests 還沒對到 requirement / AC，先幫我整理 test traceability gap。",
+    "should_trigger": true
+  },
+  {
+    "query": "請幫我 audit 一下各個 test catalog，看看哪裡還是 unmapped_to_spec。",
+    "should_trigger": true
+  },
+  {
+    "query": "我剛補了 execution report，現在要把 TESTS.md 的 Evidence Ref 跟 Execution Status 一起更新。",
+    "should_trigger": true
+  },
+  {
+    "query": "workspace .agents/specs/TESTS.md 已經落後 folder-level catalogs，請先做 reconciliation。",
+    "should_trigger": true
+  },
+  {
+    "query": "幫我整理這個 package 的 TESTS.md，補 owner、canonical command 跟 stale marker。",
+    "should_trigger": true
+  },
+  {
+    "query": "請幫我更新 SPECS.md，補上 Depends On、Impacts 與 Open Change Requests 摘要。",
+    "should_trigger": false
+  },
+  {
+    "query": "這個 spec 要進 review 了，請直接裁決 PASS / FAIL / CONDITIONAL readiness。",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我建立一個新 spec，先從 requirements.md 跟 design.md 開始。",
+    "should_trigger": false
+  },
+  {
+    "query": "我要把 backend + frontend local stack 跑起來做 E2E，先幫我處理 local env。",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我建立 RTM.md，把 requirements、tasks、review evidence 聚合起來。",
+    "should_trigger": false
+  },
+  {
+    "query": "我只想修一個 failing unit test 本身，不需要更新任何治理文件。",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我做 project review HTML，重點是 stakeholder summary 與 live demo readiness。",
+    "should_trigger": false
+  },
+  {
+    "query": "請幫我規劃如何把 mock-heavy E2E 轉成 real-auth smoke path，但先不要刷新 TESTS.md。",
+    "should_trigger": false
+  }
+]

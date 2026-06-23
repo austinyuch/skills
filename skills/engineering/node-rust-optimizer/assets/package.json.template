@@ -1,0 +1,27 @@
+{
+  "name": "rust_core",
+  "version": "0.1.0",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "napi": {
+    "name": "rust_core",
+    "triples": {
+      "defaults": true,
+      "additional": [
+        "aarch64-apple-darwin",
+        "aarch64-unknown-linux-gnu",
+        "aarch64-unknown-linux-musl"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "test": "node test.js",
+    "bench": "node bench.js"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.0.0",
+    "benchmark": "^2.1.4"
+  }
+}

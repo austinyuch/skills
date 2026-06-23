@@ -1,0 +1,602 @@
+<!--
+  Project Review Report Template
+  NAELT Brand + Executive-grade Design
+  
+  PLACEHOLDERS（由 Agent 替換）：
+  {{PROJECT_NAME}}        專案名稱
+  {{TAGLINE}}             一句話定位
+  {{GENERATED_DATE}}      生成日期
+  {{VERSION}}             版本號
+  {{STAT_1_NUM}}          統計數字1（例：73）
+  {{STAT_1_LABEL}}        統計標籤1（例：Skills）
+  {{STAT_2_NUM}}          統計數字2
+  {{STAT_2_LABEL}}        統計標籤2
+  {{STAT_3_NUM}}          統計數字3
+  {{STAT_3_LABEL}}        統計標籤3
+  {{PRESS_RELEASE_HTML}}  完整 PR 文字（HTML 段落）
+  {{FAQ_INTERNAL_HTML}}   內部 FAQ（<details> 列表）
+  {{FAQ_EXTERNAL_HTML}}   外部 FAQ（<details> 列表）
+  {{FEATURES_HTML}}       功能卡片（含截圖 or 示意圖）
+  {{UX_FLOW_SVG}}         UX 流程圖（Mermaid 或 inline SVG）
+  {{GAP_FIXED_HTML}}      已修復 gap 列表
+  {{GAP_OPEN_HTML}}       待解決 gap 列表
+  {{ROADMAP_HTML}}        里程碑時間軸
+  {{VALUE_INTERNAL_HTML}} 內部管理者價值主張列表
+  {{VALUE_EXTERNAL_HTML}} 外部倡議受眾／捐款人價值主張列表
+  {{LANGUAGE}}            文件語言（zh-TW or en）
+-->
+<!DOCTYPE html>
+<html lang="{{LANGUAGE}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{PROJECT_NAME}} — Project Review</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    /* ── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --naelt-red:       #C53030;
+      --naelt-red-dark:  #B02A2A;
+      --naelt-gray:      #4A5568;
+      --naelt-orange:    #DD6B20;
+      --naelt-dark:      #1A202C;
+      --status-positive: #97D700;
+      --bg-dark:         #1A202C;
+      --bg-card:         #ffffff;
+      --text-primary:    #1A202C;
+      --text-muted:      #4A5568;
+      --border:          #e2e8f0;
+      --shadow-sm:       0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md:       0 4px 16px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.06);
+      --shadow-lg:       0 16px 40px rgba(0,0,0,.14);
+      --radius:          12px;
+      --radius-lg:       20px;
+    }
+    
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: 'Noto Sans TC', 'Noto Sans', Arial, sans-serif;
+      background: #f5f7fa;
+      color: var(--text-primary);
+      line-height: 1.65;
+    }
+    
+    /* ── Typography ───────────────────────────────── */
+    h1, h2, h3 {
+      font-family: 'Noto Serif TC', 'Noto Serif', serif;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+    h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); }
+    h3 { font-size: 1.15rem; font-weight: 700; }
+    
+    /* ── LAYOUT ── */
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+    section:nth-of-type(even) { background: #faf9f8; }
+    
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,.96); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border); padding: 11px 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand {
+      font-family: 'Noto Serif TC', serif; font-weight: 800; font-size: 1rem;
+      color: var(--naelt-red-dark); text-decoration: none;
+    }
+    nav ul { list-style: none; display: flex; gap: 28px; }
+    nav a {
+      font-size: .85rem; font-weight: 600;
+      color: var(--text-muted); text-decoration: none; transition: color .2s;
+    }
+    nav a:hover { color: var(--naelt-red); }
+    .badge-version {
+      background: var(--naelt-red); color: #fff;
+      padding: 3px 12px; border-radius: 999px; font-family: 'Noto Serif TC', serif; font-size: .75rem; font-weight: 700;
+    }
+    
+    /* ── Hero ── */
+    section.hero {
+      background: var(--naelt-red-dark);
+      color: #fff; padding: 0; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, transparent 38%, rgba(221,107,32,.10) 38%);
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -24px; right: 72px;
+      width: 90px; height: 90px; border: 1.5px solid rgba(221,107,32,.18); border-radius: 50%;
+    }
+    .hero-inner {
+      display: grid; grid-template-columns: 5px 1fr auto; align-items: stretch; min-height: 300px; position: relative;
+    }
+    .hero-accent-bar { width: 5px; background: linear-gradient(to bottom, var(--naelt-red), var(--naelt-orange)); }
+    .hero-content { padding: 3.2rem 3rem 3.2rem 2.8rem; }
+    .hero-meta-panel {
+      padding: 2.8rem 2.5rem; min-width: 230px;
+      display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; gap: .45rem;
+      border-left: 1px solid rgba(255,255,255,.08);
+    }
+    
+    .hero-label {
+      display: inline-block;
+      background: rgba(221,107,32,.12); color: var(--naelt-orange); border: 1px solid rgba(221,107,32,.25);
+      padding: .22rem .8rem; border-radius: 20px;
+      font-family: 'Noto Serif TC', serif; font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 18px;
+    }
+    .hero h1 { font-family: 'Noto Serif TC', serif; line-height: 1.12; margin-bottom: .4rem; letter-spacing: -.01em; color: #ffffff; }
+    .hero h1 span { color: var(--naelt-orange); font-style: normal; }
+    .hero p { font-family: 'Noto Serif TC', serif; font-size: 1.05rem; color: rgba(255,255,255,.65); max-width: 540px; margin-bottom: 36px; line-height: 1.6; }
+    .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 2.4rem; }
+    .btn {
+      padding: 10px 22px; border-radius: 4px; font-family: 'Noto Serif TC', serif; font-weight: 700;
+      font-size: .82rem; text-decoration: none; cursor: pointer; border: none; letter-spacing: .04em; text-transform: uppercase;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn:hover { opacity: .88; box-shadow: var(--shadow-md); }
+    .btn-primary { background: var(--naelt-red); color: #fff; }
+    .btn-outline { background: transparent; color: rgba(255,255,255,.88); border: 1.5px solid rgba(255,255,255,.35); }
+    
+    .stats-box {
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius-lg); overflow: hidden; max-width: 500px;
+    }
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .stat-item { padding: 22px 16px; text-align: center; border-right: 1px solid rgba(255,255,255,.08); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Noto Serif TC', serif; font-size: 2.2rem; font-weight: 900; line-height: 1; color: #ffffff; margin-bottom: 5px;
+    }
+    .stat-label { font-family: 'Noto Serif TC', serif; font-size: .65rem; color: rgba(255,255,255,.5); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+    
+    .meta-line { font-size: 11px; color: rgba(255,255,255,.45); line-height: 1.55; text-align: right; }
+    .meta-line strong { color: rgba(255,255,255,.82); font-weight: 600; }
+
+    /* ── Section Headers ── */
+    .section-header { text-align: center; margin-bottom: 56px; }
+    .section-tag {
+      display: inline-block; background: rgba(197,48,48,.08); color: var(--naelt-red);
+      padding: 3px 14px; border-radius: 20px; font-family: 'Noto Serif TC', serif;
+      font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-header h2 { font-family: 'Noto Serif TC', serif; font-size: clamp(1.5rem, 2.8vw, 2.1rem); font-weight: 900; margin-bottom: 10px; color: var(--text-primary); }
+    .section-header p { color: var(--text-muted); max-width: 560px; margin: 0 auto; font-size: .92rem; }
+
+    /* ── MERMAID SVG CONTRAST OVERRIDES (WCAG AA) ── */
+    .mermaid svg .nodeLabel,
+    .mermaid svg .nodeLabel p {
+      color: #FFFFFF !important;
+    }
+    .mermaid svg .cluster-label span {
+      color: var(--text-primary) !important;
+    }
+    .mermaid svg .edgeLabel {
+      color: var(--naelt-red) !important;
+    }
+    .mermaid svg text.quadrant-title {
+      fill: #FFFFFF !important;
+      font-weight: 700 !important;
+    }
+    
+    /* ── Value Proposition ────────────────────────── */
+    .value-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    }
+    .value-card {
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      padding: 36px; box-shadow: var(--shadow-md);
+      border-top: 4px solid var(--naelt-red);
+    }
+    .value-card.external { border-top-color: var(--naelt-orange); }
+    .value-card-label {
+      font-size: .75rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 16px;
+    }
+    .value-card.internal .value-card-label { color: var(--naelt-red); }
+    .value-card.external .value-card-label { color: var(--naelt-orange); }
+    .value-card h3 { margin-bottom: 16px; }
+    .value-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .value-list li {
+      padding: 10px 14px; background: #fdf9f9; border-radius: 8px;
+      font-size: .9rem; color: var(--text-muted);
+      border-left: 3px solid var(--border);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .value-card.internal .value-list li { border-left-color: var(--naelt-red); }
+    .value-card.external .value-list li { border-left-color: var(--naelt-orange); }
+    .value-list li::before { content: '→'; font-weight: 700; flex-shrink: 0; }
+    .value-card.internal .value-list li::before { color: var(--naelt-red); }
+    .value-card.external .value-list li::before { color: var(--naelt-orange); }
+    
+    /* ── Press Release ────────────────────────────── */
+    .press-release-card {
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      padding: 48px; box-shadow: var(--shadow-md); max-width: 780px; margin: 0 auto;
+      border-left: 5px solid var(--naelt-red);
+    }
+    .pr-dateline { font-size: .82rem; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; text-transform: uppercase; letter-spacing: .04em; }
+    .press-release-card h3 { font-size: 1.4rem; margin-bottom: 20px; color: var(--naelt-red); line-height: 1.3; }
+    .press-release-card p { color: var(--text-muted); margin-bottom: 16px; font-size: .95rem; }
+    .press-release-card blockquote {
+      margin: 24px 0; padding: 16px 20px;
+      background: #fdf3ee; border-left: 3px solid var(--naelt-orange);
+      border-radius: 0 8px 8px 0; font-style: italic; color: var(--naelt-gray);
+    }
+    
+    /* ── FAQ ──────────────────────────────────────── */
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .faq-panel {
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      padding: 32px; box-shadow: var(--shadow-sm);
+    }
+    .faq-panel-title {
+      font-size: .78rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+    }
+    .faq-panel.internal .faq-panel-title { color: var(--naelt-red); }
+    .faq-panel.external .faq-panel-title { color: var(--naelt-orange); }
+    .faq-panel-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; flex-shrink: 0;
+    }
+    .faq-panel.internal .faq-panel-icon { background: rgba(197,48,48,.08); }
+    .faq-panel.external .faq-panel-icon { background: rgba(221,107,32,.10); }
+    details { margin-bottom: 10px; }
+    summary {
+      font-size: .9rem; font-weight: 700; color: var(--text-primary);
+      cursor: pointer; padding: 12px 14px; background: #fdf9f9;
+      border-radius: 8px; list-style: none; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '+'; font-size: 1.2rem; color: var(--text-muted); transition: transform .2s; }
+    details[open] summary::after { transform: rotate(45deg); }
+    details[open] summary { background: #fff0f0; color: var(--naelt-red); }
+    .faq-answer {
+      padding: 12px 14px 16px; font-size: .88rem; color: var(--text-muted);
+      line-height: 1.7; border-bottom: 1px solid var(--border);
+    }
+    
+    /* ── Features ─────────────────────────────────── */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    .feature-card {
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      overflow: hidden; box-shadow: var(--shadow-md);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .feature-screenshot {
+      width: 100%; height: 200px; object-fit: cover; object-position: top;
+      background: linear-gradient(135deg, #fff5f5, #fef2f2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: var(--naelt-red);
+    }
+    .feature-screenshot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .feature-screenshot.placeholder {
+      flex-direction: column; gap: 8px; font-size: 2.5rem;
+    }
+    .feature-screenshot.placeholder span { font-size: .85rem; color: var(--naelt-red); font-weight: 600; }
+    .feature-body { padding: 24px; }
+    .feature-tag {
+      display: inline-block; font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 4px; margin-bottom: 10px;
+      background: rgba(197,48,48,.08); color: var(--naelt-red);
+    }
+    .feature-body h3 { margin-bottom: 8px; font-size: 1rem; }
+    .feature-body p { font-size: .87rem; color: var(--text-muted); }
+    
+    /* ── UX Flow ──────────────────────────────────── */
+    .ux-flow-container {
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      padding: 48px; box-shadow: var(--shadow-md); overflow-x: auto;
+    }
+    .mermaid { text-align: center; }
+    
+    /* ── Gap Analysis ─────────────────────────────── */
+    .gap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .gap-card {
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      padding: 32px; box-shadow: var(--shadow-sm);
+    }
+    .gap-card-title {
+      font-size: .78rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+    }
+    .gap-card.fixed .gap-card-title { color: var(--status-positive); }
+    .gap-card.open .gap-card-title { color: var(--naelt-orange); }
+    .gap-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .gap-item:last-child { border-bottom: none; }
+    .gap-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .gap-content {}
+    .gap-title { font-size: .9rem; font-weight: 700; margin-bottom: 3px; }
+    .gap-desc { font-size: .82rem; color: var(--text-muted); }
+    .severity {
+      display: inline-block; font-size: .68rem; font-weight: 700;
+      padding: 1px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: .04em; margin-left: 6px;
+    }
+    .severity.high { background: rgba(197,48,48,.10); color: var(--naelt-orange); }
+    .severity.med  { background: rgba(255,199,44,.12); color: #b8860b; }
+    .severity.low  { background: rgba(151,215,0,.12); color: #5a7a00; }
+    
+    /* ── Roadmap ──────────────────────────────────── */
+    .roadmap-timeline { position: relative; padding-left: 32px; }
+    .roadmap-timeline::before {
+      content: ''; position: absolute; left: 7px; top: 0; bottom: 0;
+      width: 2px; background: linear-gradient(to bottom, var(--naelt-red), var(--naelt-orange));
+    }
+    .roadmap-item { position: relative; margin-bottom: 32px; }
+    .roadmap-dot {
+      position: absolute; left: -29px; top: 4px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--naelt-red); border: 3px solid #fff;
+      box-shadow: 0 0 0 2px var(--naelt-red);
+    }
+    .roadmap-dot.done { background: var(--status-positive); box-shadow: 0 0 0 2px var(--status-positive); }
+    .roadmap-dot.active { background: var(--naelt-orange); box-shadow: 0 0 0 2px var(--naelt-orange); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 2px var(--naelt-orange)} 50%{box-shadow:0 0 0 6px rgba(221,107,32,.20)} }
+    .roadmap-meta { font-size: .75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+    .roadmap-item h3 { font-size: 1rem; margin-bottom: 4px; }
+    .roadmap-item p { font-size: .85rem; color: var(--text-muted); }
+    
+    /* ── Footer ───────────────────────────────────── */
+    footer {
+      background: var(--bg-dark); color: rgba(255,255,255,.5);
+      padding: 40px 0; text-align: center; font-size: .82rem;
+    }
+    footer strong { color: rgba(255,255,255,.8); }
+    
+    /* ── Responsive ───────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero-inner, .value-grid, .faq-grid, .gap-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: 1fr; }
+      nav ul { display: none; }
+    }
+    
+    /* ── Print ────────────────────────────────────── */
+    @media print {
+      nav, .hero-cta { display: none; }
+      section { break-inside: avoid; padding: 40px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-brand" href="#">{{PROJECT_NAME}}</a>
+    <ul>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#press">Press Release</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#ux">UX Flow</a></li>
+      <li><a href="#gaps">Gap Analysis</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+    </ul>
+    <span class="badge-version">{{VERSION}}</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-accent-bar"></div>
+    <div class="hero-content">
+      <div class="hero-label">專案檢視 — {{GENERATED_DATE}}</div>
+      <h1>{{PROJECT_NAME}}<br><span>{{TAGLINE}}</span></h1>
+      <p>面向高階管理者、合作夥伴與倡議支持者的完整專案介紹報告，涵蓋價值主張、功能展示與發展路線圖。</p>
+      <div class="hero-cta">
+        <a href="#features" class="btn btn-primary">功能展示 →</a>
+        <a href="#press" class="btn btn-outline">閱讀 Press Release</a>
+      </div>
+      <div class="stats-box">
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-num">{{STAT_1_NUM}}</div>
+            <div class="stat-label">{{STAT_1_LABEL}}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">{{STAT_2_NUM}}</div>
+            <div class="stat-label">{{STAT_2_LABEL}}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">{{STAT_3_NUM}}</div>
+            <div class="stat-label">{{STAT_3_LABEL}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-meta-panel">
+      <div class="meta-line"><strong>生成時間</strong><br>{{GENERATED_DATE}}</div>
+      <div class="meta-line"><strong>版本</strong><br>{{VERSION}}</div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE PROPOSITION -->
+<section id="value">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Value Proposition</div>
+      <h2>為什麼選擇 {{PROJECT_NAME}}？</h2>
+      <p>從組織管理者與外部倡議受眾兩個視角，審視本專案對社會公義的核心貢獻。</p>
+    </div>
+    <div class="value-grid">
+      <div class="value-card internal">
+        <div class="value-card-label">🏢 內部管理者視角</div>
+        <h3>組織運作效益與使命推進</h3>
+        <ul class="value-list">{{VALUE_INTERNAL_HTML}}</ul>
+      </div>
+      <div class="value-card external">
+        <div class="value-card-label">🌿 倡議受眾／捐款人視角</div>
+        <h3>社會影響力與信任感</h3>
+        <ul class="value-list">{{VALUE_EXTERNAL_HTML}}</ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRESS RELEASE -->
+<section id="press">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Amazon Backwards Press Release</div>
+      <h2>如果今天對外宣布</h2>
+      <p>以專案成功推出的視角，回頭定義我們要解決的社會問題與倡議價值。</p>
+    </div>
+    <div class="press-release-card">
+      <div class="pr-dateline">Press Release · For Immediate Release</div>
+      {{PRESS_RELEASE_HTML}}
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">FAQ</div>
+      <h2>常見問題解答</h2>
+      <p>針對管理層與外部受眾最關心的問題，提供清晰的解答。</p>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-panel internal">
+        <div class="faq-panel-title">
+          <span class="faq-panel-icon">🏢</span>
+          內部管理者 FAQ
+        </div>
+        {{FAQ_INTERNAL_HTML}}
+      </div>
+      <div class="faq-panel external">
+        <div class="faq-panel-title">
+          <span class="faq-panel-icon">🌐</span>
+          外部倡議受眾／捐款人 FAQ
+        </div>
+        {{FAQ_EXTERNAL_HTML}}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Core Features</div>
+      <h2>核心功能展示</h2>
+      <p>各功能模組說明與實際操作截圖（或示意圖）。</p>
+    </div>
+    <div class="features-grid">{{FEATURES_HTML}}</div>
+  </div>
+</section>
+
+<!-- UX FLOW -->
+<section id="ux">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">UX Flow</div>
+      <h2>使用者操作流程</h2>
+      <p>從用戶角度呈現完整的操作路徑與關鍵決策點。</p>
+    </div>
+    <div class="ux-flow-container">
+      {{UX_FLOW_SVG}}
+    </div>
+  </div>
+</section>
+
+<!-- GAP ANALYSIS -->
+<section id="gaps">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Gap Analysis</div>
+      <h2>缺口盤點</h2>
+      <p>透明揭露已解決與尚待處理的功能缺口，展現持續改善的開發文化。</p>
+    </div>
+    <div class="gap-grid">
+      <div class="gap-card fixed">
+        <div class="gap-card-title">✅ 已修復 / 已完成</div>
+        {{GAP_FIXED_HTML}}
+      </div>
+      <div class="gap-card open">
+        <div class="gap-card-title">⏳ 待解決 / 規劃中</div>
+        {{GAP_OPEN_HTML}}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Roadmap</div>
+      <h2>發展里程碑</h2>
+      <p>已完成的重要里程碑與近期開發計畫。</p>
+    </div>
+    <div class="ux-flow-container" style="max-width:680px;margin:0 auto;">
+      <div class="roadmap-timeline">{{ROADMAP_HTML}}</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>
+      <strong>{{PROJECT_NAME}}</strong> — Project Review Report<br>
+      Generated by <strong>project-review-naelt</strong> on {{GENERATED_DATE}} · Version {{VERSION}}
+    </p>
+  </div>
+</footer>
+
+<script>
+  // Mermaid init
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#C53030',
+      primaryTextColor: '#ffffff',
+      primaryBorderColor: '#B02A2A',
+      lineColor: '#DD6B20',
+      secondaryColor: '#fef2f2',
+      tertiaryColor: '#fff5f5',
+      nodeBorder: '#C53030',
+      clusterBkg: '#fff5f5',
+      titleColor: '#1A202C',
+      edgeLabelBackground: '#ffffff',
+      fontFamily: 'Noto Sans TC, sans-serif',
+    }
+  });
+  
+  // Smooth accordion
+  document.querySelectorAll('details').forEach(d => {
+    d.addEventListener('toggle', () => {
+      if (d.open) {
+        document.querySelectorAll('details[open]').forEach(other => {
+          if (other !== d && other.closest('.faq-panel') === d.closest('.faq-panel')) {
+            other.open = false;
+          }
+        });
+      }
+    });
+  });
+</script>
+</body>
+</html>

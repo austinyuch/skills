@@ -1,0 +1,210 @@
+{
+  "version": "1.1.0",
+  "source": "~/.config/opencode/skills",
+  "target_repo": "~/projects/aclab/skills",
+  "description": "Open-source skills collection for AI agents",
+  "families": {
+    "spec-master": {
+      "description": "Spec Master family: routing and spec-driven development",
+      "skills": ["spec-master"]
+    },
+    "code-review": {
+      "description": "Code review family: review, quality, security, and testing tools",
+      "skills": [
+        "code-review",
+        "test-quality-reviewer",
+        "code-refactoring-advisor",
+        "test-design-generator",
+        "security-risk-reviewer",
+        "sonarqube-bridge"
+      ]
+    },
+    "scrum": {
+      "description": "Scrum family: agile team workflows",
+      "skills": [
+        "scrum-master-skill",
+        "scrum-developer-skill"
+      ]
+    }
+  },
+  "categories": {
+    "engineering": {
+      "description": "Core software engineering workflows",
+      "skills": [
+        "spec-registry-manager",
+        "code-summarizer",
+        "test-registry-manager",
+        "tdd-workflow",
+        "verification-loop",
+        "eval-harness",
+        "backend-patterns",
+        "frontend-patterns",
+        "coding-standards",
+        "golang-patterns",
+        "golang-testing",
+        "go-rust-optimizer",
+        "node-rust-optimizer",
+        "python-rust-optimizer",
+        "capability-mapper"
+      ]
+    },
+    "architecture": {
+      "description": "Architecture, governance, and process design",
+      "skills": [
+        "agentic-scrum-governance",
+        "shared-governance",
+        "committee-decision-making",
+        "strategic-compact",
+        "iterative-retrieval",
+        "epic-breakdown-skill",
+        "requirements-workflow-skill",
+        "workflow-skill-creator",
+        "continuous-learning",
+        "continuous-learning-v2",
+        "skill-migration-workflow",
+        "cross-agents-symlink-bridge",
+        "issue-log-manager",
+        "uat-demo-agent-packaging",
+        "uat-demo-target-governance-template"
+      ]
+    },
+    "devops": {
+      "description": "DevOps, containers, and infrastructure",
+      "skills": [
+        "devops-container-orchestration",
+        "podman-rootless",
+        "k8s-security-patterns",
+        "local-infra-registry-governance",
+        "container-image-janitor",
+        "cross-platform-dev-scripts"
+      ]
+    },
+    "productivity": {
+      "description": "Productivity, writing, and collaboration",
+      "skills": [
+        "writer-skill",
+        "doc-coauthoring",
+        "internal-comms",
+        "vibe-skill",
+        "kiro-skill",
+        "pm-skill",
+        "prd-skill",
+        "name-skill",
+        "find-skills"
+      ]
+    },
+    "data": {
+      "description": "Data analysis, BI, and databases",
+      "skills": [
+        "bi-analyst-skill",
+        "clickhouse-io",
+        "postgres-patterns",
+        "database-modernization-strangler",
+        "taiwan-civic-budget-tracker"
+      ]
+    },
+    "domain-expert": {
+      "description": "Domain-specific expert knowledge",
+      "skills": [
+        "mes-domain-expert-skill",
+        "aws-agent-solution-architect",
+        "microsoft-foundry"
+      ]
+    },
+    "creative": {
+      "description": "Frontend, design, and creative tools",
+      "skills": [
+        "frontend-design-skill",
+        "ui-skill",
+        "theme-factory",
+        "algorithmic-art",
+        "canvas-design",
+        "slack-gif-creator",
+        "web-artifacts-builder",
+        "shadcn"
+      ]
+    },
+    "document": {
+      "description": "Document processing and generation",
+      "skills": [
+        "docx",
+        "pdf",
+        "pptx",
+        "xlsx"
+      ]
+    },
+    "security-compliance": {
+      "description": "Security review and compliance",
+      "skills": [
+        "security-review"
+      ]
+    },
+    "social-media": {
+      "description": "Social media, advocacy, and marketing",
+      "skills": [
+        "social-media-platforms",
+        "social-post-generator",
+        "victim-rights-news-tracker",
+        "brand-guidelines",
+        "brand-guidelines-naelt",
+        
+        "NPO-marketing-guide"
+      ]
+    },
+    "tools": {
+      "description": "Developer tools and integrations",
+      "skills": [
+        "mcp-builder",
+        "claude-api",
+        "local-llm-agent-migrator",
+        "jsm-query-skill",
+        "webapp-testing",
+        "skill-creator"
+      ]
+    },
+    "scrum": {
+      "description": "Scrum and agile team workflows",
+      "skills": [
+        "scrum-master-skill",
+        "scrum-developer-skill"
+      ]
+    },
+    "user-experience": {
+      "description": "User profiles, manuals, and interaction",
+      "skills": [
+        "user-profile-skill",
+        "user-manual-skill"
+      ]
+    },
+    "project-review": {
+      "description": "Project review and executive reporting",
+      "skills": [
+        "project-review-skill",
+        "project-review-naelt"
+      ]
+    },
+    "uat-demo": {
+      "description": "UAT and demo execution tools",
+      "skills": [
+        "uat-demo-agent"
+      ]
+    }
+  },
+  "standalone_files": [
+    {
+      "file": "aws-bedrock-model-ids.md",
+      "category": "domain-expert",
+      "target_path": "references/aws-bedrock-model-ids.md"
+    },
+    {
+      "file": "NPO-marketing-guide.md",
+      "category": "social-media",
+      "target_path": "references/NPO-marketing-guide.md"
+    },
+    {
+      "file": "INTEGRATION-GUIDE.md",
+      "category": "tools",
+      "target_path": "references/INTEGRATION-GUIDE.md"
+    }
+  ]
+}

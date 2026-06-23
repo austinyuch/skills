@@ -1,0 +1,58 @@
+[
+  {
+    "query": "幫我為新的 notification-center 功能建立完整 spec，從 requirements 開始。",
+    "should_trigger": true
+  },
+  {
+    "query": "請根據 .agents/specs/NEXT_STEPS.md 告訴我現在這個專案的下一步，並接著做。",
+    "should_trigger": true
+  },
+  {
+    "query": "請盤點所有 specs 並更新 SPECS.md，補上 completed-handoff wording 和 open CR 摘要。",
+    "should_trigger": true
+  },
+  {
+    "query": "更新 TESTS.md 並整理 test traceability，順便看有沒有 stale rows 跟 duplicate IDs。",
+    "should_trigger": true
+  },
+  {
+    "query": "E2E 前要先把 backend 和 frontend podman compose 跑起來，你先幫我看能不能 reuse 現有 env。",
+    "should_trigger": true
+  },
+  {
+    "query": "我有一個 spec 做到一半，先幫我判斷現在該走 spec-driven-development、test-registry-manager 還是 spec-registry-manager。",
+    "should_trigger": true
+  },
+  {
+    "query": "請幫我整理這個 README 的用字和格式，不用碰任何 spec artifact。",
+    "should_trigger": false
+  },
+  {
+    "query": "我要直接更新 folder-level TESTS.md，補 canonical command 跟 Evidence Ref，不要處理 requirements 或 SPECS.md。",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我把這個 package 的 unit test 修好就好，不需要更新治理文件。",
+    "should_trigger": false
+  },
+  {
+    "query": "我要做 stakeholder-facing project review HTML，重點是 value proposition 和 live demo readiness。",
+    "should_trigger": false
+  },
+  {
+    "query": "請幫我檢查 local dev/UAT/E2E 的 compose stack 和 port ownership 現況。",
+    "should_trigger": false
+  },
+  {
+    "query": "請直接建立 RTM.md，把 requirements、tasks、review evidence 聚合起來，不需要我先決定任何路由。",
+    "should_trigger": true
+  },
+  {
+    "query": "請替 spec-master family 建立可以隨整包 skill 交付的說明、value proposition、Amazon backwards press 和 FAQ，不要只放在 docs 裡。",
+    "should_trigger": true
+  },
+  {
+    "query": "我要打包 spec-master 家族給另一個 agent 環境，請列出應該一起帶走哪些 family skills 和說明文件。",
+    "should_trigger": true
+  }
+]

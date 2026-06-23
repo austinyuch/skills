@@ -1,0 +1,11 @@
+# PostgreSQL
+PG_HOST=localhost
+PG_PORT=15432
+PG_DATABASE={app}_db
+PG_USER={app}_user
+PG_PASSWORD={generated}
+
+# Neo4j (if dedicated)
+NEO4J_URI=bolt://localhost:{bolt_port}
+NEO4J_USER=neo4j
+NEO4J_PASSWORD={generated}

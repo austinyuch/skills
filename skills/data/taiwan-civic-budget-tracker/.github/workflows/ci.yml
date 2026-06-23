@@ -1,0 +1,158 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r scripts/requirements.txt
+
+    - name: Install Playwright browsers
+      run: |
+        playwright install chromium
+
+    - name: Lint with flake8
+      run: |
+        # Stop build if there are Python syntax errors or undefined names
+        flake8 scripts/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 scripts/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Type check with mypy
+      run: |
+        mypy scripts/ --ignore-missing-imports || true
+
+    - name: Test with pytest
+      run: |
+        pytest tests/ -v --cov=scripts --cov-report=xml --cov-report=term
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run Bandit security scan
+      uses: PyCQA/bandit@main
+      with:
+        args: "-r scripts/ -f json -o bandit-report.json || true"
+
+    - name: Upload security scan results
+      uses: actions/upload-artifact@v3
+      with:
+        name: bandit-security-report
+        path: bandit-report.json
+
+  data-validation:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install -r scripts/requirements.txt
+        playwright install chromium
+
+    - name: Create directories
+      run: |
+        mkdir -p data/{raw/{budget,pcc,moea,judicial,moj},processed,reports}
+        mkdir -p logs
+
+    - name: Test budget data collection
+      run: |
+        python scripts/collect_budget_data.py || true
+      env:
+        PYTHONPATH: ${{ github.workspace }}/scripts
+
+    - name: Test procurement data collection (sample)
+      run: |
+        python scripts/collect_procurement.py -f $(date -d '30 days ago' +%Y-%m-%d) -t $(date +%Y-%m-%d) --delay 2.0 || true
+      env:
+        PYTHONPATH: ${{ github.workspace }}/scripts
+
+    - name: Upload collected data artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: collected-data
+        path: |
+          data/raw/
+          logs/
+        retention-days: 7
+
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build documentation
+      run: |
+        echo "Documentation built from SKILL.md and references/"
+        ls -la references/
+
+    - name: Archive documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: |
+          SKILL.md
+          README.md
+          references/
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test, data-validation]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy to staging
+      run: |
+        echo "Deploying to staging environment..."
+        echo "This is where you would deploy your application"
+        # Add your deployment commands here
+
+    - name: Notify deployment status
+      if: always()
+      run: |
+        echo "Deployment status: ${{ job.status }}"

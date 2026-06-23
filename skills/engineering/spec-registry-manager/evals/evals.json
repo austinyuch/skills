@@ -1,0 +1,27 @@
+{
+  "skill_name": "spec-registry-manager",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "請更新 SPECS.md。spec A 與 spec B 都依賴 shared-auth-contract；spec A 的 review.md 標示 Live-Demo Readiness=PASS，但 spec B 的 review.md 標示 Live-Demo Readiness=FAIL，而且 spec A 的 Demo-Critical Depends On 包含 spec B。請用 spec-registry-manager 正確更新 registry 摘要。",
+      "expected_output": "The registry manager rolls up the cross-spec dependency warning instead of inventing a new runtime verdict, and it marks the affected spec with a cross-spec demo dependency risk.",
+      "files": [],
+      "expectations": [
+        "The response preserves lifecycle state separately from governance warnings instead of downgrading the spec history itself.",
+        "The response adds or describes a CROSS_SPEC_DEMO_DEPENDENCY warning when a demo-critical upstream spec is not PASS.",
+        "The response treats live-demo readiness as aggregated review evidence, not as something inferred directly from code or runtime guessing."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "有一個 stakeholder-facing spec 已經標成 [Completed]，但沒有 review.md 的 Live-Demo Readiness 摘要，且 project review artifact 被標示為 fixture-backed screenshots。請用 spec-registry-manager 說明應如何在 registry 中反映這個狀態。",
+      "expected_output": "The registry manager emits DEMO_NOT_ASSESSED and/or ARTIFACT_HONESTY_GAP style warnings while keeping the registry in its governance role.",
+      "files": [],
+      "expectations": [
+        "The response flags missing demo-readiness assessment for a stakeholder-facing spec instead of silently treating completed tasks as sufficient.",
+        "The response recognizes fixture-backed review artifacts as an honesty risk that should surface in governance warnings.",
+        "The response does not propose turning SPECS.md into a runtime inventory or raw test-code scanner."
+      ]
+    }
+  ]
+}

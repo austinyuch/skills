@@ -1,0 +1,50 @@
+[
+  {
+    "query": "請幫我建立一份 web app 的操作手冊，內容要包含登入、列表頁、詳情頁與 dashboard flow。",
+    "should_trigger": true
+  },
+  {
+    "query": "我要更新系統手冊，請把目前前台 UI 的 UX flow 和 manual screenshots 整理成雙語 manual。",
+    "should_trigger": true
+  },
+  {
+    "query": "請替這個 review-cli 工具建立操作手冊，重點是 command syntax、JSON 報告輸出、warning code 解讀與 bootstrap 指令。",
+    "should_trigger": true
+  },
+  {
+    "query": "幫我寫一份 backend operator manual，說明 API health check、runtime bootstrap、報告 artifact 路徑與 readiness 文件怎麼看。",
+    "should_trigger": true
+  },
+  {
+    "query": "這個系統同時有 dashboard UI 跟 CLI bootstrap flow，請做一份 hybrid user manual，把兩種操作面都寫清楚。",
+    "should_trigger": true
+  },
+  {
+    "query": "請更新使用說明，除了頁面截圖，也要把後台 CLI 匯出流程和 report artifact 解讀一起放進 manual。",
+    "should_trigger": true
+  },
+  {
+    "query": "幫我把這個產品的 value proposition 和 live demo readiness 做成給主管看的 executive review HTML。",
+    "should_trigger": false
+  },
+  {
+    "query": "我要一份 PRD，請整理需求、流程、角色權限與功能模組，不用產出操作手冊。",
+    "should_trigger": false
+  },
+  {
+    "query": "請幫我做 code review，找出哪些模組被 impact，順便給我修正建議。",
+    "should_trigger": false
+  },
+  {
+    "query": "我只想跑 Playwright 測試確認頁面有沒有壞，不需要生成 manual 或使用說明。",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我設計 OpenAPI contract 與 request/response schema，先不要整理成使用者手冊。",
+    "should_trigger": false
+  },
+  {
+    "query": "把這個工具的 README 改寫成安裝與開發者貢獻指南，不是操作手冊。",
+    "should_trigger": false
+  }
+]

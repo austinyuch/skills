@@ -1,0 +1,2 @@
+approved,runtime,repository,image_id,tags,created_at,created_epoch,size_bytes,reason,group_key,group_rank,keep_limit,delete_command,notes
+yes,docker,demo/sample,sha256:0000000000000000000000000000000000000000000000000000000000000000,demo/sample:old,2026-05-26T00:00:00Z,1748217600,123456,older-than-keep-limit,demo/sample,4,3,docker image rm sha256:0000000000000000000000000000000000000000000000000000000000000000,Sample row for dry-run validation

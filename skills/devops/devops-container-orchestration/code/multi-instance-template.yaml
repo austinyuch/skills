@@ -1,0 +1,16 @@
+# Template for per-app instances
+neo4j-{app-name}:
+  image: neo4j:latest
+  container_name: dev-neo4j-{app-name}
+  ports:
+    - "{http_port}:7474"
+    - "{bolt_port}:7687"
+  environment:
+    - NEO4J_AUTH=neo4j/${NEO4J_APP_PASSWORD}
+    - NEO4J_PLUGINS=["apoc"]
+  volumes:
+    - .volumes/neo4j-{app-name}/data:/data
+    - .volumes/neo4j-{app-name}/logs:/logs
+  networks:
+    - dev-shared-net
+  restart: unless-stopped

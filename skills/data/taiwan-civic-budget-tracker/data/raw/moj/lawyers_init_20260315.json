@@ -1,0 +1,8 @@
+{
+  "collection_date": "2026-03-15T18:10:31.128829",
+  "source": "MOJ_Lawyer_Query",
+  "url": "https://lawyerbc.moj.gov.tw/",
+  "note": "可使用關鍵字批次查詢律師",
+  "target_lawyers": [],
+  "status": "initialized"
+}

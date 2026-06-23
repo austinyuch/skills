@@ -1,0 +1,50 @@
+use std::slice;
+
+/// 範例：Zero-copy 陣列求和
+/// 
+/// # Safety
+/// - ptr 必須指向有效的 f32 陣列
+/// - len 必須正確反映陣列長度
+/// - 呼叫者必須確保在函式執行期間記憶體不被釋放
+#[no_mangle]
+pub extern "C" fn rust_sum_array(ptr: *const f32, len: usize) -> f32 {
+    // SAFETY: 假設 Go 端正確傳遞了有效指針和長度
+    let data = unsafe {
+        assert!(!ptr.is_null(), "Null pointer passed to Rust");
+        slice::from_raw_parts(ptr, len)
+    };
+
+    // 使用 Rust 高效的迭代器
+    data.iter().sum()
+}
+
+/// 範例：結構體處理
+#[repr(C)]
+pub struct Point {
+    pub x: f32,
+    pub y: f32,
+}
+
+#[no_mangle]
+pub extern "C" fn rust_distance(p1: *const Point, p2: *const Point) -> f32 {
+    let (p1, p2) = unsafe {
+        assert!(!p1.is_null() && !p2.is_null());
+        (&*p1, &*p2)
+    };
+
+    let dx = p1.x - p2.x;
+    let dy = p1.y - p2.y;
+    (dx * dx + dy * dy).sqrt()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sum_array() {
+        let data = vec![1.0, 2.0, 3.0, 4.0];
+        let result = rust_sum_array(data.as_ptr(), data.len());
+        assert_eq!(result, 10.0);
+    }
+}

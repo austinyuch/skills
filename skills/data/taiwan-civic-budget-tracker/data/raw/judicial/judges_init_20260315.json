@@ -1,0 +1,14 @@
+{
+  "collection_date": "2026-03-15T18:10:31.128919",
+  "source": "Judicial_Yuan",
+  "url": "https://www.judicial.gov.tw/",
+  "note": "從法官事務分配頁面收集",
+  "courts": [
+    "最高法院",
+    "臺灣高等法院",
+    "臺北地方法院",
+    "臺中地方法院",
+    "高雄地方法院"
+  ],
+  "status": "initialized"
+}

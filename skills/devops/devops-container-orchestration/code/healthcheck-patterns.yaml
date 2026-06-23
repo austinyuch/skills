@@ -1,0 +1,16 @@
+# Fast-starting services (PostgreSQL, Valkey)
+healthcheck:
+  test: ["CMD", "pg_isready", "-U", "user"]
+  interval: 10s
+  timeout: 5s
+  retries: 5
+
+---
+
+# Slow-starting services (Neo4j ~90s)
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:7474"]
+  interval: 30s
+  timeout: 10s
+  retries: 10
+  start_period: 90s

@@ -1,0 +1,73 @@
+{
+  "skill_name": "spec-master",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "請幫我為新的 notification-center 功能建立完整 spec，從 requirements 開始。",
+      "expected_output": "The skill routes the request to spec-driven-development instead of trying to act as a second full pipeline.",
+      "files": [],
+      "expectations": [
+        "The response identifies branch-spec authoring as the primary surface.",
+        "The response routes to spec-driven-development.",
+        "The response does not claim that spec-master itself owns the six implementation phases."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "請根據 .agents/specs/NEXT_STEPS.md 告訴我現在這個專案的下一步，並接著做。",
+      "expected_output": "The skill treats this as a resume-oriented request, checks NEXT_STEPS.md plus active spec state, and hands control to spec-driven-development.",
+      "files": [],
+      "expectations": [
+        "The response recognizes NEXT_STEPS.md as a rolling operational memo, not the only source of truth.",
+        "The response routes resume work to spec-driven-development.",
+        "The response avoids turning the request into a SPECS.md registry sync by default."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "請盤點所有 specs 並更新 SPECS.md，補上 completed-handoff wording 和 open CR 摘要。",
+      "expected_output": "The skill routes the request to spec-registry-manager and preserves registry authority boundaries.",
+      "files": [],
+      "expectations": [
+        "The response identifies SPECS.md as the primary authority surface being requested.",
+        "The response routes to spec-registry-manager.",
+        "The response does not describe writing requirements.md or design.md as part of the same primary action."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "E2E 前要先把 backend 和 frontend podman compose 跑起來，你先幫我看能不能 reuse 現有 env。",
+      "expected_output": "The skill routes the request to local-infra-registry-governance because runtime allocation is the real task.",
+      "files": [],
+      "expectations": [
+        "The response recognizes this as a runtime governance request.",
+        "The response routes to local-infra-registry-governance.",
+        "The response does not guess ports, compose stack names, or instance ownership."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "請替 spec-master family 建立可以隨整包 skill 交付的說明、value proposition、Amazon backwards press 和 FAQ，不要只放在 docs 裡。",
+      "expected_output": "The skill uses the packaged family explanation path under skills/spec-master and points to README.md plus GENERATION_GUIDE.md.",
+      "files": [],
+      "expectations": [
+        "The response recognizes this as a spec-master family packaging/explanation request.",
+        "The response uses skills/spec-master/README.md as the packageable explanation deliverable.",
+        "The response uses skills/spec-master/GENERATION_GUIDE.md as the update contract.",
+        "The response avoids making docs/manual or docs/review the only authoritative copy."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "我要打包 spec-master 家族給另一個 agent 環境，請列出應該一起帶走哪些 family skills 和說明文件。",
+      "expected_output": "The skill identifies spec-master as the front-door artifact, includes companion family skills, and includes README.md plus GENERATION_GUIDE.md as the explanation package.",
+      "files": [],
+      "expectations": [
+        "The response includes skills/spec-master/ as the front-door artifact.",
+        "The response includes spec-driven-development, spec-registry-manager, test-registry-manager, issue-log-manager, local-infra-registry-governance, and shared-governance as companion family skills.",
+        "The response includes skills/spec-master/README.md and skills/spec-master/GENERATION_GUIDE.md.",
+        "The response does not claim consuming repositories are production-ready or live-demo validated."
+      ]
+    }
+  ]
+}

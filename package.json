@@ -1,0 +1,28 @@
+{
+  "name": "austinyuch-skills",
+  "version": "1.0.0",
+  "description": "AI agent skills collection for OpenCode, Claude, and Codex",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/austinyuch/skills.git"
+  },
+  "keywords": [
+    "ai-agent",
+    "skills",
+    "opencode",
+    "claude",
+    "codex",
+    "agent-skills",
+    "agentskills"
+  ],
+  "author": "austinyuch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/austinyuch/skills/issues"
+  },
+  "homepage": "https://github.com/austinyuch/skills#readme",
+  "scripts": {
+    "install:opencode": "bash scripts/install-to-opencode.sh",
+    "sync:source": "bash scripts/sync-from-source.sh"
+  }
+}

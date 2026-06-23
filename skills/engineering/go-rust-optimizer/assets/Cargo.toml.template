@@ -1,0 +1,22 @@
+[package]
+name = "rust_core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+# 產生靜態庫 (.a)，適合嵌入式環境
+crate-type = ["staticlib"]
+
+[dependencies]
+libc = "0.2"
+
+[profile.release]
+opt-level = 3           # 最高優化
+lto = true              # Link-Time Optimization
+codegen-units = 1       # 單一編譯單元
+panic = "abort"         # 減少二進位大小
+strip = true            # 移除符號表
+
+# ARM 特定優化 (可選)
+[target.aarch64-unknown-linux-gnu]
+rustflags = ["-C", "target-feature=+neon"]

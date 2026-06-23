@@ -1,0 +1,49 @@
+{
+  "skill_name": "user-manual-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "請為一個帶登入與 dashboard 的系統生成使用者手冊。現有 manual screenshots 主要來自 storageState + fixture-backed screenshots，對應 spec 的 Live-Demo Readiness=CONDITIONAL。請用 user-manual-skill 規劃手冊輸出。",
+      "expected_output": "The manual skill keeps the manual useful but explicitly labels evidence source, readiness state, and auth/mock limitations instead of implying the screenshots are fully validated production flows.",
+      "files": [],
+      "expectations": [
+        "The response requires evidence metadata such as Evidence Source, Coverage Tier, and Readiness State to be shown alongside screenshots or captions.",
+        "The response marks auth shortcut usage with AUTH_FIXTURE_COUPLING or equivalent canonical warning code behavior.",
+        "The response avoids treating fixture-backed manual screenshots as authoritative proof of live-demo readiness."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我要更新操作手冊，但 local runtime 無法在 governed allocation 內啟動，只能用示意圖或既有 screenshot。請用 user-manual-skill 說明應如何處理這份手冊，避免 false-green。",
+      "expected_output": "The manual skill allows the fallback but requires explicit illustrative labeling, fallback reason, and conservative claims instead of silently substituting fake evidence.",
+      "files": [],
+      "expectations": [
+        "The response requires a visible fallback label such as Illustrative Only plus DEMO_NOT_ASSESSED or ARTIFACT_HONESTY_GAP where appropriate.",
+        "The response records a fallback reason rather than silently replacing runtime evidence.",
+        "The response keeps the manual artifact useful while clearly limiting what readers should infer from fallback visuals."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "請為一個以 CLI 為主的 code review 工具生成使用者手冊。主要操作面包含 review-cli 指令、JSON 報告輸出、governance/readiness 文件與 runtime bootstrap 指令；沒有穩定的 web UI 截圖。請用 user-manual-skill 規劃手冊，避免把缺少 screenshot 誤判成產品不成熟。",
+      "expected_output": "The manual skill recognizes the product as Backend/Tool/CLI-dominant, uses commands and report artifacts as the primary evidence lane, and avoids applying screenshot/VRT-first standards as the main proof model.",
+      "files": [],
+      "expectations": [
+        "The response classifies the product surface as Backend / Tool / CLI Dominant or equivalent and chooses a non-browser evidence lane.",
+        "The response prefers command examples, structured outputs, report artifacts, or review/governance documents over Playwright screenshots as the primary manual evidence.",
+        "The response explicitly avoids treating the absence of browser screenshots as proof that the product is mock-heavy or non-production."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "我要替一個 hybrid 系統更新操作手冊：前台有 dashboard 與列表頁，後台還有 CLI bootstrap 指令與 API 報告輸出。UI screenshots 來自 live_screenshot，但 CLI 範例目前只能用 illustrative sample；spec review.md 對整體 Live-Demo Readiness 的結論是 CONDITIONAL。請用 user-manual-skill 規劃手冊。",
+      "expected_output": "The manual skill treats the system as hybrid, keeps UI and backend/tool evidence in separate lanes, and clearly distinguishes section-level evidence labels from the product-level readiness summary.",
+      "files": [],
+      "expectations": [
+        "The response keeps web UI evidence and backend/tool evidence separately labeled instead of collapsing them into one blanket readiness claim.",
+        "The response explains that section-level Evidence Source/Coverage Tier do not automatically summarize the whole product's production status.",
+        "The response preserves the product-level CONDITIONAL readiness from review artifacts instead of inflating live screenshots into a full PASS."
+      ]
+    }
+  ]
+}

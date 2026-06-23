@@ -1,0 +1,27 @@
+{
+  "skill_name": "test-registry-manager",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "請刷新一個 workspace 的 TESTS.md 治理。folder-level web/src/test/TESTS.md 已經補上新的 Test ID、Requirement / AC Trace 與 Evidence Ref，但 workspace .agents/specs/TESTS.md 還沒更新。請用 test-registry-manager 說明如何做正確的 reconciliation。",
+      "expected_output": "The skill refreshes folder-level authority first, then updates the workspace TESTS rollup as a summary without turning RTM.md or SPECS.md into inputs.",
+      "files": [],
+      "expectations": [
+        "The response treats folder-level TESTS.md as row-level authority and workspace .agents/specs/TESTS.md as derived rollup.",
+        "The response avoids using RTM.md or SPECS.md to correct TESTS.md rows.",
+        "The response calls out canonical commands, evidence refs, and unresolved drift if they are missing."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "有一個 critical e2e test 找不到可靠的 spec/REQ/AC 映射，但 team 想直接在 TESTS.md 填一條看起來合理的 Requirement Trace。請用 test-registry-manager 給出正確處理方式。",
+      "expected_output": "The skill refuses fabricated traceability, marks the row as unmapped or partial, and reports the gap for later bounded burn-down.",
+      "files": [],
+      "expectations": [
+        "The response explicitly avoids inventing fake requirement or AC mappings.",
+        "The response uses a conservative trace status such as unmapped, partial, or stale.",
+        "The response distinguishes traceability maintenance from readiness verdict authority."
+      ]
+    }
+  ]
+}

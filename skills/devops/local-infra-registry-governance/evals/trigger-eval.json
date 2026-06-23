@@ -1,0 +1,90 @@
+[
+  {
+    "query": "幫我把 project-a 的 backend + frontend local stack 跑起來，我要做 e2e。",
+    "should_trigger": true
+  },
+  {
+    "query": "這個 localhost port 衝突到底是哪個 local env 佔用的？",
+    "should_trigger": true
+  },
+  {
+    "query": "目前有哪些 stale 或 orphaned 的 local env 可以安全清掉？",
+    "should_trigger": true
+  },
+  {
+    "query": "我想 reuse 目前的 uat instance，不要重建。",
+    "should_trigger": true
+  },
+  {
+    "query": "幫我檢查 registry 裡現在哪些 dev instances 還 active。",
+    "should_trigger": true
+  },
+  {
+    "query": "先幫我判斷這個 e2e env 應該 release 還是 gc。",
+    "should_trigger": true
+  },
+  {
+    "query": "有工程師手動跑了 podman compose，現在想知道能不能接手 reuse。",
+    "should_trigger": true
+  },
+  {
+    "query": "這個 project-instance 其實已經在跑，只是 registry 還沒有 entry，先幫我登錄現況。",
+    "should_trigger": true
+  },
+  {
+    "query": "project-a 這個 project 有好幾個 uat instance，先列出來讓我選要用哪一個。",
+    "should_trigger": true
+  },
+  {
+    "query": "這個 project 完全沒紀錄，先幫我建 project metadata，再處理 dev 的 backend+frontend env。",
+    "should_trigger": true
+  },
+  {
+    "query": "這次選到的 canonical project 名稱請寫回 workspace 的 AGENTS.md，下次別再問。",
+    "should_trigger": true
+  },
+  {
+    "query": "frontend 起來了就夠了，先把這個 env 當成 ready。",
+    "should_trigger": true
+  },
+  {
+    "query": "幫我看一下 local dev/UAT/E2E 的 compose stack 和 port ownership 現況。",
+    "should_trigger": true
+  },
+  {
+    "query": "我們已經拿到 allocation 了，接下來請決定 compose / Podman 怎麼落地。",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我更新 SPECS.md，補上新功能的 Depends On 和 Impacts。",
+    "should_trigger": false
+  },
+  {
+    "query": "這個 design.md 要怎麼補 contract authority 和 pin/version？",
+    "should_trigger": false
+  },
+  {
+    "query": "我只想跑 unit test，不需要起任何真實服務。",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我優化 docker-compose 的 volume mount 路徑與 rootless Podman 設定。",
+    "should_trigger": false
+  },
+  {
+    "query": "把這次選到的 active instance 直接寫進 ~/.config/opencode/AGENTS.md。",
+    "should_trigger": false
+  },
+  {
+    "query": "我要做 code review，幫我分析哪些模組被 impact。",
+    "should_trigger": false
+  },
+  {
+    "query": "把 NEXT_STEPS.md 的 blocker 摘要整理一下，不要動 local infra。",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我看這個 OpenAPI contract 應該怎麼拆模組。",
+    "should_trigger": false
+  }
+]

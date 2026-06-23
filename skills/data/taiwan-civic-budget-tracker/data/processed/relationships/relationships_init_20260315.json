@@ -1,0 +1,49 @@
+{
+  "creation_date": "2026-03-15T18:10:31.129006",
+  "entity_types": {
+    "GovernmentAgency": "政府機關",
+    "BudgetPlan": "預算計畫",
+    "ProcurementCase": "標案",
+    "Company": "廠商",
+    "Person": "人員",
+    "Lawyer": "律師",
+    "Judge": "法官",
+    "Subsidy": "補助"
+  },
+  "relationship_types": [
+    {
+      "type": "BUDGET_FOR",
+      "description": "機關編列預算給計畫"
+    },
+    {
+      "type": "PROCURES",
+      "description": "計畫透過標案執行"
+    },
+    {
+      "type": "AWARDED_TO",
+      "description": "標案決標給廠商"
+    },
+    {
+      "type": "OWNS",
+      "description": "公司投資關係"
+    },
+    {
+      "type": "DIRECTS",
+      "description": "人員擔任董監事"
+    },
+    {
+      "type": "RECEIVES",
+      "description": "NPO接受補助"
+    },
+    {
+      "type": "REPRESENTS",
+      "description": "律師代表當事人"
+    },
+    {
+      "type": "PRESIDES",
+      "description": "法官審理案件"
+    }
+  ],
+  "data": [],
+  "status": "template_created"
+}

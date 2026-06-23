@@ -1,0 +1,60 @@
+{
+  "initialized_at": "2026-03-15T18:10:31.127964",
+  "version": "1.0.0",
+  "data_sources": {
+    "pcc_opendata": {
+      "enabled": true,
+      "last_update": null,
+      "update_frequency": "daily"
+    },
+    "moea_company": {
+      "enabled": true,
+      "last_update": null,
+      "update_frequency": "weekly"
+    },
+    "judicial_judges": {
+      "enabled": true,
+      "last_update": null,
+      "update_frequency": "monthly"
+    },
+    "moj_lawyers": {
+      "enabled": true,
+      "last_update": null,
+      "update_frequency": "weekly"
+    }
+  },
+  "target_agencies": [
+    "司法院",
+    "法務部",
+    "法務部調查局",
+    "矯正署",
+    "法律扶助基金會"
+  ],
+  "keywords": [
+    "司法改革",
+    "修復式司法",
+    "國民法官",
+    "人民參審",
+    "人權宣導",
+    "法律扶助",
+    "犯罪預防",
+    "更生保護",
+    "廢除死刑",
+    "死刑",
+    "刑罰",
+    "獄政"
+  ],
+  "entity_resolution": {
+    "require_birth_year": true,
+    "similarity_threshold": 0.85,
+    "fuzzy_match_enabled": true
+  },
+  "first_collection": {
+    "date_range": {
+      "start": "2020-01-01",
+      "end": "2024-12-31"
+    },
+    "status": "completed",
+    "completed_at": "2026-03-15T18:10:31.129196"
+  }
+}

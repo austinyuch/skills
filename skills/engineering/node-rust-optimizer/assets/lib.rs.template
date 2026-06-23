@@ -1,0 +1,65 @@
+use napi::bindgen_prelude::*;
+use napi_derive::napi;
+use regex::Regex;
+use aes_gcm::{Aes256Gcm, Key, Nonce};
+use aes_gcm::aead::{Aead, KeyInit};
+
+/// 高效能 JSON 解析 (使用 simd-json)
+#[napi]
+pub fn parse_json_fast(input: Buffer) -> Result<String> {
+    let mut bytes = input.as_ref().to_vec();
+    let value = simd_json::to_borrowed_value(&mut bytes)
+        .map_err(|e| Error::from_reason(format!("JSON parse error: {}", e)))?;
+    
+    serde_json::to_string(&value)
+        .map_err(|e| Error::from_reason(format!("JSON stringify error: {}", e)))
+}
+
+/// 批次正規表示式過濾
+#[napi]
+pub fn filter_regex(pattern: String, texts: Vec<String>) -> Result<Vec<String>> {
+    let re = Regex::new(&pattern)
+        .map_err(|e| Error::from_reason(format!("Invalid regex: {}", e)))?;
+    
+    Ok(texts.into_iter().filter(|t| re.is_match(t)).collect())
+}
+
+/// AES-256-GCM 加密
+#[napi]
+pub fn encrypt_aes(key: Buffer, nonce: Buffer, plaintext: Buffer) -> Result<Buffer> {
+    if key.len() != 32 {
+        return Err(Error::from_reason("Key must be 32 bytes"));
+    }
+    if nonce.len() != 12 {
+        return Err(Error::from_reason("Nonce must be 12 bytes"));
+    }
+    
+    let key = Key::<Aes256Gcm>::from_slice(key.as_ref());
+    let cipher = Aes256Gcm::new(key);
+    let nonce = Nonce::from_slice(nonce.as_ref());
+    
+    let ciphertext = cipher.encrypt(nonce, plaintext.as_ref())
+        .map_err(|e| Error::from_reason(format!("Encryption failed: {}", e)))?;
+    
+    Ok(Buffer::from(ciphertext))
+}
+
+/// AES-256-GCM 解密
+#[napi]
+pub fn decrypt_aes(key: Buffer, nonce: Buffer, ciphertext: Buffer) -> Result<Buffer> {
+    if key.len() != 32 {
+        return Err(Error::from_reason("Key must be 32 bytes"));
+    }
+    if nonce.len() != 12 {
+        return Err(Error::from_reason("Nonce must be 12 bytes"));
+    }
+    
+    let key = Key::<Aes256Gcm>::from_slice(key.as_ref());
+    let cipher = Aes256Gcm::new(key);
+    let nonce = Nonce::from_slice(nonce.as_ref());
+    
+    let plaintext = cipher.decrypt(nonce, ciphertext.as_ref())
+        .map_err(|e| Error::from_reason(format!("Decryption failed: {}", e)))?;
+    
+    Ok(Buffer::from(plaintext))
+}

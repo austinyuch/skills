@@ -1,0 +1,84 @@
+use pyo3::prelude::*;
+use numpy::{PyArray1, PyReadonlyArray1};
+
+/// 範例：簡單陣列求和
+#[pyfunction]
+fn sum_array(data: Vec<f32>) -> f32 {
+    data.iter().sum()
+}
+
+/// 範例：NumPy 陣列處理 (Zero-copy)
+#[pyfunction]
+fn process_numpy<'py>(
+    py: Python<'py>,
+    arr: PyReadonlyArray1<f64>
+) -> &'py PyArray1<f64> {
+    let arr = arr.as_array();
+    
+    // 使用 Rust 高效的迭代器
+    let result: Vec<f64> = arr.iter()
+        .map(|&x| x * 2.0)
+        .collect();
+    
+    PyArray1::from_vec(py, result)
+}
+
+/// 範例：並行處理 (釋放 GIL)
+#[pyfunction]
+fn parallel_sum(py: Python, data: Vec<f64>) -> f64 {
+    use rayon::prelude::*;
+    
+    // 釋放 GIL 允許並行
+    py.allow_threads(|| {
+        data.par_iter().sum()
+    })
+}
+
+/// 範例：Python 類別
+#[pyclass]
+struct Point {
+    #[pyo3(get, set)]
+    x: f64,
+    #[pyo3(get, set)]
+    y: f64,
+}
+
+#[pymethods]
+impl Point {
+    #[new]
+    fn new(x: f64, y: f64) -> Self {
+        Point { x, y }
+    }
+    
+    fn distance(&self, other: &Point) -> f64 {
+        let dx = self.x - other.x;
+        let dy = self.y - other.y;
+        (dx * dx + dy * dy).sqrt()
+    }
+    
+    fn __repr__(&self) -> String {
+        format!("Point({}, {})", self.x, self.y)
+    }
+}
+
+/// Python 模組定義
+#[pymodule]
+fn rust_ext(_py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(sum_array, m)?)?;
+    m.add_function(wrap_pyfunction!(process_numpy, m)?)?;
+    m.add_function(wrap_pyfunction!(parallel_sum, m)?)?;
+    m.add_class::<Point>()?;
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sum_array() {
+        let data = vec![1.0, 2.0, 3.0, 4.0];
+        let result = sum_array(data);
+        assert_eq!(result, 10.0);
+    }
+}

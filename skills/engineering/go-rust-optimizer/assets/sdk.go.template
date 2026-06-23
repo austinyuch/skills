@@ -1,0 +1,41 @@
+package main
+
+/*
+#cgo LDFLAGS: -L./lib -lrust_core -ldl -lpthread -lm
+#include <stdint.h>
+
+// 如果使用 cbindgen
+// #include "./include/rust_core.h"
+
+// 手動宣告 C 函數原型
+float rust_sum_array(float* ptr, uintptr_t len);
+*/
+import "C"
+import (
+	"runtime"
+	"unsafe"
+)
+
+// RustSumArray 呼叫 Rust 實作的陣列求和
+func RustSumArray(data []float32) float32 {
+	if len(data) == 0 {
+		return 0
+	}
+
+	ptr := (*C.float)(unsafe.Pointer(&data[0]))
+	length := C.uintptr_t(len(data))
+
+	// 防止 GC 在 Rust 執行期間回收
+	defer runtime.KeepAlive(data)
+
+	return float32(C.rust_sum_array(ptr, length))
+}
+
+// 範例：Go 原生實作 (用於 benchmark 比較)
+func GoSumArray(data []float32) float32 {
+	var sum float32
+	for _, v := range data {
+		sum += v
+	}
+	return sum
+}

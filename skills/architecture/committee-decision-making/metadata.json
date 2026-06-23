@@ -1,0 +1,57 @@
+{
+  "name": "committee-decision-making",
+  "version": "1.5.0",
+  "generated_at": "2026-02-25T16:00:31.731884979+08:00",
+  "code_repository": "https://[YOUR_REPO_URL]",
+  "mcp_tools": [
+    {
+      "name": "start_committee_session",
+      "description": "Start a new committee discussion session with multiple LLM participants."
+    },
+    {
+      "name": "get_session_status",
+      "description": "Query the current status and progress of a committee discussion session."
+    },
+    {
+      "name": "read_discussion",
+      "description": "Retrieve full discussion history with all opinions from participants."
+    },
+    {
+      "name": "synthesize_discussion",
+      "description": "Generate AI-powered synthesis and consensus analysis from the discussion."
+    }
+  ],
+  "supported_roles": [
+    "architect",
+    "devops",
+    "security",
+    "product",
+    "qa"
+  ],
+  "supported_providers": [
+    {
+      "name": "claude",
+      "models": [
+        "claude-sonnet-4-20250514"
+      ]
+    },
+    {
+      "name": "gemini",
+      "models": [
+        "gemini-3-pro-preview"
+      ]
+    },
+    {
+      "name": "openai",
+      "models": [
+        "gpt-4-turbo"
+      ]
+    },
+    {
+      "name": "opencode",
+      "models": [
+        "claude-sonnet-4-5"
+      ]
+    }
+  ]
+}

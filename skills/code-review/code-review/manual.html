@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code Review Manual</title>
+  <style>
+    :root{
+      --bg:#09111f;
+      --panel:#101a2d;
+      --panel-2:#16233c;
+      --line:#283650;
+      --text:#eef4ff;
+      --muted:#b8c3db;
+      --blue:#4ea1ff;
+      --teal:#48d6c2;
+      --gold:#f1c65d;
+      --red:#ff7b7b;
+      --shadow:0 20px 54px rgba(0,0,0,.32);
+      --radius:16px;
+      --radius-sm:12px;
+      --max:1160px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at top left, rgba(78,161,255,.16), transparent 30%),
+        radial-gradient(circle at top right, rgba(72,214,194,.12), transparent 26%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height:1.5;
+    }
+    a{color:inherit}
+    .wrap{max-width:var(--max); margin:0 auto; padding:28px 20px 52px}
+    .hero{
+      padding:30px;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:20px;
+      background:linear-gradient(180deg, rgba(16,26,45,.98), rgba(16,26,45,.84));
+      box-shadow:var(--shadow);
+      position:relative;
+    }
+    .lang-switch{
+      position:absolute;
+      top:16px;
+      right:16px;
+      display:flex;
+      gap:8px;
+    }
+    .lang-switch button{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:7px 10px;
+      border-radius:999px;
+      cursor:pointer;
+      font:inherit;
+    }
+    .lang-switch button.active{
+      background:rgba(78,161,255,.2);
+      border-color:rgba(78,161,255,.4);
+    }
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:8px;
+      color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+    }
+    .eyebrow::before{content:""; width:10px; height:10px; border-radius:999px; background:linear-gradient(135deg, var(--blue), var(--teal))}
+    h1,h2,h3,p{margin:0}
+    h1{font-size:clamp(2rem, 4vw, 3.55rem); line-height:1.04; max-width:14ch; margin-top:10px}
+    .lede{margin-top:14px; color:var(--muted); max-width:76ch}
+    .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
+    .chip{
+      padding:4px 10px; border-radius:999px;
+      border:1px solid rgba(78,161,255,.22);
+      background:rgba(78,161,255,.12);
+      color:#dbeaff;
+      font-size:12px;
+    }
+    .section{
+      margin-top:22px;
+      padding:22px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.02);
+    }
+    .section h2{font-size:1.2rem; margin-bottom:12px}
+    .grid{display:grid; gap:14px}
+    .grid.cols-2{grid-template-columns:repeat(2, minmax(0,1fr))}
+    .grid.cols-3{grid-template-columns:repeat(3, minmax(0,1fr))}
+    .card{
+      padding:16px;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--line);
+      background:var(--panel);
+    }
+    .card h3{font-size:1rem; margin-bottom:8px}
+    .card p, .card li{color:var(--muted)}
+    .step{
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:14px;
+      padding:16px;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(22,35,60,.94), rgba(16,26,45,.96));
+    }
+    .num{
+      width:34px; height:34px; border-radius:999px;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:rgba(78,161,255,.16);
+      color:#e9f4ff;
+      font-weight:700;
+    }
+    .step h3{font-size:1rem; margin-bottom:6px}
+    .step p{color:var(--muted)}
+    .flow{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:10px;
+    }
+    .flow-step{
+      padding:14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--panel-2);
+      min-height:126px;
+    }
+    .flow-step b{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:999px; margin-bottom:10px; background:rgba(78,161,255,.16); color:#eff6ff; font-size:.84rem}
+    .flow-step h3{font-size:1rem; margin-bottom:6px}
+    .flow-step p{color:var(--muted); font-size:.94rem}
+    table{width:100%; border-collapse:collapse; border-radius:12px; overflow:hidden}
+    th, td{padding:12px 10px; text-align:left; vertical-align:top; border-bottom:1px solid rgba(255,255,255,.08)}
+    th{color:#dfe7ff; font-size:.92rem}
+    td{color:var(--muted)}
+    details{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:14px 16px;
+    }
+    summary{cursor:pointer; font-weight:600}
+    summary::marker{color:var(--blue)}
+    details p{margin-top:10px; color:var(--muted)}
+    .warn{
+      color:#ffdede;
+      background:rgba(255,123,123,.08);
+      border:1px solid rgba(255,123,123,.18);
+      border-radius:12px;
+      padding:12px 14px;
+    }
+    .footer{
+      display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between;
+      margin-top:20px; padding-top:14px;
+      border-top:1px solid rgba(255,255,255,.08);
+      color:var(--muted); font-size:.92rem;
+    }
+    @media (max-width: 980px){
+      .grid.cols-2,.grid.cols-3,.flow{grid-template-columns:1fr}
+      .wrap{padding:16px}
+      .hero,.section{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="lang-switch" aria-label="Language switch">
+        <button type="button" data-lang="en" class="active">EN</button>
+        <button type="button" data-lang="zh">繁中</button>
+      </div>
+      <div class="eyebrow" data-en="Code Review Manual" data-zh="Code Review 操作手冊">Code Review Manual</div>
+      <h1 data-en="Operational guidance for review, refactor, and security handoff" data-zh="review、refactor 與 security 交棒的操作說明">Operational guidance for review, refactor, and security handoff</h1>
+      <p class="lede" data-en="Use Code Review when the task is about code structure, test quality, refactor guidance, or security preflight. This manual explains how to run the review family step by step and how to interpret the outputs." data-zh="當工作內容關於 code structure、test quality、refactor 建議，或 security preflight 時，就使用 Code Review。這份手冊會逐步說明如何使用 review family，以及如何解讀輸出。">Use Code Review when the task is about code structure, test quality, refactor guidance, or security preflight. This manual explains how to run the review family step by step and how to interpret the outputs.</p>
+      <div class="chips">
+        <span class="chip" data-en="static analysis first" data-zh="先做靜態分析">static analysis first</span>
+        <span class="chip" data-en="helper skills next" data-zh="再用 helper skills">helper skills next</span>
+        <span class="chip" data-en="no readiness claims" data-zh="不做 readiness 宣稱">no readiness claims</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Quick Start" data-zh="快速開始">Quick Start</h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3 data-en="Use this skill when" data-zh="何時使用">Use this skill when</h3>
+          <p data-en="You need to analyze a file, inspect a project, judge existing tests, propose refactors, run security preflight, or fold Sonar findings into a single review conversation." data-zh="當你需要分析單一檔案、檢視整個專案、判斷既有測試、提出 refactor 建議、執行 security preflight，或把 Sonar findings 合併進同一個 review conversation 時，就使用這個 skill。">You need to analyze a file, inspect a project, judge existing tests, propose refactors, run security preflight, or fold Sonar findings into a single review conversation.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="Read first" data-zh="先讀什麼">Read first</h3>
+          <p><code>SKILL.md</code> for the review contract, then the relevant reference file for the command or output format you need.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Review Workflow" data-zh="Review 工作流">Review Workflow</h2>
+      <div class="flow">
+        <div class="flow-step"><b>1</b><h3 data-en="Identify the review target" data-zh="辨識 review 目標">Identify the review target</h3><p data-en="Decide whether the request is file-level, project-level, test-quality, refactor, or security oriented." data-zh="先判斷請求是 file-level、project-level、test-quality、refactor，還是 security-oriented。">Decide whether the request is file-level, project-level, test-quality, refactor, or security oriented.</p></div>
+        <div class="flow-step"><b>2</b><h3 data-en="Pick the helper" data-zh="選 helper">Pick the helper</h3><p data-en="Use the sibling helper skill only for the part of the work it owns." data-zh="只在該 helper skill 所擁有的那一部分工作上使用它。">Use the sibling helper skill only for the part of the work it owns.</p></div>
+        <div class="flow-step"><b>3</b><h3 data-en="Collect evidence" data-zh="收集 evidence">Collect evidence</h3><p data-en="Read the CLI output or artifact, and keep the claim boundary conservative." data-zh="閱讀 CLI output 或 artifact，並保持保守的 claim boundary。">Read the CLI output or artifact, and keep the claim boundary conservative.</p></div>
+        <div class="flow-step"><b>4</b><h3 data-en="Hand off" data-zh="交棒">Hand off</h3><p data-en="Summarize the bounded context and the next action, not a readiness verdict." data-zh="摘要 bounded context 與下一步動作，不要寫成 readiness verdict。">Summarize the bounded context and the next action, not a readiness verdict.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Helper Skill Map" data-zh="Helper skill 地圖">Helper Skill Map</h2>
+      <table>
+        <thead>
+          <tr>
+            <th data-en="Helper" data-zh="Helper">Helper</th>
+            <th data-en="Use it for" data-zh="用在什麼情境">Use it for</th>
+            <th data-en="What to expect" data-zh="預期會得到什麼">What to expect</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>test-quality-reviewer</code></td><td>Judge existing tests</td><td>Smells, missing boundaries, pyramid gaps</td></tr>
+          <tr><td><code>code-refactoring-advisor</code></td><td>Name likely refactor moves</td><td>Fowler move, test safety net, and Ponytail/YAGNI <code>minimality_check</code></td></tr>
+          <tr><td><code>test-design-generator</code></td><td>Generate candidate tests</td><td>Boundary / equivalence / pairwise cases</td></tr>
+          <tr><td><code>security-risk-reviewer</code></td><td>Offline security preflight</td><td>Ranked OWASP-style findings</td></tr>
+          <tr><td><code>sonarqube-bridge</code></td><td>Merge Sonar into the same conversation</td><td>Sonar findings ranked with graph context</td></tr>
+          <tr><td><code>capability-mapper</code></td><td>Map a file to one business capability</td><td>Advisory capability label per file (Layer 5 enrichment input, not a verdict)</td></tr>
+          <tr><td><code>code-summarizer</code></td><td>Produce file summaries</td><td>Compact summary for the next review step</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Ponytail / YAGNI Boundary" data-zh="Ponytail / YAGNI 邊界">Ponytail / YAGNI Boundary</h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3 data-en="Where it applies" data-zh="適用位置">Where it applies</h3>
+          <p data-en="Use the ladder before recommending new abstractions, helpers, dependencies, wrappers, parsers, lifecycle managers, class/module splits, or test harnesses. It supports design and implementation decisions, not Phase 5 verdicts." data-zh="在建議新的 abstraction、helper、dependency、wrapper、parser、lifecycle manager、class/module split 或 test harness 前使用此 ladder。它支援 design 與 implementation 決策，不是 Phase 5 verdict。">Use the ladder before recommending new abstractions, helpers, dependencies, wrappers, parsers, lifecycle managers, class/module splits, or test harnesses. It supports design and implementation decisions, not Phase 5 verdicts.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="How to report it" data-zh="如何回報">How to report it</h3>
+          <p data-en="Report it through `code-refactoring-advisor` as advisory `minimality_check` context: smell, refactor move, safety net, and the smallest portable alternative. Do not translate it into PASS, FAIL, BLOCK, or approval language." data-zh="透過 `code-refactoring-advisor` 以 advisory `minimality_check` context 回報：smell、refactor move、safety net，以及最小且可攜的替代方案。不要把它翻成 PASS、FAIL、BLOCK 或核准語言。">Report it through <code>code-refactoring-advisor</code> as advisory <code>minimality_check</code> context: smell, refactor move, safety net, and the smallest portable alternative. Do not translate it into PASS, FAIL, BLOCK, or approval language.</p>
+        </div>
+      </div>
+      <table style="margin-top:16px">
+        <thead>
+          <tr>
+            <th data-en="Stage" data-zh="階段">Stage</th>
+            <th data-en="Ponytail Ladder" data-zh="Ponytail Ladder">Ponytail Ladder</th>
+            <th data-en="Code Review family" data-zh="Code Review 家族">Code Review family</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Phase 2 Design</td><td data-en="Prevent over-engineering during option selection." data-zh="在選型時防止 over-engineering。">Prevent over-engineering during option selection.</td><td data-en="Use graph-only / impact evidence when blast radius matters." data-zh="當 blast radius 重要時，使用 graph-only / impact evidence。">Use graph-only / impact evidence when blast radius matters.</td></tr>
+          <tr><td>Phase 4 Implementation</td><td data-en="Prevent over-building while writing or refactoring code." data-zh="在寫程式或重構時防止 over-building。">Prevent over-building while writing or refactoring code.</td><td data-en="Use `code-refactoring-advisor` for `minimality_check`; let `test-quality-reviewer` flag over-specified tests." data-zh="使用 `code-refactoring-advisor` 產生 `minimality_check`；讓 `test-quality-reviewer` 標出過度指定 implementation details 的測試。">Use <code>code-refactoring-advisor</code> for <code>minimality_check</code>; let <code>test-quality-reviewer</code> flag over-specified tests.</td></tr>
+          <tr><td>Phase 5 Review</td><td data-en="Does not directly participate as a verdict source." data-zh="不直接作為 verdict source。">Does not directly participate as a verdict source.</td><td data-en="Use `code-review` and security/build/test authorities for actual findings and verdicts." data-zh="實際 findings 與 verdicts 由 `code-review`、security/build/test authorities 負責。">Use <code>code-review</code> and security/build/test authorities for actual findings and verdicts.</td></tr>
+        </tbody>
+      </table>
+      <div class="warn" style="margin-top:12px;" data-en="Portability boundary: native platform features are acceptable only when they are portable across supported OS/arch targets, or isolated behind an explicit adapter, guard, and fallback." data-zh="Portability boundary：native platform feature 只有在可跨支援的 OS/arch targets 攜帶，或被明確 adapter、guard 與 fallback 隔離時才可接受。">Portability boundary: native platform features are acceptable only when they are portable across supported OS/arch targets, or isolated behind an explicit adapter, guard, and fallback.</div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Common Walkthroughs" data-zh="常見操作流程">Common Walkthroughs</h2>
+      <div class="grid cols-3">
+        <div class="step"><div class="num">A</div><div><h3 data-en="Analyze a file" data-zh="分析單一檔案">Analyze a file</h3><p data-en="For Go/Python/TypeScript/C#, run the built-in AST review (`review-cli review <path>`) as the primary deterministic pass — it needs no LLM and is accurate by construction. Then summarize the main structure, risks, and next handoff." data-zh="對 Go/Python/TypeScript/C#，先跑內建的 AST review（`review-cli review <path>`）作為主要的 deterministic pass——它不需要 LLM、且由語法樹保證正確。再摘要主要結構、風險與下一個交棒動作。">For Go/Python/TypeScript/C#, run the built-in AST review (<code>review-cli review &lt;path&gt;</code>) as the primary deterministic pass — it needs no LLM and is accurate by construction. Then summarize the main structure, risks, and next handoff.</p></div></div>
+        <div class="step"><div class="num">B</div><div><h3 data-en="Review tests" data-zh="檢視測試">Review tests</h3><p data-en="Hand the test file to `test-quality-reviewer` and keep the output scoped to test quality." data-zh="把 test file 交給 `test-quality-reviewer`，並把輸出範圍維持在 test quality。">Hand the test file to `test-quality-reviewer` and keep the output scoped to test quality.</p></div></div>
+        <div class="step"><div class="num">C</div><div><h3 data-en="Run security preflight" data-zh="執行 security preflight">Run security preflight</h3><p data-en="Use `security-risk-reviewer` for OWASP-oriented checks and keep the result ranked, not final." data-zh="使用 `security-risk-reviewer` 做 OWASP-oriented 檢查，並把結果維持在 ranked、不是 final。">Use `security-risk-reviewer` for OWASP-oriented checks and keep the result ranked, not final.</p></div></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="CLI / Artifact Interpretation" data-zh="CLI / Artifact 怎麼看">CLI / Artifact Interpretation</h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3 data-en="Good outputs" data-zh="好的輸出">Good outputs</h3>
+          <p data-en="Deterministic findings, ranked issues, structured JSON, and short handoff notes that name the next action clearly." data-zh="deterministic findings、ranked issues、structured JSON，以及能清楚說出下一步動作的短 handoff notes。">Deterministic findings, ranked issues, structured JSON, and short handoff notes that name the next action clearly.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="What to avoid" data-zh="要避免什麼">What to avoid</h3>
+          <p data-en="Do not turn graph output or helper output into a production verdict. Use it as input to the next review step." data-zh="不要把 graph output 或 helper output 直接變成 production verdict。把它當成下一個 review step 的輸入就好。">Do not turn graph output or helper output into a production verdict. Use it as input to the next review step.</p>
+        </div>
+      </div>
+      <div class="warn" style="margin-top:12px;" data-en="Claim boundary: Code Review provides review evidence and bounded-context handoffs. Readiness still belongs to the consuming repo's review artifacts and runtime evidence." data-zh="Claim boundary：Code Review 提供 review evidence 與 bounded-context handoffs。Readiness 仍然屬於 consuming repo 的 review artifacts 與 runtime evidence。">Claim boundary: Code Review provides review evidence and bounded-context handoffs. Readiness still belongs to the consuming repo's review artifacts and runtime evidence.</div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="FAQ" data-zh="常見問題">FAQ</h2>
+      <div class="grid" style="gap:12px">
+        <details open><summary data-en="When should I use code-review?" data-zh="什麼時候用 code-review？">When should I use code-review?</summary><p data-en="When the task is about code structure, tests, refactoring, security, or Sonar evidence and you need a review-oriented handoff." data-zh="當工作內容是 code structure、tests、refactoring、security，或 Sonar evidence，而且你需要 review-oriented handoff 時。">When the task is about code structure, tests, refactoring, security, or Sonar evidence and you need a review-oriented handoff.</p></details>
+        <details><summary data-en="Is this a runtime gate?" data-zh="這是 runtime gate 嗎？">Is this a runtime gate?</summary><p data-en="No. It is static analysis plus bounded-context tooling." data-zh="不是。它是 static analysis 加上 bounded-context tooling。">No. It is static analysis plus bounded-context tooling.</p></details>
+        <details><summary data-en="Why are the helper skills separate?" data-zh="為什麼 helper skills 要分開？">Why are the helper skills separate?</summary><p data-en="Because tests, refactors, security, and capability summaries are distinct review problems and should not be collapsed into one opaque workflow." data-zh="因為 tests、refactors、security 與 capability summaries 是不同的 review 問題，不應該被壓成一個不透明的 workflow。">Because tests, refactors, security, and capability summaries are distinct review problems and should not be collapsed into one opaque workflow.</p></details>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Responsible AI Operator Checks" data-zh="Responsible AI 操作檢查">Responsible AI Operator Checks</h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3 data-en="Before accepting findings" data-zh="接受 findings 前">Before accepting findings</h3>
+          <p data-en="Confirm each finding has an explainable risk, evidence source, affected file or behavior, and next owner. Treat tool output as review input, not final approval." data-zh="確認每個 finding 都有可解釋風險、證據來源、受影響檔案或行為，以及下一位 owner。工具輸出是 review input，不是 final approval。">Confirm each finding has an explainable risk, evidence source, affected file or behavior, and next owner. Treat tool output as review input, not final approval.</p>
+        </div>
+        <div class="card">
+          <h3 data-en="Before handoff" data-zh="交棒前">Before handoff</h3>
+          <p data-en="Check for secrets, privacy-sensitive data, auth or tenant-boundary risk, and stale scanner output before handing the report to another agent or team." data-zh="交棒給另一個 agent 或團隊前，檢查 secrets、privacy-sensitive data、auth 或 tenant-boundary risk，以及 stale scanner output。">Check for secrets, privacy-sensitive data, auth or tenant-boundary risk, and stale scanner output before handing the report to another agent or team.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-en="Evidence And Claim Boundary" data-zh="Evidence 與 Claim 邊界">Evidence And Claim Boundary</h2>
+      <p class="lede" data-en="This manual explains how to run the review family and interpret its outputs. It does not claim that a consuming repository is production-ready, demo-ready, or fully integrated." data-zh="這份手冊會說明如何執行 review family，以及如何解讀它的輸出。它不會宣稱 consuming repository 已經 production-ready、demo-ready 或 fully integrated。">This manual explains how to run the review family and interpret its outputs. It does not claim that a consuming repository is production-ready, demo-ready, or fully integrated.</p>
+    </section>
+
+    <div class="footer">
+      <span data-en="Source:" data-zh="來源：">Source: <code>skills/code-review/SKILL.md</code></span>
+      <span data-en="Manual guide:" data-zh="手冊規範：">Manual guide: <code>skills/code-review/MANUAL_GENERATION_GUIDE.md</code></span>
+    </div>
+  </main>
+  <script>
+    (() => {
+      const translations = document.querySelectorAll('[data-en][data-zh]');
+      const buttons = document.querySelectorAll('.lang-switch button');
+      const setLang = (lang) => {
+        document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : 'en';
+        localStorage.setItem('code-review-manual-lang', lang);
+        buttons.forEach((btn) => btn.classList.toggle('active', btn.dataset.lang === lang));
+        document.title = lang === 'zh' ? 'Code Review 操作手冊' : 'Code Review Manual';
+        translations.forEach((el) => {
+          if (el.children.length > 0) return;
+          el.textContent = lang === 'zh' ? el.dataset.zh : el.dataset.en;
+        });
+      };
+      buttons.forEach((btn) => btn.addEventListener('click', () => setLang(btn.dataset.lang)));
+      setLang(localStorage.getItem('code-review-manual-lang') || 'en');
+    })();
+  </script>
+</body>
+</html>

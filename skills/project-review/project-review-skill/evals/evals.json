@@ -1,0 +1,40 @@
+{
+  "skill_name": "project-review-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "請為主管生成 project review HTML。當前 dashboard 截圖其實來自 css illustration fallback，相關 spec 的 Live-Demo Readiness=CONDITIONAL，Coverage Tier=mock-heavy。請確保文件好看，但不能過度宣稱。",
+      "expected_output": "The generated review plan or content clearly labels the evidence as illustrative/mock-heavy, caps the claim, and avoids presenting it as live-validated functionality.",
+      "files": [],
+      "expectations": [
+        "The response includes visible evidence labeling such as evidence source, coverage tier, or readiness state for feature evidence.",
+        "The response uses conservative wording for fallback or illustrative evidence instead of claiming validated live functionality.",
+        "The response preserves executive readability while still disclosing the fallback reason or evidence limit."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我要做高階主管簡報。某個功能頁的 screenshots 依賴 storageState 與 shared auth fixture，且上游 auth spec 在 SPECS.md 中有 CROSS_SPEC_DEMO_DEPENDENCY warning。請用 project-review-skill 規劃這份 review 文件。",
+      "expected_output": "The project review skill surfaces the auth/demo dependency risk in the executive artifact and refuses to let the screenshot stand as unqualified proof.",
+      "files": [],
+      "expectations": [
+        "The response identifies auth fixture coupling or equivalent auth-context risk for the screenshot evidence.",
+        "The response cross-checks SPECS.md or review artifacts instead of independently inventing a runtime PASS decision.",
+        "The response explains how the feature should be labeled or caveated in the review output."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "請用 project-review-skill 幫我生成全專案 review，並結合 gstack CEO perspective，提高對產品 thesis、策略賭注、scope mode、10-star gap 和下一步決策的深度。citation 放在 skill README 即可，產出報告不用。",
+      "expected_output": "The generated review structure includes a CEO/founder perspective with strategy-level analysis while keeping gstack attribution in the skill bundle rather than requiring it in the generated report.",
+      "files": [],
+      "expectations": [
+        "The response includes CEO/founder-depth elements such as founder thesis, strategic bet map, scope mode, 10-star gap analysis, or decision memo.",
+        "The response preserves evidence discipline by separating hypotheses or bets from validated proof.",
+        "The skill bundle contains README or reference attribution to https://github.com/garrytan/gstack.",
+        "The generated report is not required to include gstack citation unless the user explicitly asks for report-level citation.",
+        "The response avoids implying endorsement by gstack, Garry Tan, or YC."
+      ]
+    }
+  ]
+}

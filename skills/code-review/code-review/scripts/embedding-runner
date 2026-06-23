@@ -1,0 +1,248 @@
+#!/usr/bin/env python3
+"""Run a single ONNX embedding request from stdin and return JSON on stdout."""
+
+from __future__ import annotations
+
+import json
+import math
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+
+UVX_ENV = "CODE_REVIEW_ONNX_RUNNER_UVX"
+DISABLE_UVX_ENV = "CODE_REVIEW_ONNX_RUNNER_DISABLE_UVX"
+
+
+def main() -> int:
+    request_text = sys.stdin.read()
+    deps = import_runtime_dependencies(request_text)
+    if isinstance(deps, int):
+        return deps
+    np, ort, tokenizer_cls = deps
+
+    try:
+        request = json.loads(request_text or "{}")
+        embedding = run_embedding(request, np, ort, tokenizer_cls)
+    except Exception as exc:  # noqa: BLE001 - runner protocol must return JSON errors.
+        print(json.dumps({"error": str(exc)}))
+        return 0
+
+    print(json.dumps({"embedding": embedding}, separators=(",", ":")))
+    return 0
+
+
+def import_runtime_dependencies(request_text: str):
+    try:
+        import numpy as np
+        import onnxruntime as ort
+        from tokenizers import Tokenizer
+
+        return np, ort, Tokenizer
+    except ModuleNotFoundError as exc:
+        if os.environ.get(UVX_ENV) == "1" or os.environ.get(DISABLE_UVX_ENV) == "1":
+            print(json.dumps({"error": f"missing ONNX runner dependency: {exc.name}"}))
+            return 0
+        uvx = shutil.which("uvx")
+        if not uvx:
+            print(json.dumps({"error": f"missing ONNX runner dependency: {exc.name}; uvx not found"}))
+            return 0
+
+        env = os.environ.copy()
+        env[UVX_ENV] = "1"
+        env.setdefault(
+            "UV_CACHE_DIR",
+            str(Path(os.environ.get("TMPDIR", "/tmp")) / "code-review-onnx-runner-uv"),
+        )
+        env.setdefault(
+            "UV_TOOL_DIR",
+            str(Path(os.environ.get("TMPDIR", "/tmp")) / "code-review-onnx-runner-tools"),
+        )
+        env.setdefault(
+            "PYTHONPYCACHEPREFIX",
+            str(Path(os.environ.get("TMPDIR", "/tmp")) / "code-review-onnx-runner-pycache"),
+        )
+        runtime_package = onnxruntime_package_for_request(request_text)
+        completed = subprocess.run(
+            [
+                uvx,
+                "--with",
+                "numpy",
+                "--with",
+                runtime_package,
+                "--with",
+                "tokenizers",
+                "python",
+                str(Path(__file__).resolve()),
+            ],
+            input=request_text,
+            text=True,
+            capture_output=True,
+            check=False,
+            env=env,
+        )
+        if completed.stderr:
+            sys.stderr.write(completed.stderr)
+        sys.stdout.write(completed.stdout)
+        return completed.returncode
+
+
+def onnxruntime_package_for_request(request_text: str) -> str:
+    try:
+        request = json.loads(request_text or "{}")
+    except json.JSONDecodeError:
+        return "onnxruntime"
+    provider = str(request.get("execution_provider") or "cpu").strip().lower()
+    if provider in {"cuda", "gpu"}:
+        return "onnxruntime-gpu"
+    return "onnxruntime"
+
+
+def run_embedding(request: dict[str, Any], np, ort, tokenizer_cls) -> list[float]:
+    text = str(request.get("text") or "")
+    if not text:
+        raise ValueError("text is required")
+
+    model_path = resolve_path(str(request.get("model_path") or ""))
+    tokenizer_path = resolve_path(str(request.get("tokenizer_path") or ""))
+    if not model_path.exists():
+        raise FileNotFoundError(f"model_path not found: {model_path}")
+    if not tokenizer_path.exists():
+        raise FileNotFoundError(f"tokenizer_path not found: {tokenizer_path}")
+
+    requested_dimensions = int(request.get("dimensions") or 0)
+    execution_provider = normalize_execution_provider(str(request.get("execution_provider") or "cpu"))
+    normalize = bool(request.get("normalize", True))
+
+    tokenizer = tokenizer_cls.from_file(str(tokenizer_path))
+    tokenizer.enable_truncation(max_length=model_max_length(model_path))
+    encoded = tokenizer.encode(text)
+    if not encoded.ids:
+        raise ValueError("tokenizer produced no input ids")
+
+    session = ort.InferenceSession(
+        str(model_path),
+        providers=select_providers(ort, execution_provider),
+    )
+    inputs = build_inputs(session, encoded, np)
+    outputs = session.run(None, inputs)
+    vector = pool_outputs(outputs[0], encoded.attention_mask, np)
+    if normalize:
+        vector = l2_normalize(vector, np)
+
+    embedding = [float(value) for value in vector.tolist()]
+    if requested_dimensions > 0 and len(embedding) != requested_dimensions:
+        raise ValueError(
+            f"unexpected embedding dimension: got {len(embedding)}, want {requested_dimensions}"
+        )
+    if not all(math.isfinite(value) for value in embedding):
+        raise ValueError("embedding contains non-finite values")
+    return embedding
+
+
+def resolve_path(value: str) -> Path:
+    if not value:
+        return Path("")
+    path = Path(value)
+    if path.is_absolute() or path.exists():
+        return path
+
+    script_path = Path(__file__).resolve()
+    skill_dir = script_path.parent.parent
+    repo_root = skill_dir.parent.parent.parent
+    candidates = [
+        Path.cwd() / path,
+        repo_root / path,
+        skill_dir / path,
+        skill_dir / "assets" / path,
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return path
+
+
+def model_max_length(model_path: Path) -> int:
+    config_path = model_path.with_name("config.json")
+    if not config_path.exists():
+        return 512
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return 512
+    for key in ("max_position_embeddings", "model_max_length"):
+        value = config.get(key)
+        if isinstance(value, int) and value > 0:
+            return min(value, 8192)
+    return 512
+
+
+def normalize_execution_provider(value: str) -> str:
+    normalized = value.strip().lower()
+    if normalized in {"", "cpu"}:
+        return "cpu"
+    if normalized in {"cuda", "gpu"}:
+        return "cuda"
+    raise ValueError(f"unsupported execution_provider: {value}")
+
+
+def select_providers(ort, execution_provider: str) -> list[str]:
+    available = set(ort.get_available_providers())
+    if execution_provider == "cuda":
+        if "CUDAExecutionProvider" not in available:
+            raise ValueError(
+                "CUDAExecutionProvider is not available; available providers: "
+                + ", ".join(sorted(available))
+            )
+        return ["CUDAExecutionProvider", "CPUExecutionProvider"]
+    if "CPUExecutionProvider" not in available:
+        raise ValueError(
+            "CPUExecutionProvider is not available; available providers: "
+            + ", ".join(sorted(available))
+        )
+    return ["CPUExecutionProvider"]
+
+
+def build_inputs(session, encoded, np) -> dict[str, Any]:
+    ids = np.asarray([encoded.ids], dtype=np.int64)
+    mask = np.asarray([encoded.attention_mask], dtype=np.int64)
+    type_ids = np.asarray([encoded.type_ids], dtype=np.int64)
+
+    values = {
+        "input_ids": ids,
+        "attention_mask": mask,
+        "token_type_ids": type_ids,
+    }
+    inputs: dict[str, Any] = {}
+    for item in session.get_inputs():
+        if item.name not in values:
+            raise ValueError(f"unsupported ONNX input: {item.name}")
+        inputs[item.name] = values[item.name]
+    return inputs
+
+
+def pool_outputs(output, attention_mask: list[int], np):
+    data = np.asarray(output)
+    if data.ndim == 2:
+        return data[0]
+    if data.ndim != 3:
+        raise ValueError(f"unsupported ONNX output rank: {data.ndim}")
+    mask = np.asarray(attention_mask, dtype=np.float32)
+    mask = np.expand_dims(mask, axis=(0, 2))
+    summed = (data * mask).sum(axis=1)
+    counts = np.clip(mask.sum(axis=1), a_min=1e-9, a_max=None)
+    return summed[0] / counts[0]
+
+
+def l2_normalize(vector, np):
+    norm = np.linalg.norm(vector)
+    if norm <= 0:
+        raise ValueError("embedding norm is zero")
+    return vector / norm
+
+
+if __name__ == "__main__":
+    sys.exit(main())

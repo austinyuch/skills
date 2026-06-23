@@ -1,0 +1,18 @@
+{
+  "skill_name": "database-modernization-strangler",
+  "baseline_label": "iteration-1-manual-fallback-smoke",
+  "baseline_type": "manual_fallback_reference",
+  "source_workspace": "temp/skill-evals/database-modernization-strangler/iteration-1",
+  "claim_ceiling": "CONDITIONAL",
+  "known_gaps": [
+    "subagent auth unavailable during paired benchmark runs",
+    "visible artifacts show one run per configuration despite benchmark metadata claiming three",
+    "timing and token metrics are placeholders",
+    "iteration-1 is useful for eval design and relative smoke comparison only"
+  ],
+  "recommended_use": [
+    "seed adversarial eval design",
+    "compare structure quality qualitatively",
+    "do not treat as strong parity or release-readiness evidence"
+  ]
+}

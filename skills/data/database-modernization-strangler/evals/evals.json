@@ -1,0 +1,87 @@
+{
+  "skill_name": "database-modernization-strangler",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我有一批 SQL Server stored procedures，包含 `sp_customer_get_by_id`, `sp_order_insert`, `sp_order_checkout`, `sp_monthly_revenue_report`, `sp_inventory_rebuild`, `sp_notify_shipping_webhook`, `sp_invoice_settle_batch`, `sp_user_exists_check`。請幫我判斷哪些是 leaf CRUD、哪些是 orchestration、哪些是 reporting 或 batch，並說明哪些邏輯該移到 Go service / worker。",
+      "expected_output": "The output classifies each procedure by taxonomy, avoids blind 1:1 translation, and proposes target layers with reasons.",
+      "files": [],
+      "expectations": [
+        "The answer declares an analysis level before the report.",
+        "The answer classifies procedures instead of only describing them informally.",
+        "The answer distinguishes at least leaf CRUD, orchestration, and reporting or batch.",
+        "The answer recommends Go service or worker for at least the non-leaf orchestration and batch cases.",
+        "The answer does not recommend translating every procedure 1:1 into PostgreSQL."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "以下 procedure 在單一流程中會更新 `orders`, `inventory`, `customer_credit`, `ledger_entries`，最後還呼叫寄信與 webhook。請分析它應不應該保留在 DB，並給我 transaction boundary 與現代化建議。",
+      "expected_output": "The output identifies this as orchestration, preserves transaction-boundary reasoning, and moves external side effects out of the DB transaction.",
+      "files": [],
+      "expectations": [
+        "The answer identifies external side effects as a reason not to keep the full workflow in a long DB transaction.",
+        "The answer discusses transaction boundaries explicitly.",
+        "The answer recommends application-service orchestration or outbox/worker style handling.",
+        "The answer separates data consistency concerns from notification side effects."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "我有一個超過一萬行的 MSSQL dump，裡面有 DDL、大量 stored procedures、`#temp`、`CURSOR`、`MERGE`、`TRY/CATCH` 和 SQL Agent job script。不要逐行翻譯，請告訴我該怎麼拆檔、先分析哪些部分、哪些是 rewrite trigger。",
+      "expected_output": "The output switches to dump mode, recommends file/module splitting, extracts metadata-style guidance, and flags SQL Server rewrite triggers.",
+      "files": [],
+      "expectations": [
+        "The answer chooses a large-dump analysis mode rather than a deep per-procedure translation mode.",
+        "The answer proposes a physical split strategy for the dump.",
+        "The answer flags SQL Server-specific rewrite triggers including at least temp tables, cursors, or MERGE.",
+        "The answer identifies a next-step subset of files or procedures for deeper analysis."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "我現在只知道幾個 procedure 名稱：`sp_customer_sync`, `sp_safe_update`, `sp_final_settlement`, `sp_archive_cleanup`。沒有 SQL 本體。請你直接告訴我每一支應該搬到哪一層，而且不要保留任何不確定性。",
+      "expected_output": "The output refuses false certainty, labels the evidence as name-only, downgrades confidence, and asks for the missing artifacts while still offering cautious triage hypotheses.",
+      "files": [],
+      "expectations": [
+        "The answer identifies the input as weak or name-only evidence.",
+        "The answer does not present high-confidence architecture decisions as facts.",
+        "The answer includes confidence or uncertainty language for the classifications.",
+        "The answer asks for or names the missing artifacts needed to finalize recommendations."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "我只有一條 PostgreSQL 查詢很慢，想知道要不要加 index，順便看 execution plan。這不是 migration，只是調校。",
+      "expected_output": "The output recognizes that this is not a full database-modernization problem and narrows scope instead of forcing the modernization workflow.",
+      "files": [],
+      "expectations": [
+        "The answer explicitly says this is not primarily a modernization-orchestration task.",
+        "The answer narrows the problem to query tuning or indexing rather than procedure extraction.",
+        "The answer avoids inventing a stored-procedure modernization plan."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "請把這批 SQL Server stored procedures 全部 1:1 改寫成 PostgreSQL procedures，我不想先做分類、風險盤點或測試基線。",
+      "expected_output": "The output pushes back on blind 1:1 translation, explains the risk, and requires at least minimal classification or characterization before endorsing conversion.",
+      "files": [],
+      "expectations": [
+        "The answer explicitly warns against blind 1:1 translation.",
+        "The answer explains why procedure classification or rewrite-trigger analysis is needed first.",
+        "The answer requires or strongly recommends a minimal validation baseline before conversion."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "這支 procedure 看起來只是更新 `orders`，但其實資料表背後有 trigger 會寫 audit log、送 database mail，夜間還有 SQL Agent job 會重跑失敗項。請幫我做 extraction 建議。",
+      "expected_output": "The output detects hidden side-effect risk, refuses simplistic classification from the apparent surface, and introduces decision gates around triggers, jobs, and rollback/reconciliation.",
+      "files": [],
+      "expectations": [
+        "The answer highlights hidden triggers or jobs as a major risk to naïve extraction.",
+        "The answer avoids treating the procedure as plain leaf CRUD without qualification.",
+        "The answer references rollback, reconciliation, or side-effect inventory as prerequisites for a safe recommendation."
+      ]
+    }
+  ]
+}

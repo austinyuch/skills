@@ -1,0 +1,71 @@
+{
+  "skill_name": "cross-agents-symlink-bridge",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "這個 repo 之前把整個 .claude 與 .codex 指到 .agents，結果權限與 approval state 變得不穩。請幫我改成只有 repo-local skills 用 symlink，其餘設定與權限檔維持 real directory / sync workflow；另外 Claude 仍要處理 CLAUDE.md -> AGENTS.md。",
+      "expected_output": "The response chooses a hybrid bridge instead of whole-directory symlinks, keeps .claude/.kiro/.codex as real directories, limits symlink behavior to skills, and preserves CLAUDE.md recursive sync.",
+      "files": [],
+      "expectations": [
+        "The solution keeps .claude, .kiro, and .codex as real directories rather than symlinking whole roots.",
+        "The solution explicitly symlinks only .claude/skills, .kiro/skills, and .codex/skills to the repo-local skills source.",
+        "The solution preserves CLAUDE.md -> AGENTS.md handling for Claude instead of removing it."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "skills 我一定要用 symlink，但 specs 想保留彈性：預設走 sync，必要時可以切成 symlink。其他設定檔不要被這個 skill 改成 symlink。請設計 repo-local cross-agent 機制。",
+      "expected_output": "The response introduces an explicit specs mode switch, defaults specs to sync, allows opt-in symlink behavior, and leaves other config/permission files untouched.",
+      "files": [],
+      "expectations": [
+        "The solution introduces explicit specs modes such as sync, symlink, or skip.",
+        "The default behavior for specs is sync, not symlink.",
+        "The solution states that other config or permission surfaces are intentionally left to sync workflows or real files."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "請 review cross-agents 的 gitignore 機制。現在 .gitignore 裡面還殘留舊的 .claude / .kiro 根目錄 ignore，但新的策略其實只該忽略 skills 子路徑與 generated CLAUDE.md。請提出正確修正方式。",
+      "expected_output": "The response rewrites gitignore management around generated subpath entries, separates bridge-path entries from CLAUDE.md entries, and removes stale whole-root ignore assumptions.",
+      "files": [],
+      "expectations": [
+        "The solution ignores generated subpaths like .claude/skills rather than whole roots like .claude.",
+        "The solution treats generated CLAUDE.md entries as a separately managed section or equivalent isolated mechanism.",
+        "The solution removes or prevents stale gitignore entries from older whole-directory bridge behavior."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "我只 staged 了一個 docs/AGENTS.md 變更，但 repo 裡面已經有其他既存的 generated CLAUDE.md symlink。請檢查 cross-agents 的 staged sync 設計，避免每次只根據 staged 檔案重寫 .gitignore，導致既有 ignore entries 被洗掉。",
+      "expected_output": "The response preserves existing managed CLAUDE.md ignore entries during staged runs by rebuilding from the current valid symlink state instead of only the staged AGENTS.md subset.",
+      "files": [],
+      "expectations": [
+        "The solution identifies that staged mode cannot rebuild the managed CLAUDE.md section from only staged AGENTS.md files.",
+        "The solution reconstructs the CLAUDE.md managed section from the current valid symlink state across the repo.",
+        "The solution avoids blindly deleting older CLAUDE.md ignore entries during a staged-only sync run."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Windows 上 `.claude/skills` 用 Junction，`dir /AL` 常常回傳的是 normalize 後的 target，不一定是原始的相對路徑字串。請 review cross-agents 的 Windows 驗證與 idempotency，避免因為比較 `..\\skills` 字串而誤判 link 壞掉。",
+      "expected_output": "The response normalizes Windows junction targets before comparing them, so verification and idempotency use canonical paths rather than raw relative strings.",
+      "files": [],
+      "expectations": [
+        "The solution acknowledges that Windows junction inspection may return normalized or absolute paths.",
+        "The solution compares normalized canonical targets instead of raw relative link strings.",
+        "The solution applies the same normalized-path approach to both skills and specs verification when specs are symlinked."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "pre-commit hook 會在每次 commit 都跑 `sync-claude-md --staged`。如果這次 commit 完全沒有 staged `AGENTS.md`，但 repo 裡已經有既存的 generated `CLAUDE.md -> AGENTS.md` symlink，請修正 cross-agents，避免把 `.gitignore` 的 CLAUDE managed section 清空。",
+      "expected_output": "The response preserves the managed CLAUDE.md .gitignore section during staged no-op runs by rebuilding it from the current valid symlink state instead of rewriting an empty section.",
+      "files": [],
+      "expectations": [
+        "The solution identifies that the pre-commit hook runs staged sync even when no AGENTS.md is part of the commit.",
+        "The solution states that staged no-op runs must preserve existing managed CLAUDE.md ignore entries rather than clearing the section.",
+        "The solution rebuilds the CLAUDE.md managed section from the current valid symlink state across the repo."
+      ]
+    }
+  ]
+}

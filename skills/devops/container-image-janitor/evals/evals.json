@@ -1,0 +1,38 @@
+{
+  "skill_name": "container-image-janitor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "請盤點這台機器上的 docker 與 podman images，保留每個 repository 最新 3 個 image，把建議刪除清單輸出成 UTF-8-SIG CSV 到 ./temp/container-image-cleanup.csv，不要真的刪除任何 image。完成後告訴我下一步該編輯哪個欄位。",
+      "expected_output": "Agent 使用 skill 的 inventory workflow，建立 CSV，且明確指出要編輯 approved 欄位。",
+      "files": [],
+      "expectations": [
+        "The output references scripts/manage_images.py inventory or clearly describes the inventory step.",
+        "The output says no deletions are performed during the inventory/export step.",
+        "The output tells the user to edit the approved column in the CSV."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我已經編輯好 ./temp/container-image-cleanup.csv，請先用 dry-run 告訴我哪些 docker 或 podman images 會被刪除，不要真的執行。",
+      "expected_output": "Agent 使用 skill 的 apply dry-run workflow，預覽 approved rows 的刪除計畫，但不做จริง刪除。",
+      "files": [],
+      "expectations": [
+        "The output references the apply workflow or scripts/manage_images.py apply.",
+        "The output clearly states that this step is a dry-run.",
+        "The output does not claim that images were actually deleted."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "解釋 container-image-janitor 產生的 CSV 欄位用途，特別是 approved、image_id、reason、delete_command 四個欄位。",
+      "expected_output": "Agent 讀取 skill 的 CSV schema reference，正確解釋重點欄位與安全用途。",
+      "files": [],
+      "expectations": [
+        "The output explains that approved controls whether a row is eligible for deletion.",
+        "The output explains that image_id is the safer deletion key than tags.",
+        "The output explains why reason and delete_command are included in the CSV."
+      ]
+    }
+  ]
+}

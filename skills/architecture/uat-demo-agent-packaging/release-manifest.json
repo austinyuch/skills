@@ -1,0 +1,14 @@
+{
+  "skill_name": "uat-demo-agent-packaging",
+  "release_id": "20260609-122108",
+  "bundle_dir": "uat-demo-agent-packaging",
+  "files": [
+    "SKILL.md",
+    "references/release-hygiene.md"
+  ],
+  "distribution_boundary": {
+    "automation_level": "repo-owned-direct-copy-skill",
+    "package_manager_distribution": "deferred",
+    "signed_release_delivery": "deferred"
+  }
+}

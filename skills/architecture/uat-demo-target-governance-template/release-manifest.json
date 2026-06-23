@@ -1,0 +1,21 @@
+{
+  "skill_name": "uat-demo-target-governance-template",
+  "release_id": "20260609-122111",
+  "bundle_dir": "uat-demo-target-governance-template",
+  "files": [
+    "SKILL.md",
+    "assets/target-agents-snippet.md",
+    "assets/target-bootstrap-template.md",
+    "assets/target-next-steps-template.md",
+    "references/bootstrap-governance.md",
+    "references/routing-boundary.md",
+    "references/target-governance-artifacts.md",
+    "references/uat-to-demo-transition.md",
+    "scripts/publish_target_governance_template.py"
+  ],
+  "distribution_boundary": {
+    "automation_level": "repo-owned-template-bundle",
+    "package_manager_distribution": "deferred",
+    "signed_release_delivery": "deferred"
+  }
+}

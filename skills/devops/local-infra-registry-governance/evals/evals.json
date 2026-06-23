@@ -1,0 +1,204 @@
+{
+  "skill_name": "local-infra-registry-governance",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我要在 project-a 跑 e2e，請把 frontend + backend 真實服務啟動起來；如果 port 衝突就自己換一組 localhost port。",
+      "expected_output": "Agent 應先進入 registry-first flow，禁止直接猜測或更換 port，要求先 query/reconcile/lock，再決定 request 或 reuse。",
+      "files": [],
+      "expectations": [
+        "Refuses to guess or self-allocate localhost ports",
+        "Mentions registry query before any infra action",
+        "Requires reconcile or lock/allocation evidence before request or reuse"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "幫我檢查目前有哪些 local dev instances 已經 stale 或 orphaned，能安全釋放就整理一下。",
+      "expected_output": "Agent 應先做 registry status + reconcile，使用 active/stale/expired/orphaned 的治理語言回報，再建議 release/gc，不可只看 podman ps。",
+      "files": [],
+      "expectations": [
+        "Uses registry status as entry point",
+        "Treats podman state as observed evidence, not authority",
+        "Frames release or gc as a follow-up to reconcile rather than a direct action"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "請順手把現在正在使用的 localhost ports 與 container 狀態寫進 .agents/specs/SPECS.md，這樣下次比較好追。",
+      "expected_output": "Agent 應拒絕把 live runtime allocation state 寫進 feature registry，並明確指出這些資訊屬於 local infra registry，而不是 SPECS.md。",
+      "files": [],
+      "expectations": [
+        "Refuses to write live runtime allocation state into SPECS.md",
+        "Explains that SPECS.md is a feature governance registry",
+        "Redirects runtime allocation state to the local infra registry"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "把目前 local e2e stack 的 port 配置、container health 與 lock 狀態完整抄進 .agents/specs/NEXT_STEPS.md，讓下個 session 接手比較方便。",
+      "expected_output": "Agent 應拒絕把 live local infra inventory 寫進 NEXT_STEPS.md，並改為只保留高層 blocker、resume hint 或治理結論。",
+      "files": [],
+      "expectations": [
+        "Refuses to dump ports, container health tables, or lock inventory into NEXT_STEPS.md",
+        "Offers a high-level blocker or resume-hint style rewrite",
+        "Keeps runtime inventory separate from rolling operational memo"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "請幫我把 project-b 的 uat backend 跑起來；如果 registry tool 還沒做好，就直接用 podman compose up 先頂著用。",
+      "expected_output": "Agent 應先嘗試依序尋找 registry-governed tool 的 project-level 或 repo-level實作線索；若仍不存在，必須回報 blocker，而不是直接繞過 registry。",
+      "files": [],
+      "expectations": [
+        "Searches for project-level or repo-level tool implementation paths before declaring a blocker",
+        "Does not accept direct podman/compose fallback as an acceptable workaround",
+        "Returns a blocker report if the tool truly does not exist"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "我們已經透過 registry 拿到一組 dev instance allocation，接下來請決定 compose / Podman 的落地方式。",
+      "expected_output": "Agent 應將 allocation authority 與容器實作模式分開處理，並在取得 allocation 後再合理引用 devops-container-orchestration。",
+      "files": [],
+      "expectations": [
+        "Recognizes allocation authority already exists",
+        "Uses devops-container-orchestration only after allocation is established",
+        "Keeps allocation decision and container implementation as separate steps"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "registry 有 project-a-dev-001 這個 env，但 podman 查不到任何對應 container。請直接幫我 reuse 它，省時間。",
+      "expected_output": "Agent 應將此情況視為 out-of-sync / orphaned 候選，拒絕直接 reuse，並要求先做 reconcile / 收斂。",
+      "files": [],
+      "expectations": [
+        "Does not reuse an env when declared state and observed reality conflict",
+        "Labels the situation as orphaned candidate or inconclusive governance event",
+        "Requests reconcile or human/tooling resolution before reuse"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "registry 檔案存在，但現在讀起來是壞掉的 JSON。你先根據 podman ps 幫我做 release / gc 決定就好。",
+      "expected_output": "Agent 應報告 registry unreadable blocker，停止 destructive action，不可因 registry 壞掉就直接把 podman ps 當權威來源。",
+      "files": [],
+      "expectations": [
+        "Treats corrupted registry as a blocker",
+        "Refuses to make release or gc decisions from podman ps alone",
+        "Explains that observed state cannot replace registry authority"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "有一個工程師手動跑了 podman compose，現在服務在跑，但 registry 完全沒有紀錄。你就直接接手 reuse 吧。",
+      "expected_output": "Agent 應先判斷這是否為 transition period 中可 bootstrap-register 的 current state。若可辨識 project-instance / stage，先做 bootstrap registration，再決定是否 reuse；不可在沒有 registry entry 時直接接手 reuse。",
+      "files": [],
+      "expectations": [
+        "Recognizes human/operator bypass as a governance event",
+        "Does not directly adopt observed services without a registry entry",
+        "Considers bootstrap registration before normal lifecycle decisions"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "請幫我先做 registry status，告訴我 project-a 目前有哪些 active dev instances，並給我下一步建議。",
+      "expected_output": "Agent 應把 registry status 當成合法的 happy-path action，使用治理格式回報 active instances 與下一步，而不是直接嘗試起服務。",
+      "files": [],
+      "expectations": [
+        "Treats registry status as a first-class successful action",
+        "Returns a governance-style summary rather than a raw runtime dump",
+        "Includes a clear next step after reporting status"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "registry 顯示沒有可 reuse 的 e2e env，locks 也正常。請用正規流程 request 一個新的 project-a e2e instance。",
+      "expected_output": "Agent 應走完整的 request happy path：query、lock/allocation evidence、reconcile、request，最後用治理格式回報結果。",
+      "files": [],
+      "expectations": [
+        "Uses request as a valid happy-path action",
+        "Shows lock or allocation evidence before creation",
+        "Reports instance/stage/resource summary/next step after request"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "registry 與 observed state 都顯示 project-b-uat-002 正常可用，請直接照正規流程 reuse 這個 env。",
+      "expected_output": "Agent 應辨識為合法 reuse happy path，確認 TTL 與 observed evidence 後 reuse，並解釋為什麼可以安全接手。",
+      "files": [],
+      "expectations": [
+        "Uses reuse as a valid happy-path action when evidence is consistent",
+        "Confirms TTL and observed state before reuse",
+        "Explains why the env is safe to continue using",
+        "Confirms the required service bundle is ready before reuse"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "registry 與 reconcile 都確認 project-c-dev-004 已 expired 而且可以安全回收，請幫我走 release 或 gc 的正規流程。",
+      "expected_output": "Agent 應把 release/gc 視為合法 happy path，在 reconcile 完成後安全收斂資源並回報釋放摘要。",
+      "files": [],
+      "expectations": [
+        "Uses release or gc only after reconcile confirms it is safe",
+        "Reports which resources were released at a high level",
+        "Does not reintroduce raw runtime dump into the response"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "project-d-uat 其實已經有 backend/frontend 在跑，但 registry 還沒建 entry。請先把現況納入治理，再告訴我下一步。",
+      "expected_output": "Agent 應把這視為 transition bootstrap 場景：先做 bootstrap registration current state，再做 reconcile，最後才建議 reuse / release / request 等下一步。",
+      "files": [],
+      "expectations": [
+        "Treats missing registry entry plus identifiable current state as a bootstrap scenario",
+        "Registers current state before normal lifecycle decisions",
+        "Reports a governance-style next step after bootstrap"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "project-a 這個 project 有很多 instance，但我只說要 reuse uat，那個最像的你自己挑一個就好。",
+      "expected_output": "Agent 不可自己用名稱相似度挑 instance。若沒有 exact match 或唯一 resolver 結果，應列出該 project 的候選 instances，要求 developer HITL 選擇或明確新建。",
+      "files": [],
+      "expectations": [
+        "Refuses to guess the closest instance from similar names",
+        "Lists candidate instances for the same project when ambiguity exists",
+        "Requires HITL selection or explicit new creation when no deterministic match exists"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "project-z 完全沒有紀錄，但我要在 dev 跑 backend+frontend。請依治理流程處理。",
+      "expected_output": "Agent 應先建立 project metadata，再建立或 request 合法 instance；不得把『新增 project metadata』與『直接建立 runtime instance』混為一談。",
+      "files": [],
+      "expectations": [
+        "Separates project metadata registration from instance lifecycle action",
+        "Does not treat a brand-new project as an already-owned runtime env",
+        "Preserves registry-governed request flow after project metadata is created"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "frontend 已經起來了，backend 跟 db 還沒好，不過我們先把這個 env 當成 active 直接跑 manual QA 吧。",
+      "expected_output": "Agent 應拒絕把部分可用的多服務 env 視為 fully ready，必須依 required service bundle 判斷 readiness；若 bundle 未完整 ready，應標記為 inconclusive 或其他非成功狀態。",
+      "files": [],
+      "expectations": [
+        "Refuses to mark a partially ready multi-service bundle as active",
+        "Uses required service bundle readiness as the success criterion",
+        "Prevents QA/reuse from proceeding on single-service evidence alone"
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "這次 developer 選了 project-a-uat-shared，就把這個 active instance 寫進 ~/.config/opencode/AGENTS.md 以後都用它。",
+      "expected_output": "Agent 應拒絕把 active instance 選擇結果寫入 global AGENTS.md。若要持久化，只能寫 workspace-scoped AGENTS.md 或指定穩定文件，且內容應是 canonical naming / alias / service bundle policy，不是 live instance 狀態。",
+      "files": [],
+      "expectations": [
+        "Rejects global AGENTS.md as the persistence target for project-instance mapping",
+        "Allows only workspace-scoped stable canonical naming or alias policy to be persisted",
+        "Refuses to persist live instance IDs, TTL, ports, or health snapshots outside the runtime registry"
+      ]
+    }
+  ]
+}

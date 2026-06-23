@@ -1,0 +1,34 @@
+[
+  {
+    "query": "請幫我規劃一個 SQL Server stored procedure 很重的 legacy database modernization 路線圖，目標是拆出 service layer 並遷移到 PostgreSQL。",
+    "should_trigger": true
+  },
+  {
+    "query": "我們有一批 MSSQL procedures，想知道哪些應該留在 DB、哪些應該抽到 application service，還要考慮 transaction boundary。",
+    "should_trigger": true
+  },
+  {
+    "query": "我有一個超大 SQL dump，裡面有 DDL、jobs、triggers、stored procedures，請先不要逐行翻譯，幫我切模組。",
+    "should_trigger": true
+  },
+  {
+    "query": "How should I extract business logic out of SQL Server stored procedures without breaking batch jobs and side effects?",
+    "should_trigger": true
+  },
+  {
+    "query": "我的 PostgreSQL 查詢很慢，幫我看 execution plan 和 index。",
+    "should_trigger": false
+  },
+  {
+    "query": "請幫我修一條 SQL 語法錯誤，只有一行。",
+    "should_trigger": false
+  },
+  {
+    "query": "我想整理 schema naming convention，跟 stored procedure 無關。",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我一般性地重構 backend service，沒有 database modernization 背景。",
+    "should_trigger": false
+  }
+]

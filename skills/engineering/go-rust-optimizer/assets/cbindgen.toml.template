@@ -1,0 +1,13 @@
+language = "C"
+braces = "SameLine"
+line_length = 80
+tab_width = 4
+documentation_style = "c99"
+
+[export]
+# 指定需要導出到 Go 的結構體
+include = []
+
+[export.rename]
+# 重命名以避免衝突
+# "StructName" = "RustStructName"
