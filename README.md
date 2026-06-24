@@ -39,6 +39,19 @@ Each skill installs as `<skill-home>/<skill-name>/` and the agent picks it up au
 Override the destination anywhere with `SKILLS_TARGET=/custom/path`. (OpenCode users can also use the
 community tool: `npx skills@latest add austinyuch/skills`.)
 
+### Native binaries (not bundled)
+
+A few skills rely on **prebuilt native binaries / models that are intentionally not committed** here —
+they are large and platform-specific, so they are gitignored. This keeps `git clone`, `npx`, and `uvx`
+fast and **LFS-free** (no git-lfs dependency, no pointer-stub breakage). Large binaries are distributed
+**out-of-band (e.g. GitHub Releases), never via git LFS.**
+
+- **`code-review`** uses a `review-cli-<os>-<arch>` binary (+ a ~128 MB embedding model). Installing it
+  from this repo copies its docs and scripts but **not** the binary, so its CLI/graph features need that
+  binary obtained separately (built or published by the code-review toolchain). The pure-Python review
+  helpers — `code-refactoring-advisor`, `test-quality-reviewer`, `security-risk-reviewer`,
+  `test-design-generator` — work as-is with no binary.
+
 ## What's Inside
 
 | Category | Skills | Description |

@@ -109,6 +109,9 @@ function main() {
   console.log(`📊 ${dryRun ? 'Would install' : 'Installed'}: ${installed}   ⚠️  Missing: ${missing}`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
   console.log(`Skills ${dryRun ? 'would be' : 'are now'} in: ${target}`);
+  if (fs.existsSync(path.join(target, 'code-review'))) {
+    console.log(`ℹ️  code-review needs a review-cli-<os>-<arch> binary (not bundled) — see README "Native binaries".`);
+  }
 }
 
 main();

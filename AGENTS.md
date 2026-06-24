@@ -80,6 +80,12 @@ Full narrative: [`methodology.html`](methodology.html) · [`docs/agentic-deliver
 - Also credit external sources that informed concrete skills: **everything-claude-code** (MIT, the
   `continuous-learning` skills), **gstack** (MIT), **mattpocock/skills** (MIT). Giant-proprietary
   assets and Anthropic skills have also been purged from git history — do not re-add them.
+- **Native binaries / models are gitignored, never git LFS.** `code-review` needs `review-cli-<os>-<arch>`
+  binaries (built from the upstream **aclab-code-review** Go `go-review-service`, published via its
+  `code-review-publish` flow) and a ~128 MB embedding model. They are intentionally **not** committed
+  (`.gitignore`: `review-cli-*`, `*.onnx`, `uatdemo-*`), so a clone/`npx`/`uvx` install ships the skill
+  without them. Distribute such binaries out-of-band (GitHub Releases), not via LFS — LFS would break
+  the no-dependency `git clone`/`npx`/`uvx` install flow.
 
 ## 5. House conventions
 

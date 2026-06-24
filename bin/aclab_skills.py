@@ -112,6 +112,8 @@ def main() -> int:
     print(f"📊 {'Would install' if args.dry_run else 'Installed'}: {installed}   ⚠️  Missing: {missing}")
     print("━" * 32)
     print(f"Skills {'would be' if args.dry_run else 'are now'} in: {target}")
+    if (target / "code-review").exists():
+        print('ℹ️  code-review needs a review-cli-<os>-<arch> binary (not bundled) — see README "Native binaries".')
     return 0
 
 

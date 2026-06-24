@@ -37,6 +37,17 @@ pwsh scripts/install.ps1 claude      # Windows PowerShell
 每個技能會安裝成 `<skill-home>/<skill-name>/`，agent 會自動載入。可用 `SKILLS_TARGET=/custom/path`
 覆寫目的地。（OpenCode 使用者也可用社群工具：`npx skills@latest add austinyuch/skills`。）
 
+### Native binaries（不隨 repo 附帶）
+
+少數 skill 依賴**預編譯的 native binary／模型，這些刻意不 commit 進來** —— 它們很大且依平台而異，
+所以已 gitignore。這讓 `git clone`、`npx`、`uvx` 保持快速且**不需 git LFS**（沒有 git-lfs 相依、不會
+拿到 pointer 假檔）。大型 binary 一律以 **out-of-band 方式（例如 GitHub Releases）發佈，絕不用 git LFS。**
+
+- **`code-review`** 使用 `review-cli-<os>-<arch>` binary（外加約 128 MB 的 embedding 模型）。從本 repo 安裝
+  只會複製它的文件與腳本，**不含** binary，所以它的 CLI／graph 功能需要另外取得該 binary（由上游
+  code-review 工具鏈 build／publish）。純 Python 的複核 helper —— `code-refactoring-advisor`、
+  `test-quality-reviewer`、`security-risk-reviewer`、`test-design-generator` —— 不需 binary，可直接使用。
+
 ## 內容總覽
 
 | 分類 | 技能數 | 說明 |

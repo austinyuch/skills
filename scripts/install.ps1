@@ -77,3 +77,6 @@ Write-Host ("`n" + ("━" * 32))
 Write-Host "📊 Installed: $installed   ⚠️  Missing: $missing"
 Write-Host ("━" * 32)
 Write-Host "Skills are now in: $Target"
+if (Test-Path (Join-Path $Target "code-review")) {
+  Write-Host 'ℹ️  code-review needs a review-cli-<os>-<arch> binary (not bundled) — see README "Native binaries".'
+}

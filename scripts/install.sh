@@ -62,3 +62,4 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "📊 Install Summary — ✅ $INSTALLED  ⏭️  $SKIPPED  ⚠️  $MISSING"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Skills are now available in: $TARGET"
+[ -d "$TARGET/code-review" ] && echo 'ℹ️  code-review needs a review-cli-<os>-<arch> binary (not bundled) — see README "Native binaries".'
