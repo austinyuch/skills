@@ -88,6 +88,10 @@ else
     SRC=()
     for f in "${CHANGED[@]}"; do
         [ -f "$f" ] || continue
+        # Skip test corpora — eval/fixture trees intentionally contain vulnerable samples.
+        case "$f" in
+            */evals/*|*/fixtures/*|*/__fixtures__/*|*/testdata/*|*/test-fixtures/*) continue ;;
+        esac
         case "$f" in
             *.py|*.sh|*.js|*.ts|*.jsx|*.tsx|*.go|*.rb|*.java|*.cs|*.php|*.html) SRC+=("$f") ;;
         esac
