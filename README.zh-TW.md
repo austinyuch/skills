@@ -237,7 +237,12 @@ pwsh scripts/install.ps1 claude      # Windows PowerShell
 
 ## 授權與致謝
 
-本 repository 的技能、方法論與整合程式以 **MIT** 授權 — 見 [LICENSE](LICENSE)。
+本 repository 以 **MIT** 授權（見根目錄 [LICENSE](LICENSE)），**唯一例外是 code-review 家族**，
+採 **Apache-2.0**。這六個 skill 各自附 `LICENSE` + `NOTICE`：
+
+- Apache-2.0：`code-review`、`code-refactoring-advisor`、`test-quality-reviewer`、
+  `test-design-generator`、`security-risk-reviewer`、`sonarqube-bridge`（Code Review System）。
+- MIT（根目錄）：其餘全部，包含 `capability-mapper` 與 `code-summarizer`。
 
 > **注意：** 取材自 Anthropic `anthropics/skills`（以及專有的 `docx`/`pdf`/`pptx`/`xlsx`）與 Giant 公司資產的技能，
 > 已**自本合集移除**。方法論仍以概念影響的形式致謝其來源——**AWS Kiro**、**Ponytail**（MIT）、**gstack**（MIT）、

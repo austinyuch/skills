@@ -93,6 +93,16 @@ img{max-width:100%}
 <p>  severity), full manifest⇄filesystem consistency, and relative-link checks.</p>
 <ul><li>Bypass when you must: <code>git commit --no-verify</code> / <code>git push --no-verify</code>, or <code>SKIP_HOOKS=1</code>.</li></ul>
 <p>The same checks are the manual pre-commit checklist: manifest ⇄ filesystem in sync, README counts match the manifest, no <code>/home/&lt;user&gt;/...</code> paths in skills, external influences credited in <code>CREDITS.md</code>, bilingual HTML balanced, and doc twins regenerated (<code>python3 scripts/render-docs.py</code>).</p>
+<h2>7. Licensing &amp; going public</h2>
+<p>This repo is <strong>currently private</strong> and intended to be <strong>open-sourced</strong> later. Licensing is <strong>mixed</strong>:</p>
+<ul><li><strong>MIT</strong> (root <code>LICENSE</code>) — the repo glue, methodology, and most skills (incl. <code>capability-mapper</code>,</li></ul>
+<p>  <code>code-summarizer</code>).</p>
+<ul><li><strong>Apache-2.0</strong> — the <strong>code-review family</strong> (<code>code-review</code>, <code>code-refactoring-advisor</code>,</li></ul>
+<p>  <code>test-quality-reviewer</code>, <code>test-design-generator</code>, <code>security-risk-reviewer</code>, <code>sonarqube-bridge</code>).   Each carries its own <code>LICENSE</code> + <code>NOTICE</code>. <strong>Do not relicense these under MIT.</strong> Adjust the <code>NOTICE</code>   copyright holder if the legal entity differs from <code>aclab</code>.</p>
+<p><strong>Going public is a one-step flip — no code changes needed.</strong> The installers already work for both: <code>gh release download</code> and <code>git+</code>/<code>github:</code> resolution simply stop requiring auth once the repo is public.</p>
+<p>Go-public checklist:</p>
+<ol><li>Confirm the Apache-2.0 scope + <code>NOTICE</code> holder are final.</li><li>Re-run the hooks / secret scan over the tree (<code>bash .git/hooks/pre-commit</code> on a staged tree).</li><li>History is already scrubbed of Anthropic/Giant assets — spot-check once more.</li><li><code>gh repo edit austinyuch/skills --visibility public</code> (and confirm the <code>review-cli-*</code> release stays attached).</li><li>Optional: add a no-<code>gh</code> <code>curl</code>/<code>Invoke-WebRequest</code> fallback to <code>--with-cli</code> so public users without</li></ol>
+<p>   <code>gh</code> can fetch the binary anonymously.</p>
 </main>
 
 </body>

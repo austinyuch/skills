@@ -323,7 +323,13 @@ bash scripts/install-to-opencode.sh
 
 ## License & Attribution
 
-This repository's skills, methodology, and glue are licensed **MIT** — see [LICENSE](LICENSE).
+This repository is **MIT** — see the root [LICENSE](LICENSE) — **except** the **code-review family**,
+which is **Apache-2.0**. Each of these six skills carries its own `LICENSE` + `NOTICE`:
+
+- Apache-2.0: `code-review`, `code-refactoring-advisor`, `test-quality-reviewer`,
+  `test-design-generator`, `security-risk-reviewer`, `sonarqube-bridge`
+  (the [Code Review System](https://github.com/austinyuch/skills/tree/main/skills/code-review)).
+- MIT (root): everything else, including `capability-mapper` and `code-summarizer`.
 
 > **Note:** skills derived from Anthropic's `anthropics/skills` (and the proprietary `docx`/`pdf`/`pptx`/`xlsx`)
 > have been **removed** from this collection. The methodology still credits its sources — **AWS Kiro**,

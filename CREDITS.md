@@ -7,9 +7,11 @@ missing or wrong, please open an issue — corrections are welcome.
 本合集建立在許多前人的成果之上。凡是衍生自、啟發自或引用了上游專案的 skill，其來源都列於下方。
 若發現遺漏或錯誤的出處，歡迎開 issue 指正。
 
-> This repository (the original skills, the methodology, and the glue) is licensed **MIT** — see
-> [`LICENSE`](./LICENSE). Individual upstream components retain **their own licenses**, reproduced
-> in each skill's `LICENSE.txt`. The MIT license of this repo does **not** relicense those components.
+> This repository is **MIT** — see [`LICENSE`](./LICENSE) — **except** the **code-review family**
+> (`code-review`, `code-refactoring-advisor`, `test-quality-reviewer`, `test-design-generator`,
+> `security-risk-reviewer`, `sonarqube-bridge`), which is **Apache-2.0**; each of those six skills
+> carries its own `LICENSE` + `NOTICE`. Individual upstream components retain **their own licenses**.
+> The MIT license of this repo does **not** relicense the Apache-2.0 family or any upstream component.
 
 ## ⭐ Recommended upstream sources
 

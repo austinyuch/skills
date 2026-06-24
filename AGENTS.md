@@ -124,3 +124,25 @@ bash scripts/install-git-hooks.sh      # copies pre-commit + pre-push into .git/
 The same checks are the manual pre-commit checklist: manifest ⇄ filesystem in sync, README counts
 match the manifest, no `/home/<user>/...` paths in skills, external influences credited in
 `CREDITS.md`, bilingual HTML balanced, and doc twins regenerated (`python3 scripts/render-docs.py`).
+
+## 7. Licensing & going public
+
+This repo is **currently private** and intended to be **open-sourced** later. Licensing is **mixed**:
+
+- **MIT** (root `LICENSE`) — the repo glue, methodology, and most skills (incl. `capability-mapper`,
+  `code-summarizer`).
+- **Apache-2.0** — the **code-review family** (`code-review`, `code-refactoring-advisor`,
+  `test-quality-reviewer`, `test-design-generator`, `security-risk-reviewer`, `sonarqube-bridge`).
+  Each carries its own `LICENSE` + `NOTICE`. **Do not relicense these under MIT.** Adjust the `NOTICE`
+  copyright holder if the legal entity differs from `aclab`.
+
+**Going public is a one-step flip — no code changes needed.** The installers already work for both:
+`gh release download` and `git+`/`github:` resolution simply stop requiring auth once the repo is public.
+
+Go-public checklist:
+1. Confirm the Apache-2.0 scope + `NOTICE` holder are final.
+2. Re-run the hooks / secret scan over the tree (`bash .git/hooks/pre-commit` on a staged tree).
+3. History is already scrubbed of Anthropic/Giant assets — spot-check once more.
+4. `gh repo edit austinyuch/skills --visibility public` (and confirm the `review-cli-*` release stays attached).
+5. Optional: add a no-`gh` `curl`/`Invoke-WebRequest` fallback to `--with-cli` so public users without
+   `gh` can fetch the binary anonymously.
