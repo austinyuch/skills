@@ -1,0 +1,213 @@
+#!/bin/bash
+# DevSecOps pre-push hook for aclab/skills
+# Purpose: heavier guardrails over the push range (slower than pre-commit; still bounded).
+#
+# Checks:
+#   A. security scan      - run security-risk-reviewer over changed source files;
+#                           FAIL on any high/critical (severity high) finding.
+#   B. manifest<->fs       - full consistency: every on-disk skill is listed; every
+#                           listed skill folder exists (reference-only entries allowed).
+#   C. relative links     - broken intra-repo links in changed .md / .html files.
+#
+# Invoked by git with:  pre-push <remote> <url>   and ref pairs on stdin:
+#   <local ref> <local sha> <remote ref> <remote sha>
+# Can also be run manually (no stdin) — it then checks HEAD vs its upstream / origin/main.
+#
+# Bypass:  git push --no-verify        or   SKIP_HOOKS=1 git push ...
+# Optional tools degrade gracefully (warn + skip), python3 is the workhorse.
+
+set -uo pipefail
+
+if [ "${SKIP_HOOKS:-0}" = "1" ]; then
+    echo "SKIP_HOOKS=1 set — skipping aclab/skills pre-push checks."
+    exit 0
+fi
+
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT" || exit 1
+
+FAILED=0
+pass() { echo -e "  ${GREEN}PASS${NC} $1"; }
+fail() { echo -e "  ${RED}FAIL${NC} $1"; FAILED=1; }
+warn() { echo -e "  ${YELLOW}WARN${NC} $1"; }
+note() { echo -e "  ${BLUE}····${NC} $1"; }
+
+echo -e "${BLUE}== aclab/skills pre-push (DevSecOps) ==${NC}"
+
+ZERO="0000000000000000000000000000000000000000"
+
+# ---- Determine the changed-file set for the push range ---------------------
+# Read ref updates from stdin if present (real git invocation); else fall back.
+RANGES=()
+if [ ! -t 0 ]; then
+    while read -r local_ref local_sha remote_ref remote_sha; do
+        [ -z "${local_sha:-}" ] && continue
+        if [ "$local_sha" = "$ZERO" ]; then continue; fi          # branch deletion
+        if [ "$remote_sha" = "$ZERO" ]; then
+            RANGES+=("$local_sha")                                 # new branch: all of it
+        else
+            RANGES+=("$remote_sha..$local_sha")
+        fi
+    done
+fi
+if [ "${#RANGES[@]}" -eq 0 ]; then
+    # Manual run: prefer upstream, then origin/main, else last commit.
+    if up="$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null)"; then
+        RANGES+=("$up..HEAD")
+    elif git rev-parse --verify -q origin/main >/dev/null; then
+        RANGES+=("origin/main..HEAD")
+    else
+        RANGES+=("HEAD~1..HEAD")
+    fi
+    note "manual run — using range: ${RANGES[*]}"
+fi
+
+# Collect unique changed files across all ranges (Added/Copied/Modified/Renamed).
+declare -A SEEN=()
+CHANGED=()
+for r in "${RANGES[@]}"; do
+    if [[ "$r" == *..* ]]; then
+        while IFS= read -r f; do [ -n "$f" ] && { [ -z "${SEEN[$f]:-}" ] && CHANGED+=("$f"); SEEN[$f]=1; }; done \
+            < <(git diff --name-only --diff-filter=ACMR "$r" 2>/dev/null)
+    else
+        while IFS= read -r f; do [ -n "$f" ] && { [ -z "${SEEN[$f]:-}" ] && CHANGED+=("$f"); SEEN[$f]=1; }; done \
+            < <(git diff-tree --no-commit-id --name-only -r --diff-filter=ACMR "$r" 2>/dev/null)
+    fi
+done
+note "${#CHANGED[@]} changed file(s) in push range"
+
+# ---------------------------------------------------------------------------
+# A. Security scan over changed source files (security-risk-reviewer)
+# ---------------------------------------------------------------------------
+echo "[A] security-risk-reviewer scan"
+SCANNER="skills/code-review/security-risk-reviewer/scripts/run.py"
+if [ ! -f "$SCANNER" ]; then
+    warn "security-risk-reviewer not found at $SCANNER — skipping"; pass "skipped"
+else
+    SRC=()
+    for f in "${CHANGED[@]}"; do
+        [ -f "$f" ] || continue
+        case "$f" in
+            *.py|*.sh|*.js|*.ts|*.jsx|*.tsx|*.go|*.rb|*.java|*.cs|*.php|*.html) SRC+=("$f") ;;
+        esac
+    done
+    if [ "${#SRC[@]}" -eq 0 ]; then
+        note "no scannable source files changed"; pass "n/a"
+    else
+        HIGH_TOTAL=0
+        for f in "${SRC[@]}"; do
+            out="$(printf '{"file": %s}' "$(python3 -c 'import json,sys;print(json.dumps(sys.argv[1]))' "$f")" \
+                   | python3 "$SCANNER" 2>/dev/null)" || { warn "scanner error on $f"; continue; }
+            high="$(printf '%s' "$out" | python3 -c 'import json,sys
+try:
+    d=json.load(sys.stdin); print(d.get("summary",{}).get("by_severity",{}).get("high",0))
+except Exception: print(0)')"
+            if [ "${high:-0}" -gt 0 ] 2>/dev/null; then
+                echo "      $f : $high high-severity finding(s)"
+                printf '%s' "$out" | python3 -c 'import json,sys
+d=json.load(sys.stdin)
+for x in d.get("findings",[]):
+    if x.get("severity")=="high":
+        print("        - %s %s (%s) line %s"%(x.get("rule"),x.get("owasp",""),x.get("cwe",""),x.get("line","?")))' 2>/dev/null
+                HIGH_TOTAL=$((HIGH_TOTAL+high))
+            fi
+        done
+        if [ "$HIGH_TOTAL" -gt 0 ]; then fail "$HIGH_TOTAL high-severity security finding(s) in changed files"
+        else pass "no high-severity findings (${#SRC[@]} file(s) scanned)"; fi
+    fi
+fi
+
+# ---------------------------------------------------------------------------
+# B. Full manifest <-> filesystem consistency
+# ---------------------------------------------------------------------------
+echo "[B] manifest <-> filesystem consistency"
+if [ ! -f skills-manifest.json ]; then
+    fail "skills-manifest.json missing"
+else
+    python3 - <<'PY'
+import json, glob, os, sys
+DENY={"docx","pdf","pptx","xlsx","mcp-builder","skill-creator","webapp-testing","canvas-design",
+      "algorithmic-art","theme-factory","web-artifacts-builder","slack-gif-creator","internal-comms",
+      "brand-guidelines","claude-api","doc-coauthoring","jsm-query-skill","user-profile-skill",
+      "bi-analyst-skill","mes-domain-expert-skill","aws-agent-solution-architect"}
+m=json.load(open("skills-manifest.json"))
+listed=set()
+for fam in m.get("families",{}).values(): listed|=set(fam.get("skills",[]))
+for cat in m.get("categories",{}).values(): listed|=set(cat.get("skills",[]))
+# reference-only / standalone entries are allowed to lack a skill folder
+standalone={os.path.splitext(s.get("file",""))[0] for s in m.get("standalone_files",[])}
+# disk: skills/<category>/<skill>/SKILL.md
+disk=set()
+for p in glob.glob("skills/*/*/SKILL.md"):
+    disk.add(p.split("/")[2])
+errors=[]
+# 1) orphan SKILL.md dirs not in manifest (dangerous: could be a re-added purged skill)
+orphans=sorted(disk-listed)
+for o in orphans: errors.append(f"orphan on disk, not in manifest: {o}")
+# 2) purged skills present on disk at all
+for d in sorted(disk & DENY): errors.append(f"PURGED skill present on disk: {d}")
+# 3) manifest entries pointing at a missing folder (warn unless purged)
+missing=sorted(listed - disk - standalone)
+warnings=[f"manifest entry without skill folder (reference-only?): {x}" for x in missing
+          if x not in DENY]
+for x in sorted(set(missing)&DENY): errors.append(f"PURGED skill listed in manifest: {x}")
+for w in warnings: print("  \033[1;33mWARN\033[0m "+w)
+if errors:
+    for e in errors: print("  \033[0;31mFAIL\033[0m "+e)
+    sys.exit(1)
+print(f"  \033[0;32mPASS\033[0m manifest consistent: {len(disk)} skill folder(s), no orphans/purged")
+PY
+    [ $? -ne 0 ] && FAILED=1
+fi
+
+# ---------------------------------------------------------------------------
+# C. Broken relative-link scan in changed .md / .html
+# ---------------------------------------------------------------------------
+echo "[C] relative-link scan (changed .md/.html)"
+DOCS=()
+for f in "${CHANGED[@]}"; do
+    [ -f "$f" ] || continue
+    case "$f" in *.md|*.html) DOCS+=("$f") ;; esac
+done
+if [ "${#DOCS[@]}" -eq 0 ]; then
+    note "no changed .md/.html"; pass "n/a"
+else
+    if BROKEN="$(python3 - "${DOCS[@]}" <<'PY'
+import os, re, sys
+files=sys.argv[1:]
+md_link=re.compile(r'\[[^\]]*\]\(([^)]+)\)')
+href=re.compile(r'(?:href|src)\s*=\s*["\']([^"\'#?]+)')
+broken=[]
+def check(target, base):
+    if re.match(r'^[a-z]+://|^#|^mailto:|^data:|^//|^\{', target): return
+    t=target.split('#')[0].split('?')[0]
+    if not t or t.startswith('<'): return            # template placeholder
+    p=os.path.normpath(os.path.join(os.path.dirname(base), t))
+    if not os.path.exists(p):
+        broken.append((base, target))
+for f in files:
+    try: txt=open(f, encoding='utf-8', errors='ignore').read()
+    except Exception: continue
+    if f.endswith('.md'):
+        for m in md_link.finditer(txt): check(m.group(1), f)
+    else:
+        for m in href.finditer(txt): check(m.group(1), f)
+for b,t in broken: print(f"      {b} -> {t}")
+sys.exit(1 if broken else 0)
+PY
+    )"; then
+        pass "no broken relative links (${#DOCS[@]} doc(s))"
+    else
+        printf '%s\n' "$BROKEN"
+        fail "broken relative link(s) in changed docs"
+    fi
+fi
+
+echo
+if [ "$FAILED" -ne 0 ]; then
+    echo -e "${RED}pre-push FAILED — fix the issues above, or bypass with: git push --no-verify${NC}"
+    exit 1
+fi
+echo -e "${GREEN}pre-push OK${NC}"
+exit 0

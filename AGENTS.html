@@ -80,8 +80,15 @@ img{max-width:100%}
 <ul><li><strong>One brief per family.</strong> <code>spec-master</code> + <code>spec-driven-development</code> share <strong>one</strong> merged brief at</li></ul>
 <p>  <code>skills/spec-master/</code> — do not split them into separate landing pages again. The code-review family   has its single brief at <code>skills/code-review/</code>.</p>
 <ul><li>Prefer the dedicated skill for a job over re-deriving it inline — that is the whole point of routing.</li><li>Don't overstate readiness. A change is "done" only when its evidence (tests, <code>review.md</code>) says so.</li></ul>
-<h2>6. Quick checks before you commit</h2>
-<ul><li><code>skills-manifest.json</code> ⇄ filesystem: no missing folders, no unlisted skills.</li><li>README counts/lists match the manifest.</li><li>No new absolute machine paths (<code>/home/&lt;user&gt;/...</code>) introduced into skills.</li><li>New external influences credited in <code>CREDITS.md</code>.</li><li>Bilingual HTML still balanced.</li></ul>
+<h2>6. DevSecOps git hooks (run them)</h2>
+<p>This repo ships versioned hooks in <code>scripts/git-hooks/</code>. Install once after cloning:</p>
+<pre><code>bash scripts/install-git-hooks.sh      # copies pre-commit + pre-push into .git/hooks</code></pre>
+<ul><li><strong>pre-commit</strong> (fast, staged files): secret scan, absolute-machine-path scan under <code>skills/**</code>,</li></ul>
+<p>  purged-skill denylist, JSON validity, conflict markers, <code>bash -n</code> / <code>py_compile</code>, bilingual-HTML   balance, and markdown→HTML twin freshness.</p>
+<ul><li><strong>pre-push</strong> (push range): <code>security-risk-reviewer</code> scan of changed source (fails on high</li></ul>
+<p>  severity), full manifest⇄filesystem consistency, and relative-link checks.</p>
+<ul><li>Bypass when you must: <code>git commit --no-verify</code> / <code>git push --no-verify</code>, or <code>SKIP_HOOKS=1</code>.</li></ul>
+<p>The same checks are the manual pre-commit checklist: manifest ⇄ filesystem in sync, README counts match the manifest, no <code>/home/&lt;user&gt;/...</code> paths in skills, external influences credited in <code>CREDITS.md</code>, bilingual HTML balanced, and doc twins regenerated (<code>python3 scripts/render-docs.py</code>).</p>
 </main>
 
 </body>

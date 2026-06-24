@@ -1,0 +1,20 @@
+[
+  {
+    "eval_id": 1,
+    "eval_name": "Review a PR that adds enterprise SSO with OIDC, support-user impersonation, refresh tokens for web and mobile clients, and SCIM-based deprovisioning.",
+    "prompt": "Review a PR that adds enterprise SSO with OIDC, support-user impersonation, refresh tokens for web and mobile clients, and SCIM-based deprovisioning. Focus on auth, session, and service identity risks.",
+    "expected_output": "A security review that selects the authn-authz-session lane, uses an evidence-based workflow, identifies enterprise auth/session failure modes, and explains exploit paths plus concrete fixes.",
+    "files": [
+      "evals/workspaces/scenario-1/README.md",
+      "evals/workspaces/scenario-1/src/auth/session.ts",
+      "evals/workspaces/scenario-1/src/api/admin/impersonation.ts",
+      "evals/workspaces/scenario-1/src/scim/deprovision.ts"
+    ],
+    "expectations": [
+      "The output identifies the authn-authz-session lane.",
+      "The output discusses session revocation, token rotation, or replay/fixation risk.",
+      "The output discusses impersonation, deprovisioning, or service identity scope.",
+      "The output includes evidence, exploit path, impact, and a concrete fix."
+    ]
+  }
+]

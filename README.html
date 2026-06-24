@@ -136,6 +136,8 @@ SKILLS_TARGET=/path/to/skills bash scripts/install.sh</code></pre>
 │   └── methodology-diagram.md
 ├── scripts/
 │   ├── install.sh                   # Generic installer (opencode|claude|codex|kiro)
+│   ├── install-git-hooks.sh         # Install DevSecOps pre-commit + pre-push hooks
+│   ├── git-hooks/                   # Versioned hook sources (pre-commit, pre-push)
 │   ├── render-docs.py               # Generate browsable .html twins from markdown
 │   ├── sync-from-source.sh          # Publish from ~/.config/opencode/skills
 │   └── install-to-opencode.sh       # Legacy OpenCode-only installer

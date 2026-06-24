@@ -94,10 +94,21 @@ Full narrative: [`methodology.html`](methodology.html) · [`docs/agentic-deliver
 - Prefer the dedicated skill for a job over re-deriving it inline — that is the whole point of routing.
 - Don't overstate readiness. A change is "done" only when its evidence (tests, `review.md`) says so.
 
-## 6. Quick checks before you commit
+## 6. DevSecOps git hooks (run them)
 
-- `skills-manifest.json` ⇄ filesystem: no missing folders, no unlisted skills.
-- README counts/lists match the manifest.
-- No new absolute machine paths (`/home/<user>/...`) introduced into skills.
-- New external influences credited in `CREDITS.md`.
-- Bilingual HTML still balanced.
+This repo ships versioned hooks in `scripts/git-hooks/`. Install once after cloning:
+
+```bash
+bash scripts/install-git-hooks.sh      # copies pre-commit + pre-push into .git/hooks
+```
+
+- **pre-commit** (fast, staged files): secret scan, absolute-machine-path scan under `skills/**`,
+  purged-skill denylist, JSON validity, conflict markers, `bash -n` / `py_compile`, bilingual-HTML
+  balance, and markdown→HTML twin freshness.
+- **pre-push** (push range): `security-risk-reviewer` scan of changed source (fails on high
+  severity), full manifest⇄filesystem consistency, and relative-link checks.
+- Bypass when you must: `git commit --no-verify` / `git push --no-verify`, or `SKIP_HOOKS=1`.
+
+The same checks are the manual pre-commit checklist: manifest ⇄ filesystem in sync, README counts
+match the manifest, no `/home/<user>/...` paths in skills, external influences credited in
+`CREDITS.md`, bilingual HTML balanced, and doc twins regenerated (`python3 scripts/render-docs.py`).
