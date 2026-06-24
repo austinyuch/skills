@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aclab-skills"
+version = "1.0.0"
+description = "Cross-platform installer for the aclab AI agent skills collection"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "austinyuch" }]
+keywords = ["ai-agent", "skills", "opencode", "claude", "codex", "agent-skills"]
+
+[project.urls]
+Homepage = "https://github.com/austinyuch/skills"
+Issues = "https://github.com/austinyuch/skills/issues"
+
+# `uvx --from git+https://github.com/austinyuch/skills aclab-skills <agent>`
+[project.scripts]
+aclab-skills = "aclab_skills:main"
+
+# Map bin/aclab_skills.py -> top-level module `aclab_skills` in the built wheel.
+# The skill data is NOT bundled (it is large); the CLI shallow-clones the repo at
+# runtime when it is run outside a checkout. See bin/aclab_skills.py:cache_clone.
+[tool.hatch.build.targets.wheel]
+only-include = ["bin/aclab_skills.py"]
+
+[tool.hatch.build.targets.wheel.sources]
+"bin" = ""

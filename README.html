@@ -43,19 +43,21 @@ img{max-width:100%}
 <p>🌐 <strong>Languages:</strong> <a href="README.html">English</a> · <a href="README.zh-TW.html">繁體中文</a></p>
 <blockquote>🤖 <strong>Using a coding agent?</strong> Read <a href="AGENTS.html"><code>AGENTS.md</code></a> — it explains how to navigate this collection, when to enter the <strong>Spec Master Method</strong>, and the routing/ownership rules the skills expect.</blockquote>
 <h2>Quick Start</h2>
-<pre><code>git clone https://github.com/austinyuch/skills.git
-cd skills</code></pre>
-<p>Install into your agent's skill home with the generic installer:</p>
-<pre><code>bash scripts/install.sh opencode   # → ~/.config/opencode/skills/
-bash scripts/install.sh claude     # → ~/.claude/skills/
-bash scripts/install.sh codex      # → ~/.codex/skills/
-bash scripts/install.sh kiro       # → ~/.kiro/skills/
-
-# or pick any path:
-SKILLS_TARGET=/path/to/skills bash scripts/install.sh</code></pre>
-<p>Each skill installs as <code>&lt;skill-home&gt;/&lt;skill-name&gt;/</code> and is picked up by the agent automatically. Install via npx is also available for OpenCode users: <code>npx skills@latest add austinyuch/skills</code>.</p>
+<p>Install the skills into your coding agent. <strong>Nothing is published to any registry</strong> — every command below resolves straight from this Git repo. Pick whichever runtime you already have.</p>
+<p><code>&lt;agent&gt;</code> = <code>opencode</code> | <code>claude</code> | <code>codex</code> | <code>kiro</code> (default: <code>opencode</code>).</p>
+<p><strong>Node — npx / bunx (no clone):</strong></p>
+<pre><code>npx -y github:austinyuch/skills claude
+bunx   github:austinyuch/skills codex</code></pre>
+<p><strong>Python — uvx / pipx (no clone):</strong></p>
+<pre><code>uvx --from git+https://github.com/austinyuch/skills aclab-skills claude
+pipx run --spec git+https://github.com/austinyuch/skills aclab-skills codex</code></pre>
+<p><strong>No Node/Python — clone + run a script (cross-platform):</strong></p>
+<pre><code>git clone https://github.com/austinyuch/skills.git &amp;&amp; cd skills
+bash scripts/install.sh claude       # macOS / Linux
+pwsh scripts/install.ps1 claude      # Windows PowerShell</code></pre>
+<p>Each skill installs as <code>&lt;skill-home&gt;/&lt;skill-name&gt;/</code> and the agent picks it up automatically. Override the destination anywhere with <code>SKILLS_TARGET=/custom/path</code>. (OpenCode users can also use the community tool: <code>npx skills@latest add austinyuch/skills</code>.)</p>
 <h2>What's Inside</h2>
-<table><thead><tr><th>Category</th><th>Skills</th><th>Description</th></tr></thead><tbody><tr><td><strong>Spec Master</strong></td><td>2</td><td>Spec routing and spec-driven development</td></tr><tr><td><strong>Code Review</strong></td><td>6</td><td>Review, quality, security, and testing tools</td></tr><tr><td><strong>Scrum</strong></td><td>2</td><td>Scrum and agile team workflows</td></tr><tr><td><strong>Engineering</strong></td><td>15</td><td>Core software engineering workflows</td></tr><tr><td><strong>Architecture</strong></td><td>15</td><td>Architecture, governance, and process design</td></tr><tr><td><strong>DevOps</strong></td><td>6</td><td>DevOps, containers, and infrastructure</td></tr><tr><td><strong>Productivity</strong></td><td>7</td><td>Productivity, writing, and collaboration</td></tr><tr><td><strong>Data</strong></td><td>4</td><td>Data analysis, BI, and databases</td></tr><tr><td><strong>Domain Expert</strong></td><td>1</td><td>Domain-specific expert knowledge</td></tr><tr><td><strong>Creative</strong></td><td>2</td><td>Frontend, design, and creative tools</td></tr><tr><td><strong>Security &amp; Compliance</strong></td><td>1</td><td>Security review and compliance</td></tr><tr><td><strong>Social Media</strong></td><td>5</td><td>Social media, advocacy, and marketing</td></tr><tr><td><strong>Tools</strong></td><td>1</td><td>Developer tools and integrations</td></tr><tr><td><strong>User Experience</strong></td><td>1</td><td>User profiles, manuals, and interaction</td></tr><tr><td><strong>Project Review</strong></td><td>2</td><td>Project review and executive reporting</td></tr><tr><td><strong>UAT &amp; Demo</strong></td><td>1</td><td>UAT and demo execution tools</td></tr></tbody></table>
+<table><thead><tr><th>Category</th><th>Skills</th><th>Description</th></tr></thead><tbody><tr><td><strong>Spec Master</strong></td><td>2</td><td>Spec routing and spec-driven development</td></tr><tr><td><strong>Code Review</strong></td><td>6</td><td>Review, quality, security, and testing tools</td></tr><tr><td><strong>Scrum</strong></td><td>2</td><td>Scrum and agile team workflows</td></tr><tr><td><strong>Engineering</strong></td><td>15</td><td>Core software engineering workflows</td></tr><tr><td><strong>Architecture</strong></td><td>15</td><td>Architecture, governance, and process design</td></tr><tr><td><strong>DevOps</strong></td><td>6</td><td>DevOps, containers, and infrastructure</td></tr><tr><td><strong>Productivity</strong></td><td>7</td><td>Productivity, writing, and collaboration</td></tr><tr><td><strong>Data</strong></td><td>4</td><td>Data analysis, BI, and databases</td></tr><tr><td><strong>Domain Expert</strong></td><td>1</td><td>Domain-specific expert knowledge</td></tr><tr><td><strong>Creative</strong></td><td>2</td><td>Frontend, design, and creative tools</td></tr><tr><td><strong>Security &amp; Compliance</strong></td><td>1</td><td>Security review and compliance</td></tr><tr><td><strong>Social Media</strong></td><td>4</td><td>Social media, advocacy, and marketing</td></tr><tr><td><strong>Tools</strong></td><td>1</td><td>Developer tools and integrations</td></tr><tr><td><strong>User Experience</strong></td><td>1</td><td>User profiles, manuals, and interaction</td></tr><tr><td><strong>Project Review</strong></td><td>2</td><td>Project review and executive reporting</td></tr><tr><td><strong>UAT &amp; Demo</strong></td><td>1</td><td>UAT and demo execution tools</td></tr></tbody></table>
 <h2>The Spec Master Method</h2>
 <blockquote><strong>Bring DevSecOps, Scrum, and TDD into agentic workflows — without losing the truth.</strong> 把 DevSecOps、Scrum 與 TDD 帶進 agentic 工作流——而且不失真。</blockquote>
 <p>Coding agents made <em>producing</em> code cheap but not <em>coordinating</em> it. The bottleneck moves from typing to deciding ownership, keeping evidence fresh, and stopping a green-looking file from lying about readiness. The <strong>Spec Master Method</strong> is an open-source family of <strong>14 composable skills</strong> that ports five proven engineering practices into a governed, inspectable agentic workflow.</p>
@@ -91,7 +93,8 @@ SKILLS_TARGET=/path/to/skills bash scripts/install.sh</code></pre>
 <h3>Security &amp; Compliance</h3>
 <ul><li><code>security-review</code> - Security review checklist</li><li><code>security-risk-reviewer</code> - OWASP security scanning</li></ul>
 <h3>Social Media</h3>
-<ul><li><code>social-media-platforms</code> - Social media content optimization</li><li><code>social-post-generator</code> - Social media post generation</li><li><code>victim-rights-news-tracker</code> - News tracking for advocacy</li><li><code>brand-guidelines-naelt</code> - NAELT brand guidelines</li><li><code>NPO-marketing-guide</code> - NPO marketing guide</li></ul>
+<ul><li><code>social-media-platforms</code> - Social media content optimization</li><li><code>social-post-generator</code> - Social media post generation</li><li><code>victim-rights-news-tracker</code> - News tracking for advocacy</li><li><code>brand-guidelines-naelt</code> - NAELT brand guidelines</li></ul>
+<blockquote>Also shipped: <code>NPO-marketing-guide.md</code> (a standalone reference, installed alongside the skills).</blockquote>
 <h3>Tools</h3>
 <ul><li><code>local-llm-agent-migrator</code> - Local LLM agent migration</li></ul>
 <h3>Scrum</h3>
@@ -134,8 +137,12 @@ SKILLS_TARGET=/path/to/skills bash scripts/install.sh</code></pre>
 ├── docs/                            # Methodology article + diagrams
 │   ├── agentic-delivery-methodology.md
 │   └── methodology-diagram.md
+├── bin/
+│   ├── aclab-skills.mjs             # Node CLI (npx/bunx github:…)
+│   └── aclab_skills.py              # Python CLI (uvx/pipx from git)
 ├── scripts/
-│   ├── install.sh                   # Generic installer (opencode|claude|codex|kiro)
+│   ├── install.sh                   # Bash installer (opencode|claude|codex|kiro)
+│   ├── install.ps1                  # PowerShell installer (Windows)
 │   ├── install-git-hooks.sh         # Install DevSecOps pre-commit + pre-push hooks
 │   ├── git-hooks/                   # Versioned hook sources (pre-commit, pre-push)
 │   ├── render-docs.py               # Generate browsable .html twins from markdown
@@ -143,6 +150,8 @@ SKILLS_TARGET=/path/to/skills bash scripts/install.sh</code></pre>
 │   └── install-to-opencode.sh       # Legacy OpenCode-only installer
 ├── methodology.html                 # The Spec Master Method — landing page (EN/繁中)
 ├── skills-manifest.json             # Skill catalog and categorization
+├── package.json                     # npm metadata + bin (npx/bunx)
+├── pyproject.toml                   # Python packaging for uvx/pipx (from git)
 ├── AGENTS.md                        # Guide for coding agents using this repo
 ├── CREDITS.md                       # Attribution and upstream licenses
 ├── README.md                        # This file (English)

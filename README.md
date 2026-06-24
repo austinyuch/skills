@@ -11,25 +11,33 @@ This is an **agent-agnostic** collection — the skills run on **OpenCode**, **C
 
 ## Quick Start
 
+Install the skills into your coding agent. **Nothing is published to any registry** — every command
+below resolves straight from this Git repo. Pick whichever runtime you already have.
+
+`<agent>` = `opencode` | `claude` | `codex` | `kiro` (default: `opencode`).
+
+**Node — npx / bunx (no clone):**
 ```bash
-git clone https://github.com/austinyuch/skills.git
-cd skills
+npx -y github:austinyuch/skills claude
+bunx   github:austinyuch/skills codex
 ```
 
-Install into your agent's skill home with the generic installer:
-
+**Python — uvx / pipx (no clone):**
 ```bash
-bash scripts/install.sh opencode   # → ~/.config/opencode/skills/
-bash scripts/install.sh claude     # → ~/.claude/skills/
-bash scripts/install.sh codex      # → ~/.codex/skills/
-bash scripts/install.sh kiro       # → ~/.kiro/skills/
-
-# or pick any path:
-SKILLS_TARGET=/path/to/skills bash scripts/install.sh
+uvx --from git+https://github.com/austinyuch/skills aclab-skills claude
+pipx run --spec git+https://github.com/austinyuch/skills aclab-skills codex
 ```
 
-Each skill installs as `<skill-home>/<skill-name>/` and is picked up by the agent automatically.
-Install via npx is also available for OpenCode users: `npx skills@latest add austinyuch/skills`.
+**No Node/Python — clone + run a script (cross-platform):**
+```bash
+git clone https://github.com/austinyuch/skills.git && cd skills
+bash scripts/install.sh claude       # macOS / Linux
+pwsh scripts/install.ps1 claude      # Windows PowerShell
+```
+
+Each skill installs as `<skill-home>/<skill-name>/` and the agent picks it up automatically.
+Override the destination anywhere with `SKILLS_TARGET=/custom/path`. (OpenCode users can also use the
+community tool: `npx skills@latest add austinyuch/skills`.)
 
 ## What's Inside
 
@@ -46,7 +54,7 @@ Install via npx is also available for OpenCode users: `npx skills@latest add aus
 | **Domain Expert** | 1 | Domain-specific expert knowledge |
 | **Creative** | 2 | Frontend, design, and creative tools |
 | **Security & Compliance** | 1 | Security review and compliance |
-| **Social Media** | 5 | Social media, advocacy, and marketing |
+| **Social Media** | 4 | Social media, advocacy, and marketing |
 | **Tools** | 1 | Developer tools and integrations |
 | **User Experience** | 1 | User profiles, manuals, and interaction |
 | **Project Review** | 2 | Project review and executive reporting |
@@ -185,7 +193,8 @@ The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → sp
 - `social-post-generator` - Social media post generation
 - `victim-rights-news-tracker` - News tracking for advocacy
 - `brand-guidelines-naelt` - NAELT brand guidelines
-- `NPO-marketing-guide` - NPO marketing guide
+
+> Also shipped: `NPO-marketing-guide.md` (a standalone reference, installed alongside the skills).
 
 ### Tools
 - `local-llm-agent-migrator` - Local LLM agent migration
@@ -238,8 +247,12 @@ The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → sp
 ├── docs/                            # Methodology article + diagrams
 │   ├── agentic-delivery-methodology.md
 │   └── methodology-diagram.md
+├── bin/
+│   ├── aclab-skills.mjs             # Node CLI (npx/bunx github:…)
+│   └── aclab_skills.py              # Python CLI (uvx/pipx from git)
 ├── scripts/
-│   ├── install.sh                   # Generic installer (opencode|claude|codex|kiro)
+│   ├── install.sh                   # Bash installer (opencode|claude|codex|kiro)
+│   ├── install.ps1                  # PowerShell installer (Windows)
 │   ├── install-git-hooks.sh         # Install DevSecOps pre-commit + pre-push hooks
 │   ├── git-hooks/                   # Versioned hook sources (pre-commit, pre-push)
 │   ├── render-docs.py               # Generate browsable .html twins from markdown
@@ -247,6 +260,8 @@ The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → sp
 │   └── install-to-opencode.sh       # Legacy OpenCode-only installer
 ├── methodology.html                 # The Spec Master Method — landing page (EN/繁中)
 ├── skills-manifest.json             # Skill catalog and categorization
+├── package.json                     # npm metadata + bin (npx/bunx)
+├── pyproject.toml                   # Python packaging for uvx/pipx (from git)
 ├── AGENTS.md                        # Guide for coding agents using this repo
 ├── CREDITS.md                       # Attribution and upstream licenses
 ├── README.md                        # This file (English)

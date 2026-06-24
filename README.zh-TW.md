@@ -10,25 +10,32 @@
 
 ## 快速開始
 
+把技能安裝到你的 coding agent。**不會發布到任何 registry** —— 以下每個指令都直接從這個 Git repo 解析。
+挑你手邊已有的 runtime 即可。
+
+`<agent>` = `opencode` | `claude` | `codex` | `kiro`（預設 `opencode`）。
+
+**Node — npx / bunx（免 clone）：**
 ```bash
-git clone https://github.com/austinyuch/skills.git
-cd skills
+npx -y github:austinyuch/skills claude
+bunx   github:austinyuch/skills codex
 ```
 
-用通用安裝器把技能安裝到你的 agent skill home：
-
+**Python — uvx / pipx（免 clone）：**
 ```bash
-bash scripts/install.sh opencode   # → ~/.config/opencode/skills/
-bash scripts/install.sh claude     # → ~/.claude/skills/
-bash scripts/install.sh codex      # → ~/.codex/skills/
-bash scripts/install.sh kiro       # → ~/.kiro/skills/
-
-# 或指定任意路徑：
-SKILLS_TARGET=/path/to/skills bash scripts/install.sh
+uvx --from git+https://github.com/austinyuch/skills aclab-skills claude
+pipx run --spec git+https://github.com/austinyuch/skills aclab-skills codex
 ```
 
-每個技能會安裝成 `<skill-home>/<skill-name>/`，agent 會自動載入。OpenCode 使用者也可用 npx 安裝：
-`npx skills@latest add austinyuch/skills`。
+**沒有 Node/Python —— clone 後跑腳本（跨平台）：**
+```bash
+git clone https://github.com/austinyuch/skills.git && cd skills
+bash scripts/install.sh claude       # macOS / Linux
+pwsh scripts/install.ps1 claude      # Windows PowerShell
+```
+
+每個技能會安裝成 `<skill-home>/<skill-name>/`，agent 會自動載入。可用 `SKILLS_TARGET=/custom/path`
+覆寫目的地。（OpenCode 使用者也可用社群工具：`npx skills@latest add austinyuch/skills`。）
 
 ## 內容總覽
 
@@ -45,7 +52,7 @@ SKILLS_TARGET=/path/to/skills bash scripts/install.sh
 | **Domain Expert** | 1 | 領域專家知識 |
 | **Creative** | 2 | 前端、設計與創意工具 |
 | **Security & Compliance** | 1 | 安全複核與合規 |
-| **Social Media** | 5 | 社群媒體、倡議與行銷 |
+| **Social Media** | 4 | 社群媒體、倡議與行銷 |
 | **Tools** | 1 | 開發者工具與整合 |
 | **User Experience** | 1 | 使用者檔案、手冊與互動 |
 | **Project Review** | 2 | 專案複核與高管報告 |
@@ -182,7 +189,8 @@ SKILLS_TARGET=/path/to/skills bash scripts/install.sh
 - `social-post-generator` - 社群貼文生成
 - `victim-rights-news-tracker` - 倡議新聞追蹤
 - `brand-guidelines-naelt` - NAELT 品牌指南
-- `NPO-marketing-guide` - NPO 行銷指南
+
+> 另外隨附：`NPO-marketing-guide.md`（standalone 參考文件，會與 skills 一併安裝）。
 
 ### Tools（工具）
 - `local-llm-agent-migrator` - 本地 LLM agent 遷移

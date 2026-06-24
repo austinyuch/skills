@@ -17,6 +17,12 @@
   ],
   "author": "austinyuch",
   "license": "MIT",
+  "bin": {
+    "aclab-skills": "bin/aclab-skills.mjs"
+  },
+  "engines": {
+    "node": ">=16.7"
+  },
   "bugs": {
     "url": "https://github.com/austinyuch/skills/issues"
   },

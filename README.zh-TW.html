@@ -43,19 +43,21 @@ img{max-width:100%}
 <p>🌐 <strong>語言：</strong> <a href="README.html">English</a> · <a href="README.zh-TW.html">繁體中文</a></p>
 <blockquote>🤖 <strong>使用程式代理人嗎？</strong> 請先讀 <a href="AGENTS.html"><code>AGENTS.md</code></a> — 它說明如何在本合集中導航、何時進入 <strong>Spec Master Method</strong>，以及這些技能預期的路由／責任歸屬規則。</blockquote>
 <h2>快速開始</h2>
-<pre><code>git clone https://github.com/austinyuch/skills.git
-cd skills</code></pre>
-<p>用通用安裝器把技能安裝到你的 agent skill home：</p>
-<pre><code>bash scripts/install.sh opencode   # → ~/.config/opencode/skills/
-bash scripts/install.sh claude     # → ~/.claude/skills/
-bash scripts/install.sh codex      # → ~/.codex/skills/
-bash scripts/install.sh kiro       # → ~/.kiro/skills/
-
-# 或指定任意路徑：
-SKILLS_TARGET=/path/to/skills bash scripts/install.sh</code></pre>
-<p>每個技能會安裝成 <code>&lt;skill-home&gt;/&lt;skill-name&gt;/</code>，agent 會自動載入。OpenCode 使用者也可用 npx 安裝： <code>npx skills@latest add austinyuch/skills</code>。</p>
+<p>把技能安裝到你的 coding agent。<strong>不會發布到任何 registry</strong> —— 以下每個指令都直接從這個 Git repo 解析。 挑你手邊已有的 runtime 即可。</p>
+<p><code>&lt;agent&gt;</code> = <code>opencode</code> | <code>claude</code> | <code>codex</code> | <code>kiro</code>（預設 <code>opencode</code>）。</p>
+<p><strong>Node — npx / bunx（免 clone）：</strong></p>
+<pre><code>npx -y github:austinyuch/skills claude
+bunx   github:austinyuch/skills codex</code></pre>
+<p><strong>Python — uvx / pipx（免 clone）：</strong></p>
+<pre><code>uvx --from git+https://github.com/austinyuch/skills aclab-skills claude
+pipx run --spec git+https://github.com/austinyuch/skills aclab-skills codex</code></pre>
+<p><strong>沒有 Node/Python —— clone 後跑腳本（跨平台）：</strong></p>
+<pre><code>git clone https://github.com/austinyuch/skills.git &amp;&amp; cd skills
+bash scripts/install.sh claude       # macOS / Linux
+pwsh scripts/install.ps1 claude      # Windows PowerShell</code></pre>
+<p>每個技能會安裝成 <code>&lt;skill-home&gt;/&lt;skill-name&gt;/</code>，agent 會自動載入。可用 <code>SKILLS_TARGET=/custom/path</code> 覆寫目的地。（OpenCode 使用者也可用社群工具：<code>npx skills@latest add austinyuch/skills</code>。）</p>
 <h2>內容總覽</h2>
-<table><thead><tr><th>分類</th><th>技能數</th><th>說明</th></tr></thead><tbody><tr><td><strong>Spec Master</strong></td><td>2</td><td>規格路由與規格驅動開發</td></tr><tr><td><strong>Code Review</strong></td><td>6</td><td>複核、品質、安全與測試工具</td></tr><tr><td><strong>Scrum</strong></td><td>2</td><td>Scrum 與敏捷團隊工作流</td></tr><tr><td><strong>Engineering</strong></td><td>15</td><td>核心軟體工程工作流</td></tr><tr><td><strong>Architecture</strong></td><td>15</td><td>架構、治理與流程設計</td></tr><tr><td><strong>DevOps</strong></td><td>6</td><td>DevOps、容器與基礎設施</td></tr><tr><td><strong>Productivity</strong></td><td>7</td><td>生產力、寫作與協作</td></tr><tr><td><strong>Data</strong></td><td>4</td><td>數據分析、BI 與資料庫</td></tr><tr><td><strong>Domain Expert</strong></td><td>1</td><td>領域專家知識</td></tr><tr><td><strong>Creative</strong></td><td>2</td><td>前端、設計與創意工具</td></tr><tr><td><strong>Security &amp; Compliance</strong></td><td>1</td><td>安全複核與合規</td></tr><tr><td><strong>Social Media</strong></td><td>5</td><td>社群媒體、倡議與行銷</td></tr><tr><td><strong>Tools</strong></td><td>1</td><td>開發者工具與整合</td></tr><tr><td><strong>User Experience</strong></td><td>1</td><td>使用者檔案、手冊與互動</td></tr><tr><td><strong>Project Review</strong></td><td>2</td><td>專案複核與高管報告</td></tr><tr><td><strong>UAT &amp; Demo</strong></td><td>1</td><td>UAT 與 demo 執行工具</td></tr></tbody></table>
+<table><thead><tr><th>分類</th><th>技能數</th><th>說明</th></tr></thead><tbody><tr><td><strong>Spec Master</strong></td><td>2</td><td>規格路由與規格驅動開發</td></tr><tr><td><strong>Code Review</strong></td><td>6</td><td>複核、品質、安全與測試工具</td></tr><tr><td><strong>Scrum</strong></td><td>2</td><td>Scrum 與敏捷團隊工作流</td></tr><tr><td><strong>Engineering</strong></td><td>15</td><td>核心軟體工程工作流</td></tr><tr><td><strong>Architecture</strong></td><td>15</td><td>架構、治理與流程設計</td></tr><tr><td><strong>DevOps</strong></td><td>6</td><td>DevOps、容器與基礎設施</td></tr><tr><td><strong>Productivity</strong></td><td>7</td><td>生產力、寫作與協作</td></tr><tr><td><strong>Data</strong></td><td>4</td><td>數據分析、BI 與資料庫</td></tr><tr><td><strong>Domain Expert</strong></td><td>1</td><td>領域專家知識</td></tr><tr><td><strong>Creative</strong></td><td>2</td><td>前端、設計與創意工具</td></tr><tr><td><strong>Security &amp; Compliance</strong></td><td>1</td><td>安全複核與合規</td></tr><tr><td><strong>Social Media</strong></td><td>4</td><td>社群媒體、倡議與行銷</td></tr><tr><td><strong>Tools</strong></td><td>1</td><td>開發者工具與整合</td></tr><tr><td><strong>User Experience</strong></td><td>1</td><td>使用者檔案、手冊與互動</td></tr><tr><td><strong>Project Review</strong></td><td>2</td><td>專案複核與高管報告</td></tr><tr><td><strong>UAT &amp; Demo</strong></td><td>1</td><td>UAT 與 demo 執行工具</td></tr></tbody></table>
 <h2>Spec Master Method（開發方法）</h2>
 <blockquote><strong>把 DevSecOps、Scrum 與 TDD 帶進 agentic 工作流——而且不失真。</strong></blockquote>
 <p>程式代理人讓「產生程式碼」變便宜，卻沒讓「協調程式碼」變便宜。瓶頸從打字轉移到決定責任歸屬、維持證據新鮮， 以及阻止一個看似綠燈的檔案謊報 readiness。<strong>Spec Master Method</strong> 是一套由 <strong>14 個可組合技能</strong>組成的開源家族， 把五種已驗證的工程實踐移植成一個受治理、可檢視的 agentic 工作流。</p>
@@ -91,7 +93,8 @@ SKILLS_TARGET=/path/to/skills bash scripts/install.sh</code></pre>
 <h3>Security &amp; Compliance（安全與合規）</h3>
 <ul><li><code>security-review</code> - 安全複核檢查清單</li><li><code>security-risk-reviewer</code> - OWASP 安全掃描</li></ul>
 <h3>Social Media（社群媒體）</h3>
-<ul><li><code>social-media-platforms</code> - 社群媒體內容優化</li><li><code>social-post-generator</code> - 社群貼文生成</li><li><code>victim-rights-news-tracker</code> - 倡議新聞追蹤</li><li><code>brand-guidelines-naelt</code> - NAELT 品牌指南</li><li><code>NPO-marketing-guide</code> - NPO 行銷指南</li></ul>
+<ul><li><code>social-media-platforms</code> - 社群媒體內容優化</li><li><code>social-post-generator</code> - 社群貼文生成</li><li><code>victim-rights-news-tracker</code> - 倡議新聞追蹤</li><li><code>brand-guidelines-naelt</code> - NAELT 品牌指南</li></ul>
+<blockquote>另外隨附：<code>NPO-marketing-guide.md</code>（standalone 參考文件，會與 skills 一併安裝）。</blockquote>
 <h3>Tools（工具）</h3>
 <ul><li><code>local-llm-agent-migrator</code> - 本地 LLM agent 遷移</li></ul>
 <h3>Scrum</h3>
