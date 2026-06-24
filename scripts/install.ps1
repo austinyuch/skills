@@ -12,10 +12,12 @@
 [CmdletBinding()]
 param(
   [Parameter(Position = 0)]
-  [string]$Agent = "opencode"
+  [string]$Agent = "opencode",
+  [switch]$WithCli
 )
 $ErrorActionPreference = "Stop"
 
+$CliRepo = "austinyuch/skills"; $CliTag = "review-cli-v0.11.0"
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $Manifest = Join-Path $RepoRoot "skills-manifest.json"
 $Source   = Join-Path $RepoRoot "skills"
@@ -77,6 +79,30 @@ Write-Host ("`n" + ("━" * 32))
 Write-Host "📊 Installed: $installed   ⚠️  Missing: $missing"
 Write-Host ("━" * 32)
 Write-Host "Skills are now in: $Target"
+
 if (Test-Path (Join-Path $Target "code-review")) {
-  Write-Host 'ℹ️  code-review needs a review-cli-<os>-<arch> binary (not bundled) — see README "Native binaries".'
+  if ($WithCli) {
+    if ($IsMacOS) { $os = "darwin"; $ext = "" } elseif ($IsLinux) { $os = "linux"; $ext = "" } else { $os = "windows"; $ext = ".exe" }
+    $pa = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLower()
+    $arch = if ($pa -eq "arm64") { "arm64" } elseif ($pa -in @("x64", "amd64")) { "amd64" } else { "unsupported" }
+    $asset = "review-cli-$os-$arch$ext"
+    $dest = Join-Path $Target "code-review\scripts"
+    if ($arch -eq "unsupported") {
+      Write-Host "   ⚠️  unsupported platform for review-cli ($pa)"
+    } elseif (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
+      Write-Host "   ⚠️  GitHub CLI (gh) not found. Install gh + auth, then:"
+      Write-Host "      gh release download $CliTag -R $CliRepo -p $asset -D `"$dest`" --clobber"
+    } else {
+      Write-Host "⬇️  fetching $asset from $CliRepo@$CliTag (gh) …"
+      gh release download $CliTag -R $CliRepo -p $asset -D $dest --clobber
+      if ($LASTEXITCODE -eq 0) {
+        if (-not $IsWindows) { & chmod +x (Join-Path $dest $asset) }
+        Write-Host "   ✅ review-cli installed: $(Join-Path $dest $asset)"
+      } else {
+        Write-Host "   ⚠️  download failed — retry: gh release download $CliTag -R $CliRepo -p $asset -D `"$dest`" --clobber"
+      }
+    }
+  } else {
+    Write-Host 'ℹ️  code-review''s review-cli binary is not bundled — re-run with -WithCli to fetch it (needs gh auth; repo is private). See README "Native binaries".'
+  }
 }

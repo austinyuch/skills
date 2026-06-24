@@ -1,8 +1,9 @@
 #!/bin/bash
 # Install aclab skills into a coding agent's skill home.
 # Usage:
-#   bash scripts/install.sh [opencode|claude|codex|kiro]   # default: opencode
+#   bash scripts/install.sh [opencode|claude|codex|kiro] [--with-cli]
 #   SKILLS_TARGET=/custom/path bash scripts/install.sh     # explicit target wins
+#   --with-cli also fetches code-review's review-cli binary via `gh` (needs auth).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -10,7 +11,15 @@ REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 MANIFEST="$REPO_ROOT/skills-manifest.json"
 SOURCE="$REPO_ROOT/skills"
 
-AGENT="${1:-opencode}"
+CLI_REPO="austinyuch/skills"; CLI_TAG="review-cli-v0.11.0"
+AGENT="opencode"; WITH_CLI=0
+for a in "$@"; do
+  case "$a" in
+    --with-cli) WITH_CLI=1 ;;
+    -*) echo "❌ Unknown flag: $a"; exit 1 ;;
+    *) AGENT="$a" ;;
+  esac
+done
 case "$AGENT" in
   opencode) DEFAULT_TARGET="$HOME/.config/opencode/skills" ;;
   claude)   DEFAULT_TARGET="$HOME/.claude/skills" ;;
@@ -62,4 +71,28 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "📊 Install Summary — ✅ $INSTALLED  ⏭️  $SKIPPED  ⚠️  $MISSING"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Skills are now available in: $TARGET"
-[ -d "$TARGET/code-review" ] && echo 'ℹ️  code-review needs a review-cli-<os>-<arch> binary (not bundled) — see README "Native binaries".'
+
+if [ -d "$TARGET/code-review" ]; then
+  if [ "$WITH_CLI" = "1" ]; then
+    os=$(uname -s | tr '[:upper:]' '[:lower:]'); case "$os" in darwin) os=darwin;; linux) os=linux;; *) os=unsupported;; esac
+    m=$(uname -m); case "$m" in x86_64|amd64) arch=amd64;; arm64|aarch64) arch=arm64;; *) arch=unsupported;; esac
+    asset="review-cli-${os}-${arch}"
+    dest="$TARGET/code-review/scripts"
+    if [ "$os" = unsupported ] || [ "$arch" = unsupported ]; then
+      echo "   ⚠️  unsupported platform for review-cli ($os/$m)"
+    elif ! command -v gh >/dev/null; then
+      echo "   ⚠️  GitHub CLI (gh) not found. Install gh + auth, then:"
+      echo "      gh release download $CLI_TAG -R $CLI_REPO -p $asset -D \"$dest\" --clobber"
+    else
+      echo "⬇️  fetching $asset from $CLI_REPO@$CLI_TAG (gh) …"
+      if gh release download "$CLI_TAG" -R "$CLI_REPO" -p "$asset" -D "$dest" --clobber; then
+        chmod +x "$dest/$asset" 2>/dev/null || true
+        echo "   ✅ review-cli installed: $dest/$asset"
+      else
+        echo "   ⚠️  download failed — retry: gh release download $CLI_TAG -R $CLI_REPO -p $asset -D \"$dest\" --clobber"
+      fi
+    fi
+  else
+    echo 'ℹ️  code-review'\''s review-cli binary is not bundled — re-run with --with-cli to fetch it (needs gh auth; repo is private). See README "Native binaries".'
+  fi
+fi

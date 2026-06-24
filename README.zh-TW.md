@@ -37,16 +37,31 @@ pwsh scripts/install.ps1 claude      # Windows PowerShell
 每個技能會安裝成 `<skill-home>/<skill-name>/`，agent 會自動載入。可用 `SKILLS_TARGET=/custom/path`
 覆寫目的地。（OpenCode 使用者也可用社群工具：`npx skills@latest add austinyuch/skills`。）
 
-### Native binaries（不隨 repo 附帶）
+### Native binaries（放在 GitHub Releases，不進 git）
 
 少數 skill 依賴**預編譯的 native binary／模型，這些刻意不 commit 進來** —— 它們很大且依平台而異，
 所以已 gitignore。這讓 `git clone`、`npx`、`uvx` 保持快速且**不需 git LFS**（沒有 git-lfs 相依、不會
-拿到 pointer 假檔）。大型 binary 一律以 **out-of-band 方式（例如 GitHub Releases）發佈，絕不用 git LFS。**
+拿到 pointer 假檔）。它們改用 **GitHub Releases 發佈，絕不用 git LFS。**
 
-- **`code-review`** 使用 `review-cli-<os>-<arch>` binary（外加約 128 MB 的 embedding 模型）。從本 repo 安裝
-  只會複製它的文件與腳本，**不含** binary，所以它的 CLI／graph 功能需要另外取得該 binary（由上游
-  code-review 工具鏈 build／publish）。純 Python 的複核 helper —— `code-refactoring-advisor`、
-  `test-quality-reviewer`、`security-risk-reviewer`、`test-design-generator` —— 不需 binary，可直接使用。
+- **`code-review`** 使用 `review-cli-<os>-<arch>` binary（外加約 128 MB 的 embedding 模型）。安裝只會複製
+  skill 的文件／腳本，**不含** binary。用 `--with-cli` 抓對應平台的 binary：
+
+  ```bash
+  npx -y github:austinyuch/skills claude --with-cli
+  uvx --from git+https://github.com/austinyuch/skills aclab-skills claude --with-cli
+  bash scripts/install.sh claude --with-cli       #   macOS / Linux
+  pwsh scripts/install.ps1 claude -WithCli         #   Windows
+  ```
+
+  純 Python 的複核 helper —— `code-refactoring-advisor`、`test-quality-reviewer`、
+  `security-risk-reviewer`、`test-design-generator` —— 不需 binary，可直接使用。模型不會被抓
+  （CLI 在 graph-only 模式下不需要它）。
+
+> 🔐 **本 repository 是 private。** `npx`／`uvx`／`git clone` **以及** `--with-cli` 下載 binary 都需要
+> GitHub 驗證。`--with-cli` 透過 **`gh` CLI**（`gh auth login`）從
+> [`review-cli-v0.11.0`](https://github.com/austinyuch/skills/releases/tag/review-cli-v0.11.0)
+> release 抓 asset；沒有 `gh` 時會印出可直接執行的 `gh release download …` 指令。除非把 repo（或 release）
+> 設為 public，否則無法匿名安裝。
 
 ## 內容總覽
 

@@ -23,6 +23,44 @@ from pathlib import Path
 
 REPO_URL = "https://github.com/austinyuch/skills"
 
+# code-review's native CLI lives in GitHub Releases (the repo is private, so the
+# download is authenticated via `gh`). Bump CLI_TAG when a new binary is released.
+CLI_REPO = "austinyuch/skills"
+CLI_TAG = "review-cli-v0.11.0"
+
+
+def review_cli_asset() -> str | None:
+    import platform
+    o = {"darwin": "darwin", "linux": "linux", "windows": "windows"}.get(platform.system().lower())
+    m = platform.machine().lower()
+    a = "arm64" if m in ("arm64", "aarch64") else ("amd64" if m in ("x86_64", "amd64") else None)
+    if not o or not a:
+        return None
+    return f"review-cli-{o}-{a}" + (".exe" if o == "windows" else "")
+
+
+def fetch_review_cli(target: Path) -> None:
+    asset = review_cli_asset()
+    dest = target / "code-review" / "scripts"
+    if not asset:
+        print("   ⚠️  unsupported platform for review-cli"); return
+    if not dest.exists():
+        print("   ⚠️  code-review not installed — skipping --with-cli"); return
+    cmd = ["gh", "release", "download", CLI_TAG, "-R", CLI_REPO, "-p", asset, "-D", str(dest), "--clobber"]
+    try:
+        print(f"⬇️  fetching {asset} from {CLI_REPO}@{CLI_TAG} (gh) …")
+        subprocess.run(cmd, check=True)
+        f = dest / asset
+        if os.name != "nt":
+            f.chmod(0o755)
+        print(f"   ✅ review-cli installed: {f}")
+    except FileNotFoundError:
+        print("   ⚠️  GitHub CLI (gh) not found. Install gh + auth, then:")
+        print(f'      gh release download {CLI_TAG} -R {CLI_REPO} -p {asset} -D "{dest}" --clobber')
+    except subprocess.CalledProcessError as e:
+        print(f"   ⚠️  could not fetch review-cli (gh exit {e.returncode}).")
+        print(f'      gh release download {CLI_TAG} -R {CLI_REPO} -p {asset} -D "{dest}" --clobber')
+
 AGENT_HOMES = {
     "opencode": lambda: (Path(os.environ["XDG_CONFIG_HOME"]) / "opencode" / "skills")
     if os.environ.get("XDG_CONFIG_HOME")
@@ -60,6 +98,7 @@ def main() -> int:
     p.add_argument("agent", nargs="?", default="opencode", help="opencode | claude | codex | kiro")
     p.add_argument("--target", help="explicit destination dir (wins over <agent>)")
     p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--with-cli", action="store_true", help="also fetch code-review's review-cli binary via gh (needs auth)")
     args = p.parse_args()
 
     target = args.target or os.environ.get("SKILLS_TARGET")
@@ -112,8 +151,12 @@ def main() -> int:
     print(f"📊 {'Would install' if args.dry_run else 'Installed'}: {installed}   ⚠️  Missing: {missing}")
     print("━" * 32)
     print(f"Skills {'would be' if args.dry_run else 'are now'} in: {target}")
-    if (target / "code-review").exists():
-        print('ℹ️  code-review needs a review-cli-<os>-<arch> binary (not bundled) — see README "Native binaries".')
+    if (target / "code-review").exists() and not args.dry_run:
+        if args.with_cli:
+            fetch_review_cli(target)
+        else:
+            print('ℹ️  code-review\'s review-cli binary is not bundled — re-run with --with-cli to fetch it '
+                  '(needs gh auth; the repo is private). See README "Native binaries".')
     return 0
 
 

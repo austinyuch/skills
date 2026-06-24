@@ -10,9 +10,39 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// code-review's native CLI lives in GitHub Releases (the repo is private, so the
+// download is authenticated via `gh`). Bump CLI_TAG when a new binary is released.
+const CLI_REPO = 'austinyuch/skills';
+const CLI_TAG = 'review-cli-v0.11.0';
+
+function reviewCliAsset() {
+  const o = { darwin: 'darwin', linux: 'linux', win32: 'windows' }[process.platform];
+  const a = { x64: 'amd64', arm64: 'arm64' }[process.arch];
+  if (!o || !a) return null;
+  return `review-cli-${o}-${a}${o === 'windows' ? '.exe' : ''}`;
+}
+
+function fetchReviewCli(target) {
+  const asset = reviewCliAsset();
+  const dest = path.join(target, 'code-review', 'scripts');
+  if (!asset) { console.log(`   ⚠️  unsupported platform for review-cli (${process.platform}/${process.arch})`); return; }
+  if (!fs.existsSync(dest)) { console.log('   ⚠️  code-review not installed — skipping --with-cli'); return; }
+  try {
+    console.log(`⬇️  fetching ${asset} from ${CLI_REPO}@${CLI_TAG} (gh) …`);
+    execFileSync('gh', ['release', 'download', CLI_TAG, '-R', CLI_REPO, '-p', asset, '-D', dest, '--clobber'], { stdio: 'inherit' });
+    if (process.platform !== 'win32') fs.chmodSync(path.join(dest, asset), 0o755);
+    console.log(`   ✅ review-cli installed: ${path.join(dest, asset)}`);
+  } catch (e) {
+    const why = e && e.code === 'ENOENT' ? 'GitHub CLI (gh) not found' : (e.message || e);
+    console.log(`   ⚠️  could not fetch review-cli (${why}).`);
+    console.log(`      Install gh + auth, then: gh release download ${CLI_TAG} -R ${CLI_REPO} -p ${asset} -D "${dest}" --clobber`);
+  }
+}
 
 const AGENT_HOMES = {
   opencode: () => process.env.XDG_CONFIG_HOME
@@ -54,11 +84,12 @@ function findDataRoot(start) {
 
 function main() {
   const argv = process.argv.slice(2);
-  let agent = null, target = process.env.SKILLS_TARGET || null, dryRun = false;
+  let agent = null, target = process.env.SKILLS_TARGET || null, dryRun = false, withCli = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '-h' || a === '--help') usage(0);
     else if (a === '--dry-run') dryRun = true;
+    else if (a === '--with-cli') withCli = true;
     else if (a === '--target') target = argv[++i];
     else if (a.startsWith('--target=')) target = a.slice('--target='.length);
     else if (!a.startsWith('-') && !agent) agent = a;
@@ -109,8 +140,9 @@ function main() {
   console.log(`📊 ${dryRun ? 'Would install' : 'Installed'}: ${installed}   ⚠️  Missing: ${missing}`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
   console.log(`Skills ${dryRun ? 'would be' : 'are now'} in: ${target}`);
-  if (fs.existsSync(path.join(target, 'code-review'))) {
-    console.log(`ℹ️  code-review needs a review-cli-<os>-<arch> binary (not bundled) — see README "Native binaries".`);
+  if (!dryRun && fs.existsSync(path.join(target, 'code-review'))) {
+    if (withCli) fetchReviewCli(target);
+    else console.log(`ℹ️  code-review's review-cli binary is not bundled — re-run with --with-cli to fetch it (needs gh auth; the repo is private). See README "Native binaries".`);
   }
 }
 

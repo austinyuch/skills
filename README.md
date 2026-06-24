@@ -39,18 +39,32 @@ Each skill installs as `<skill-home>/<skill-name>/` and the agent picks it up au
 Override the destination anywhere with `SKILLS_TARGET=/custom/path`. (OpenCode users can also use the
 community tool: `npx skills@latest add austinyuch/skills`.)
 
-### Native binaries (not bundled)
+### Native binaries (GitHub Releases, not in git)
 
 A few skills rely on **prebuilt native binaries / models that are intentionally not committed** here —
 they are large and platform-specific, so they are gitignored. This keeps `git clone`, `npx`, and `uvx`
-fast and **LFS-free** (no git-lfs dependency, no pointer-stub breakage). Large binaries are distributed
-**out-of-band (e.g. GitHub Releases), never via git LFS.**
+fast and **LFS-free** (no git-lfs dependency, no pointer-stub breakage). They are distributed via
+**GitHub Releases, never git LFS.**
 
 - **`code-review`** uses a `review-cli-<os>-<arch>` binary (+ a ~128 MB embedding model). Installing it
-  from this repo copies its docs and scripts but **not** the binary, so its CLI/graph features need that
-  binary obtained separately (built or published by the code-review toolchain). The pure-Python review
-  helpers — `code-refactoring-advisor`, `test-quality-reviewer`, `security-risk-reviewer`,
-  `test-design-generator` — work as-is with no binary.
+  copies the skill's docs/scripts but **not** the binary. Fetch the matching binary with `--with-cli`:
+
+  ```bash
+  npx -y github:austinyuch/skills claude --with-cli
+  uvx --from git+https://github.com/austinyuch/skills aclab-skills claude --with-cli
+  bash scripts/install.sh claude --with-cli       #   macOS / Linux
+  pwsh scripts/install.ps1 claude -WithCli         #   Windows
+  ```
+
+  The pure-Python review helpers — `code-refactoring-advisor`, `test-quality-reviewer`,
+  `security-risk-reviewer`, `test-design-generator` — work as-is with no binary. The model is not
+  fetched (the CLI runs graph-only without it).
+
+> 🔐 **This repository is private.** `npx`/`uvx`/`git clone` **and** the `--with-cli` binary download
+> all require GitHub authentication. `--with-cli` uses the **`gh` CLI** (`gh auth login`) to pull the
+> asset from the [`review-cli-v0.11.0`](https://github.com/austinyuch/skills/releases/tag/review-cli-v0.11.0)
+> release; without `gh` it prints the exact `gh release download …` command to run. Anonymous/public
+> install is not available unless the repo (or release) is made public.
 
 ## What's Inside
 
