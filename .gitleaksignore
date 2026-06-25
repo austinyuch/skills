@@ -1,0 +1,10 @@
+# Reviewed false positives.
+#
+# owasp-patterns.md: prose documenting password hashing recommendations.
+# viewer assets: bundled Cytoscape code where "keyCount" is detected as a generic API key.
+skills/code-review/security-risk-reviewer/references/owasp-patterns.md:generic-api-key:19
+skills/code-review/code-review/scripts/viewer/assets/index-5blR8HyG.js:generic-api-key:15
+skills/code-review/code-review/scripts/viewer/graph-explorer/assets/index-fAaX2FWO.js:generic-api-key:15
+c98c222bd4a84c938d8dc93918c5eede388773df:skills/code-review/security-risk-reviewer/references/owasp-patterns.md:generic-api-key:19
+c98c222bd4a84c938d8dc93918c5eede388773df:skills/code-review/code-review/scripts/viewer/assets/index-5blR8HyG.js:generic-api-key:15
+c98c222bd4a84c938d8dc93918c5eede388773df:skills/code-review/code-review/scripts/viewer/graph-explorer/assets/index-fAaX2FWO.js:generic-api-key:15

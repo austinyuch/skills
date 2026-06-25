@@ -4,6 +4,12 @@
 review-cli-*
 uatdemo-*
 
+# Local/generated data stores excluded from source releases
+*.db
+*.sqlite
+*.sqlite3
+skills/**/data/*.db
+
 # Python cache
 __pycache__/
 *.pyc

@@ -71,7 +71,7 @@ PLACEHOLDER_RE="[:=][[:space:]]*['\"]?(changeme|change-me|change_me|your[-_a-z0-
 EMPTY_RE="[:=][[:space:]]*(\"\"|''|[[:space:]]*$)"
 
 SECRET_HITS="$(added_lines_with_path . \
-    | awk -F'\t' '$1 !~ /\/(evals|fixtures|__fixtures__|testdata|test-fixtures)\// && $1 !~ /\/(test_[^/]*|[^/]*_test|[^/]*\.test)\.[A-Za-z]+$/' \
+    | awk -F'\t' '$1 != ".gitleaksignore" && $1 !~ /\/(evals|fixtures|__fixtures__|testdata|test-fixtures)\// && $1 !~ /\/(test_[^/]*|[^/]*_test|[^/]*\.test)\.[A-Za-z]+$/' \
     | grep -v 'AKIAIOSFODNN7EXAMPLE' \
     | grep -viE '\.env\.(example|sample|template)' \
     | { grep -iE "($HIGH_ENTROPY)|(${KEYWORD}[^[:space:]*]+)" || true; } \
