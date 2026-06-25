@@ -131,20 +131,20 @@ import { NAELTButton } from './code/react-button-component';
 ```bash
 # 在專案中測試使用
 cd /path/to/project
-cp -r /home/ac/.kiro/skills/brand-guidelines-naelt/code ./naelt-brand
+cp -r ~/.kiro/skills/brand-guidelines-naelt/code ./naelt-brand
 ```
 
 ### 2. 建立 Assets 目錄（可選）
 如果需要包含實際的 Logo 檔案：
 ```bash
-mkdir -p /home/ac/.kiro/skills/brand-guidelines-naelt/assets
-cp sites/naelt/public/site-assets/images/* /home/ac/.kiro/skills/brand-guidelines-naelt/assets/
+mkdir -p ~/.kiro/skills/brand-guidelines-naelt/assets
+cp sites/naelt/public/site-assets/images/* ~/.kiro/skills/brand-guidelines-naelt/assets/
 ```
 
 ### 3. 打包 Skill（可選）
 如果需要分發給其他開發者：
 ```bash
-cd /home/ac/.kiro/skills
+cd ~/.kiro/skills
 tar -czf brand-guidelines-naelt.tar.gz brand-guidelines-naelt/
 ```
 
@@ -165,8 +165,8 @@ tar -czf brand-guidelines-naelt.tar.gz brand-guidelines-naelt/
 - **NAELT 官網**: https://www.naelt.org
 - **專案位置**: `sites/naelt/`
 - **主題配置**: `sites/naelt/plugins/naelt-theme/manifest.json`
-- **Anthropic Brand Guidelines**: `/home/ac/.kiro/skills/brand-guidelines/SKILL.md`
-- **Skill Creator Guide**: `/home/ac/.kiro/skills/skill-creator/SKILL.md`
+- **Anthropic Brand Guidelines**: `~/.kiro/skills/brand-guidelines/SKILL.md`
+- **Skill Creator Guide**: `~/.kiro/skills/skill-creator/SKILL.md`
 
 ---
 

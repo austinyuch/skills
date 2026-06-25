@@ -6,6 +6,8 @@ This is an **agent-agnostic** collection — the skills run on **OpenCode**, **C
 
 🌐 **Languages:** [English](README.md) · [繁體中文](README.zh-TW.md)
 
+[![CI](https://github.com/austinyuch/skills/actions/workflows/ci.yml/badge.svg)](https://github.com/austinyuch/skills/actions/workflows/ci.yml)
+
 > 🤖 **Using a coding agent?** Read [`AGENTS.md`](AGENTS.md) — it explains how to navigate this
 > collection, when to enter the **Spec Master Method**, and the routing/ownership rules the skills expect.
 
@@ -320,6 +322,13 @@ cd skills
 # Install skills locally for testing
 bash scripts/install-to-opencode.sh
 ```
+
+## Contributing
+
+PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). In short: install the hooks
+(`bash scripts/install-git-hooks.sh`), keep the manifest/README/twins in sync, and make sure
+`bash scripts/ci-checks.sh` passes (the same checks CI runs). Please follow the
+[Code of Conduct](CODE_OF_CONDUCT.md); report security issues per [SECURITY.md](SECURITY.md).
 
 ## License & Attribution
 

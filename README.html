@@ -41,6 +41,7 @@ img{max-width:100%}
 <h1>aclab Skills</h1>
 <p><strong>aclab's</strong> curated collection of AI agent skills for professional software development workflows. This is an <strong>agent-agnostic</strong> collection — the skills run on <strong>OpenCode</strong>, <strong>Claude Code</strong>, and <strong>Codex</strong> (and other compatible runtimes), not just one vendor.</p>
 <p>🌐 <strong>Languages:</strong> <a href="README.html">English</a> · <a href="README.zh-TW.html">繁體中文</a></p>
+<p><a href="https://github.com/austinyuch/skills/actions/workflows/ci.yml/badge.svg">![CI</a>](https://github.com/austinyuch/skills/actions/workflows/ci.yml)</p>
 <blockquote>🤖 <strong>Using a coding agent?</strong> Read <a href="AGENTS.html"><code>AGENTS.md</code></a> — it explains how to navigate this collection, when to enter the <strong>Spec Master Method</strong>, and the routing/ownership rules the skills expect.</blockquote>
 <h2>Quick Start</h2>
 <p>Install the skills into your coding agent. <strong>Nothing is published to any registry</strong> — every command below resolves straight from this Git repo. Pick whichever runtime you already have.</p>
@@ -177,6 +178,8 @@ git push origin main</code></pre>
 cd skills
 # Install skills locally for testing
 bash scripts/install-to-opencode.sh</code></pre>
+<h2>Contributing</h2>
+<p>PRs welcome — see <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>. In short: install the hooks (<code>bash scripts/install-git-hooks.sh</code>), keep the manifest/README/twins in sync, and make sure <code>bash scripts/ci-checks.sh</code> passes (the same checks CI runs). Please follow the <a href="CODE_OF_CONDUCT.md">Code of Conduct</a>; report security issues per <a href="SECURITY.md">SECURITY.md</a>.</p>
 <h2>License &amp; Attribution</h2>
 <p>This repository is <strong>MIT</strong> — see the root <a href="LICENSE">LICENSE</a> — <strong>except</strong> the <strong>code-review family</strong>, which is <strong>Apache-2.0</strong>. Each of these six skills carries its own <code>LICENSE</code> + <code>NOTICE</code>:</p>
 <ul><li>Apache-2.0: <code>code-review</code>, <code>code-refactoring-advisor</code>, <code>test-quality-reviewer</code>,</li></ul>

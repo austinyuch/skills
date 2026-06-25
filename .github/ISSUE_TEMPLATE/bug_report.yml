@@ -1,0 +1,39 @@
+name: Bug report
+description: Something in a skill, installer, or doc isn't working
+labels: [bug]
+body:
+  - type: input
+    id: area
+    attributes:
+      label: Affected skill / file
+      placeholder: e.g. skills/code-review/… or scripts/install.sh
+    validations:
+      required: true
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Agent / runtime
+      options: [OpenCode, Claude Code, Codex, Kiro, Other / N/A]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Ran `npx -y github:austinyuch/skills claude`
+        2. …
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS / arch
+      placeholder: e.g. macOS arm64, Windows amd64, Ubuntu 22.04

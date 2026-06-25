@@ -1,0 +1,26 @@
+name: Skill request / idea
+description: Propose a new skill or an improvement to an existing one
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this skill solve?
+      description: Describe the job-to-be-done — when would an agent reach for it?
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: Proposed skill name + category
+      placeholder: e.g. terraform-patterns (devops)
+  - type: textarea
+    id: trigger
+    attributes:
+      label: When to use / when NOT to use
+      description: This becomes the SKILL.md description — be specific.
+  - type: input
+    id: source
+    attributes:
+      label: Derived from / inspired by (for attribution)
+      placeholder: e.g. an external project + its license, or "original"

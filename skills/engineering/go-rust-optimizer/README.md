@@ -132,6 +132,6 @@ docker buildx build --platform linux/amd64,linux/arm64 -t myapp:latest .
 
 ## 輸出檔案
 
-已打包為: `/home/ac/.kiro/skills/go-rust-optimizer.skill`
+已打包為: `~/.kiro/skills/go-rust-optimizer.skill`
 
 可以直接分享給使用者安裝使用。

@@ -235,6 +235,13 @@ pwsh scripts/install.ps1 claude      # Windows PowerShell
 ### UAT & Demo
 - `uat-demo-agent` - UAT/Demo 計畫執行
 
+## 參與貢獻
+
+歡迎 PR —— 見 [CONTRIBUTING.md](CONTRIBUTING.md)。重點：先裝 hooks
+（`bash scripts/install-git-hooks.sh`），保持 manifest／README／twins 同步，並確認
+`bash scripts/ci-checks.sh` 通過（與 CI 相同的檢查）。請遵守 [Code of Conduct](CODE_OF_CONDUCT.md)；
+安全問題請依 [SECURITY.md](SECURITY.md) 回報。
+
 ## 授權與致謝
 
 本 repository 以 **MIT** 授權（見根目錄 [LICENSE](LICENSE)），**唯一例外是 code-review 家族**，

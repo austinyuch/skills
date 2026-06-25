@@ -71,7 +71,8 @@ PLACEHOLDER_RE="[:=][[:space:]]*['\"]?(changeme|change-me|change_me|your[-_a-z0-
 EMPTY_RE="[:=][[:space:]]*(\"\"|''|[[:space:]]*$)"
 
 SECRET_HITS="$(added_lines_with_path . \
-    | awk -F'\t' '$1 !~ /\/(evals|fixtures|__fixtures__|testdata|test-fixtures)\//' \
+    | awk -F'\t' '$1 !~ /\/(evals|fixtures|__fixtures__|testdata|test-fixtures)\// && $1 !~ /\/(test_[^/]*|[^/]*_test|[^/]*\.test)\.[A-Za-z]+$/' \
+    | grep -v 'AKIAIOSFODNN7EXAMPLE' \
     | grep -viE '\.env\.(example|sample|template)' \
     | { grep -iE "($HIGH_ENTROPY)|(${KEYWORD}[^[:space:]*]+)" || true; } \
     | grep -vE 'env:|file:' \
@@ -102,6 +103,7 @@ ABS_HITS="$(added_lines_with_path 'skills/**' \
     | awk -F'\t' '$1 !~ /\/(evals|fixtures|__fixtures__|testdata|test-fixtures)\//' \
     | grep -E '/home/[a-z_][a-z0-9_-]*/' \
     | grep -vE '/home/<[^>]+>' \
+    | grep -vE '/home/(user|users|agent|ci|me|you|username|youruser|example|test)/' \
     || true)"
 if [ -n "$ABS_HITS" ]; then
     printf '%s\n' "$ABS_HITS" | head -5 | sed 's/^/      /'

@@ -83,7 +83,7 @@ CODE_REVIEW_EMBEDDING_VERTEX_PROJECT_ID=gcputil
 CODE_REVIEW_EMBEDDING_VERTEX_LOCATION=us-central1
 CODE_REVIEW_EMBEDDING_VERTEX_MODEL=gemini-embedding-2-preview
 CODE_REVIEW_EMBEDDING_VERTEX_DIMENSIONS=1536
-CODE_REVIEW_EMBEDDING_VERTEX_CREDENTIALS_FILE=/home/ga6653/.config/gcloud/gcputil-6ea3c7189bd4.json
+CODE_REVIEW_EMBEDDING_VERTEX_CREDENTIALS_FILE=/home/user/.config/gcloud/gcputil-6ea3c7189bd4.json
 ```
 
 這條路徑使用的是 Vertex 的 Gemini Embedding 2 系列，並沿用 service account / ADC 認證。
@@ -93,7 +93,7 @@ CODE_REVIEW_EMBEDDING_VERTEX_CREDENTIALS_FILE=/home/ga6653/.config/gcloud/gcputi
 標準 ADC 相容路徑也仍可用：
 
 ```bash
-GOOGLE_APPLICATION_CREDENTIALS=/home/ga6653/.config/gcloud/gcputil-6ea3c7189bd4.json
+GOOGLE_APPLICATION_CREDENTIALS=/home/user/.config/gcloud/gcputil-6ea3c7189bd4.json
 ```
 
 但對這個服務來說，preferred 的 unique env 名稱是 `CODE_REVIEW_EMBEDDING_VERTEX_CREDENTIALS_FILE`。
@@ -168,7 +168,7 @@ CODE_REVIEW_LLM_PROVIDER=vertex
 CODE_REVIEW_LLM_VERTEX_PROJECT_ID=gcputil
 CODE_REVIEW_LLM_VERTEX_LOCATION=us-central1
 CODE_REVIEW_LLM_VERTEX_MODEL=gemini-3.5-flash
-CODE_REVIEW_LLM_VERTEX_CREDENTIALS_FILE=/home/ga6653/.config/gcloud/gcputil-6ea3c7189bd4.json
+CODE_REVIEW_LLM_VERTEX_CREDENTIALS_FILE=/home/user/.config/gcloud/gcputil-6ea3c7189bd4.json
 ```
 
 請依目標帳號實際可用的 Vertex model catalog 調整 `CODE_REVIEW_LLM_VERTEX_MODEL`；不要沿用舊範例 model 當作預設值。
@@ -176,7 +176,7 @@ CODE_REVIEW_LLM_VERTEX_CREDENTIALS_FILE=/home/ga6653/.config/gcloud/gcputil-6ea3
 標準 ADC 相容路徑也仍可用：
 
 ```bash
-GOOGLE_APPLICATION_CREDENTIALS=/home/ga6653/.config/gcloud/gcputil-6ea3c7189bd4.json
+GOOGLE_APPLICATION_CREDENTIALS=/home/user/.config/gcloud/gcputil-6ea3c7189bd4.json
 ```
 
 但對這個服務來說，preferred 的 unique env 名稱是 `CODE_REVIEW_LLM_VERTEX_CREDENTIALS_FILE`。
