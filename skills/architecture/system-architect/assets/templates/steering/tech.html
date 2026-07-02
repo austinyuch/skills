@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Technology Steering</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; color: #17202a; background: #f7f8fa; }
+    main { max-width: 1180px; margin: 0 auto; padding: 32px 20px 56px; }
+    h1, h2 { color: #0f1720; }
+    .status { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0 28px; }
+    .badge { border: 1px solid #ccd3dc; background: white; border-radius: 6px; padding: 6px 10px; font-size: 14px; }
+    section { margin: 28px 0; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #d8dee6; padding: 8px 10px; text-align: left; vertical-align: top; }
+    pre { background: #101820; color: #eef2f7; padding: 16px; overflow: auto; border-radius: 6px; }
+    .warning { border-left: 4px solid #b45309; background: #fff7ed; padding: 12px 14px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Technology Steering</h1>
+    <div class="status">
+      <span class="badge">State: {{STATE}}</span>
+      <span class="badge">Last reviewed: {{LAST_REVIEWED}}</span>
+      <span class="badge">Source: .agents/steering/tech.md</span>
+    </div>
+    <section>
+      <h2>System Context</h2>
+      {{SYSTEM_CONTEXT_HTML}}
+    </section>
+    <section>
+      <h2>Architecture Map</h2>
+      <pre>{{ARCHITECTURE_MAP}}</pre>
+    </section>
+    <section>
+      <h2>SAA Technical Surface</h2>
+      <table>
+        <thead><tr><th>Surface</th><th>Current contract</th><th>Evidence</th></tr></thead>
+        <tbody>
+          <tr><td>Common Programming Interface</td><td>{{COMMON_PROGRAMMING_INTERFACE}}</td><td>{{CPI_EVIDENCE}}</td></tr>
+          <tr><td>Common Communications Support</td><td>{{COMMON_COMMUNICATIONS_SUPPORT}}</td><td>{{CCS_EVIDENCE}}</td></tr>
+          <tr><td>Cross-platform/runtime consistency</td><td>{{CROSS_PLATFORM_RUNTIME_CONSISTENCY}}</td><td>{{RUNTIME_EVIDENCE}}</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Data and Trust Boundaries</h2>
+      {{DATA_AND_TRUST_BOUNDARIES_HTML}}
+    </section>
+    <section>
+      <h2>Code-Review Context Packet</h2>
+      {{CODE_REVIEW_CONTEXT_PACKET_HTML}}
+    </section>
+    <section>
+      <h2>Evidence and Gaps</h2>
+      <div class="warning">{{EVIDENCE_AND_GAPS}}</div>
+    </section>
+  </main>
+</body>
+</html>

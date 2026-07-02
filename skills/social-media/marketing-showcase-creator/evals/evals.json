@@ -1,0 +1,29 @@
+{
+  "skill_name": "marketing-showcase-creator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our public showcase home page currently reads: hero title 'Acme Studio — a sample tenant', subtitle 'Its content lives in its own database (acme_db), rendered from DB-driven page sections'; stats 'Studio in numbers — 99% DB-driven, 12 tenants onboarded'; CTA 'Work with us / This is a demo tenant'. The showcase targets potential customers of our website-building platform. Rewrite it to be value-driven and marketing-oriented.",
+      "expected_output": "Confirms/uses B2B positioning; outcome-first hero, benefit features, outcome stats, conversion CTAs; ZERO internal jargon in produced copy; flags data-only vs rebuild; notes live-verify.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Make our demo site's tutoring page more marketing-oriented for potential students and parents. Current copy: 'A live demo of the platform's tutoring & learning plugin — teacher profiles, a course catalog, access-gated preview materials, and a real inquiry form. Every block is a database-stored page section.'",
+      "expected_output": "Reframes to student/parent audience with benefit language; removes plugin/access-gated/database-stored jargon; unobtrusive trust note; outcome-first.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I rewrote our showcase home copy in the seed file and it greps clean of jargon, but the live page still shows 'database-stored sections' somewhere. Help me get the showcase fully clean.",
+      "expected_output": "Recognizes jargon hides in layers (page meta, and especially related content from another table); directs layer-by-layer sweep AND live-render check (curl live HTML, not just grep seed); checks CTA hrefs resolve.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Before we rewrite our showcase, give me a sharp value proposition, an Amazon working-backwards press release + FAQ, and a CEO viewpoint for our AI website-building platform (potential customers = small orgs and NGOs). Then turn it into the hero copy.",
+      "expected_output": "Produces a value-prop one-liner (canvas-grounded), a customer-POV future press release + external FAQ, and 3-5 gstack-style CEO viewpoint statements (wedge / 10-star / why-now); then distills the PR headline + value prop into an outcome-first hero; keeps fabricated metrics out (aspirational but honest); credits gstack as 'adapted from' only in the brief, not the public copy.",
+      "files": []
+    }
+  ]
+}

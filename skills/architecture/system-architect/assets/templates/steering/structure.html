@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Structure Steering</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; color: #17202a; background: #f7f8fa; }
+    main { max-width: 1120px; margin: 0 auto; padding: 32px 20px 56px; }
+    h1, h2 { color: #0f1720; }
+    .status { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0 28px; }
+    .badge { border: 1px solid #ccd3dc; background: white; border-radius: 6px; padding: 6px 10px; font-size: 14px; }
+    section { margin: 28px 0; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #d8dee6; padding: 8px 10px; text-align: left; vertical-align: top; }
+    pre { background: #101820; color: #eef2f7; padding: 16px; overflow: auto; border-radius: 6px; }
+    .warning { border-left: 4px solid #b45309; background: #fff7ed; padding: 12px 14px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Structure Steering</h1>
+    <div class="status">
+      <span class="badge">State: {{STATE}}</span>
+      <span class="badge">Last reviewed: {{LAST_REVIEWED}}</span>
+      <span class="badge">Source: .agents/steering/structure.md</span>
+    </div>
+    <section>
+      <h2>Repository / Workspace Shape</h2>
+      <pre>{{REPOSITORY_TREE}}</pre>
+      {{REPOSITORY_WORKSPACE_SHAPE_HTML}}
+    </section>
+    <section>
+      <h2>Bounded Contexts and Ownership</h2>
+      {{BOUNDED_CONTEXTS_AND_OWNERSHIP_HTML}}
+    </section>
+    <section>
+      <h2>Architecture Decisions</h2>
+      {{ARCHITECTURE_DECISIONS_HTML}}
+    </section>
+    <section>
+      <h2>Source and Artifact Flow</h2>
+      {{SOURCE_AND_ARTIFACT_FLOW_HTML}}
+    </section>
+    <section>
+      <h2>Evidence and Freshness</h2>
+      <div class="warning">{{EVIDENCE_AND_FRESHNESS}}</div>
+    </section>
+  </main>
+</body>
+</html>

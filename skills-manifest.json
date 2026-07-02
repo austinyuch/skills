@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "source": "~/.config/opencode/skills",
   "target_repo": "~/projects/aclab/skills",
   "description": "Open-source skills collection for AI agents",
@@ -67,6 +67,7 @@
         "skill-migration-workflow",
         "cross-agents-symlink-bridge",
         "issue-log-manager",
+        "system-architect",
         "uat-demo-agent-packaging",
         "uat-demo-target-governance-template"
       ]
@@ -128,7 +129,8 @@
         "social-media-platforms",
         "social-post-generator",
         "victim-rights-news-tracker",
-        "brand-guidelines-naelt"
+        "brand-guidelines-naelt",
+        "marketing-showcase-creator"
       ]
     },
     "tools": {

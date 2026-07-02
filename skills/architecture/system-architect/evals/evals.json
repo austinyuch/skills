@@ -1,0 +1,51 @@
+{
+  "skill_name": "system-architect",
+  "version": "2026-06-30",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "專案開始時幫我建立系統設計書，並用 Agile 方式保留 IBM SAA 的 good parts",
+      "expected_output": "The skill classifies whether project-level architecture docs are required, uses SAA good-parts vocabulary, and preserves Agile/YAGNI boundaries.",
+      "files": [],
+      "expectations": [
+        "The response checks whether .agents/steering/product.md, tech.md, and structure.md already exist, plus same-name HTML or equivalent legacy docs.",
+        "The response uses Common User Access, Common Programming Interface, Common Communications Support, and cross-platform consistency as lightweight vocabulary.",
+        "The response avoids big-upfront architecture and allows not_yet_required when evidence is thin."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "project review 前檢查 .agents/steering/product|tech|structure markdown/HTML 是否和 specs 一致",
+      "expected_output": "The skill compares architecture markdown/HTML against accepted spec and review evidence, classifies stale or missing docs, and avoids overclaim.",
+      "files": [],
+      "expectations": [
+        "The response reads steering markdown/HTML as narrative input, not readiness authority.",
+        "The response classifies architecture state as current, needs_update, missing_but_required, not_yet_required, or stale_or_overclaiming.",
+        "The response claim-caps project review language against review.md, SPECS.md, RTM.md, and evidence metadata."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "幫 code-review 先整理這個專案的高階架構資訊和 GraphRAG 查詢方向",
+      "expected_output": "The skill produces an Architecture Context Packet and focused code-review query suggestions while treating graph output as evidence input only.",
+      "files": [],
+      "expectations": [
+        "The response includes system boundary, modules/services, bounded contexts, critical data flows, public contracts, trust boundaries, high-blast-radius files, graph query suggestions, open questions, and evidence refs.",
+        "The response suggests focused code-review query intents such as architecture, bounded-context, impact, dependency-path, developer-routing, capability-inventory, or search-code graph-only.",
+        "The response states that code-review graph output is evidence input, not authority over checked-out code or accepted spec artifacts."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Sprint review 發現多個 specs 之間的架構 ownership 和 handoff 不一致，請用 agentic scrum governance 和 system-architect 協助判斷下一步",
+      "expected_output": "The response treats architecture drift as a sprint review/retro signal, delegates architecture doc refresh to system-architect, and preserves readiness authority in review.md.",
+      "files": [],
+      "expectations": [
+        "The response recognizes architecture drift or ownership ambiguity as a review/retro input.",
+        "The response routes architecture markdown/HTML creation or refresh to system-architect.",
+        "The response does not treat architecture docs as readiness verdict authority.",
+        "The response does not promote the issue to broad skill churn without repetition and owner-resolution evidence."
+      ]
+    }
+  ]
+}

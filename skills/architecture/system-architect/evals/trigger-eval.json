@@ -1,0 +1,38 @@
+[
+  {
+    "query": "專案開始時幫我建立系統設計書，並用 Agile 方式保留 IBM SAA 的 good parts。",
+    "should_trigger": true
+  },
+  {
+    "query": "project review 前檢查 .agents/steering/product.md、tech.md、structure.md 和同名 HTML 是否和 specs 一致。",
+    "should_trigger": true
+  },
+  {
+    "query": "幫 code-review 先整理這個專案的高階架構資訊、bounded contexts、trust boundaries 和 GraphRAG 查詢方向。",
+    "should_trigger": true
+  },
+  {
+    "query": "多個 branch specs 的 design.md 對同一個 runtime boundary 說法不一致，請做 cross-spec architecture review。",
+    "should_trigger": true
+  },
+  {
+    "query": "Sprint review 發現 architecture drift 和 handoff gap，請判斷是否需要 .agents/steering product/tech/structure refresh。",
+    "should_trigger": true
+  },
+  {
+    "query": "請幫我只修一個 failing unit test，不需要整理 spec 或架構文件。",
+    "should_trigger": false
+  },
+  {
+    "query": "只更新 folder-level TESTS.md 的 canonical command 和 Evidence Ref。",
+    "should_trigger": false
+  },
+  {
+    "query": "請生成 stakeholder-facing project review HTML，重點是 value proposition 和 screenshots。",
+    "should_trigger": false
+  },
+  {
+    "query": "幫我啟動 local backend/frontend runtime 做 E2E，先確認 port ownership。",
+    "should_trigger": false
+  }
+]
