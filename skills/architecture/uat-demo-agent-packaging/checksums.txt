@@ -1,2 +1,2 @@
-b48edc2892aac0c9d158d5c1b857a3436792a2bd69ab17793665c6e701ac0b40  uat-demo-agent-packaging/SKILL.md
-26ee0cfc4ba57f0952b1a73226520549c4a1ce292bd67b428b2137cde995a1e3  uat-demo-agent-packaging/references/release-hygiene.md
+ef141bc6320ab9026a7002b3b225dd46a19594b687a4100c1e3d938d84b50225  uat-demo-agent-packaging/SKILL.md
+d07c57b6d1f20613a08c77a92fa6d0de8b89291ccb11c448242efc89601c9b7b  uat-demo-agent-packaging/references/release-hygiene.md

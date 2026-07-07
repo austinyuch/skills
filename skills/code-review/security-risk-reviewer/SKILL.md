@@ -66,7 +66,21 @@ secret in a leaf script.
 Security regex over-matches by design (better to over-flag than miss). The lower-confidence
 rules — `SQL_INJECTION`, `PATH_TRAVERSAL`, `WEAK_CRYPTO`, the generic secret pattern — should
 be confirmed with `--explain` or a human before reporting as real. The high-confidence rules
-(`AKIA…` keys, PEM blocks, `verify=False`) are reliable. This skill is a triage aid, **not a
+(`AKIA…` keys, PEM blocks, `verify=False`) are reliable.
+
+This precision boundary is an **executable contract**, not just prose: `scripts/test_run.py`
+ships a `TestPrecisionGuards` suite of benign-but-vuln-shaped inputs each noisy rule must **not**
+flag (parameterized SQL, ORM queries, placeholder/`${…}`/env-ref secrets, a bare `verify = False`
+a constant `filepath.Join`, `md5` named only in a comment), a paired `TestRecallHeld` suite proving
+the real vuln variants still fire, and `TestAcceptedOverflags` which locks the context-dependent
+over-flags (e.g. `Math.random()`, a bare `verify = False`) at **low/known confidence** so they
+can't silently become alert-fatigue. The one recall-safe refiner: the generic secret rule skips
+**non-literal** values only — templates/refs (`${…}`, `{{…}}`, `<…>`, env refs) and a curated
+instructional-placeholder set (`changeme`, `your-api-key-here`, `xxxxxx`). It deliberately still
+flags weak/**default** credentials (a password field containing the literal `"password"`,
+`"admin"`, `"0000…"`) and any
+entropy-bearing value (`your-prod-key-9f3a7c2b`) — a cross-family security review (CR-076) showed
+dropping those was a real recall loss, not noise reduction. [CR-076] This skill is a triage aid, **not a
 SAST replacement** — **SonarQube is the authoritative SAST + quality gate**; this skill is the
 fast shift-left pre-flight that catches the obvious before the gate. Pull the authoritative
 findings via the `sonarqube-bridge` skill.
@@ -74,7 +88,10 @@ findings via the `sonarqube-bridge` skill.
 The rule set is a **floor, not a ceiling**: it guarantees the known classes are never missed,
 but it is finite. Do not stop at the detector output — also apply judgement for issues outside
 the rules (business-logic flaws, auth bypass, novel sinks). Treat zero findings as "no *known
-pattern* matched", not "secure".
+pattern* matched", not "secure". The scanner is **line-based**, so it will not follow data flow
+across lines (e.g. `flag = False` then `verify=flag`), non-literal falsey values (`verify=0`), or a
+call whose risky argument is split across lines — apply judgement for those. `--explain` (LLM) and
+SonarQube (authoritative SAST) cover what a per-line regex structurally cannot.
 
 ## Optional LLM explanation, mock mode, install, testing
 

@@ -127,5 +127,73 @@ class TestModesAndHonesty(unittest.TestCase):
         self.assertIn("provider failed", r.stderr)
 
 
+class TestPrecisionGuards(unittest.TestCase):
+    """False-positive guards for a smell advisor: the dangerous direction here is CRYING WOLF on
+    clean-but-structured code — a refactoring advisor that fires on tidy code gets muted. These lock
+    the precision boundary into an executable contract (the skill previously had one trivial clean
+    guard, `func Add`, for 7 smell families). [CR-2026-07-05-077]"""
+
+    def assertRuleClean(self, payload, rule):
+        out = json.loads(invoke(payload).stdout)
+        got = rules(out)
+        self.assertNotIn(rule, got, f"false positive: {rule} fired on {payload['content']!r} -> {sorted(got)}")
+
+    def test_numbers_in_strings_not_magic(self):  # dates/URLs/versions in strings are not magic numbers
+        src = ('def cfg():\n    return {\n        "url": "https://api.example.com/v2/9/8/7",\n'
+               '        "date": "2026-07-05", "ver": "1.4.7",\n        "ts": "2024-01-02T03:04:05",\n    }\n')
+        self.assertRuleClean({"file": "a.py", "content": src}, "MAGIC_NUMBER")
+
+    def test_numbers_in_comment_not_magic(self):  # digits in a trailing comment are not magic numbers
+        src = "def f(x):\n    return x  # retry 3x, wait 30s, timeout 60, backoff 2, max 500, cap 999, tries 7\n"
+        self.assertRuleClean({"file": "a.py", "content": src}, "MAGIC_NUMBER")
+
+    def test_table_driven_data_not_duplicated_block(self):  # short repeated struct rows aren't a dup smell
+        src = ('var table = []Case{\n  {name: "aaaaaaaaa", in: "bbbbbbbbb", want: "ccccccccc"},\n'
+               '  {name: "dddddddddd", in: "eeeeeeeee", want: "fffffffff"},\n'
+               '  {name: "gggggggggg", in: "hhhhhhhhh", want: "iiiiiiiii"},\n}\n')
+        self.assertRuleClean({"file": "a.go", "content": src}, "DUPLICATED_BLOCK")
+
+    def test_format_specs_and_brace_strings_not_magic(self):
+        # CR-077 v2 dogfood: an interpolation body's text after the first ':' is a format spec
+        # (`{x:.0f}`) or brace-string data (`{"port":8080}`), not a code literal — must not count.
+        jsn = 'def f():\n    return \'{"port":8080,"timeout":30,"retries":3,"limit":50,"a":77,"b":88,"c":99}\'\n'
+        self.assertRuleClean({"file": "a.py", "content": jsn}, "MAGIC_NUMBER")
+        fmt = 'def g(a,b,c,d,e,f,g):\n    return f"{a:8080}{b:9090}{c:7000}{d:6000}{e:5000}{f:4000}{g:3000}"\n'
+        self.assertRuleClean({"file": "a.py", "content": fmt}, "MAGIC_NUMBER")
+
+    def test_small_class_not_god_file(self):  # a normal small class is not a god file
+        src = ('class User:\n    def __init__(self, name):\n        self.name = name\n'
+               '    def greet(self):\n        return f"hi {self.name}"\n')
+        self.assertRuleClean({"file": "a.py", "content": src}, "GOD_FILE")
+
+    def test_normal_function_not_long_or_nested(self):  # a tidy function trips no threshold smell
+        out = json.loads(invoke({"file": "a.go", "content": "func F(a, b int) int {\n    if a > b {\n        return a\n    }\n    return b\n}\n"}).stdout)
+        self.assertEqual(out["findings"], [], f"clean function flagged: {sorted(rules(out))}")
+
+
+class TestRecallHeld(unittest.TestCase):
+    """Paired recall guards: the REAL smell variants of the precision fixes above MUST still fire,
+    proving the string/comment stripping narrowed only false positives, not detection."""
+
+    def test_real_magic_numbers_in_code_still_fire(self):
+        out = json.loads(invoke({"file": "a.py", "content": "def score(x):\n    return x*7 + 13 - 42 + 17 + 23 + 31 + 99\n"}).stdout)
+        self.assertIn("MAGIC_NUMBER", rules(out), "recall lost on real in-code magic numbers")
+
+    def test_ts_private_field_not_treated_as_comment(self):
+        # a TS `#private` field is code, not a Python-style comment — its numbers must still count
+        src = "class C {\n  #count = 5\n  run() { return this.#count + 3 + 7 + 11 + 13 + 17 + 19 + 23 }\n}\n"
+        out = json.loads(invoke({"file": "a.ts", "content": src}).stdout)
+        self.assertIn("MAGIC_NUMBER", rules(out), "recall lost: #private field misread as a comment")
+
+    def test_magic_numbers_in_interpolation_expressions_still_fire(self):
+        # CR-077 dogfood: string literals are blanked, but interpolation EXPRESSIONS are code — a
+        # real magic number inside f-string / template / $"..." interpolation must still count.
+        py = 'def f(a):\n    return f"{a/86400} {a*3600} {a*7} {a*13} {a*17} {a*23} {a*31}"\n'
+        ts = "function g(a) { return `${a/86400}+${a*3600}+${a*7}+${a*13}+${a*17}+${a*23}+${a*31}` }\n"
+        for name, src in (("a.py", py), ("a.ts", ts)):
+            out = json.loads(invoke({"file": name, "content": src}).stdout)
+            self.assertIn("MAGIC_NUMBER", rules(out), f"recall lost on interpolation magic numbers in {name}")
+
+
 if __name__ == "__main__":
     unittest.main()

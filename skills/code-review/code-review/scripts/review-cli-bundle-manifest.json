@@ -1,12 +1,12 @@
 {
   "tool": "review-cli",
-  "version": "v0.15.0",
+  "version": "20260707-082640-675016",
   "platforms": {
-    "review-cli-linux-amd64": { "sha256": "c233c613a6b725d50afd42d2ec2a2dd77675e079bdc6a54a2031a07e2b0cf5e8", "bytes": 60843432 },
-    "review-cli-linux-arm64": { "sha256": "abb7d3094a82816dca160a91075b3bf8f06d6f4a59a25b438ff2a521c2d8f2cb", "bytes": 57543192 },
-    "review-cli-darwin-amd64": { "sha256": "4e08ebc4eeb6bc894c273ec9892e7b9b157a330debf4aad4a294f50bad60fca5", "bytes": 44670128 },
-    "review-cli-darwin-arm64": { "sha256": "5cdb0ad4e1ff7b74877e63bd979e2d5bf4319c362d92cb082b889aa8a6f03097", "bytes": 41588274 },
-    "review-cli-windows-amd64.exe": { "sha256": "5c95179c8099c7f87b155e201f5d4997fa054ee317fc5796e683fb6870cb7c84", "bytes": 54096896 },
-    "review-cli-windows-arm64.exe": { "sha256": "6605bbf1b2e7e6f487565acd4f9816c2ecf041a52c4d3132501f94d736fe572e", "bytes": 50139648 }
+    "review-cli-linux-amd64": { "sha256": "10978f2b51cdf66cae337d68c4b48bebfc6156e7a5a49b82a2bad8ae479eaab7", "bytes": 60857096 },
+    "review-cli-linux-arm64": { "sha256": "526c5a75963dd4778ced21dfca014ac76033f3ab78973b1499d45926e196f2a9", "bytes": 57556296 },
+    "review-cli-darwin-amd64": { "sha256": "ecae36e39605d8be9d0c5d7743bc1f4d70d1ad1758f900a1a5ac923b2de455f4", "bytes": 44682416 },
+    "review-cli-darwin-arm64": { "sha256": "3457546b20b260c790dcb6ce283ba6d744c99d9e460c49a91691f379a0a38eb5", "bytes": 41604786 },
+    "review-cli-windows-amd64.exe": { "sha256": "a82ec2b73306324e6f079f4ca7de87357bd125f7816a1d8ad4ac41bc036c00f3", "bytes": 54110208 },
+    "review-cli-windows-arm64.exe": { "sha256": "0f6e0dd4b57ee9ed48cbb67aa9dbaca47279b85cc2676ffccae9f247ef7d6082", "bytes": 50152448 }
   }
 }

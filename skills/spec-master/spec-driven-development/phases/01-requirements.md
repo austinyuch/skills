@@ -37,8 +37,12 @@
    - 採用 IBM SAA 的 good parts：共同使用者存取概念、共同程式介面、共同通訊支援、跨平台一致性。
    - 保持 Agile / YAGNI：只要求 current slice 需要的 architecture snapshot，不做 big-upfront 完整藍圖；若證據不足，標為 `not_yet_required`。
    - architecture docs 不得成為 requirement / readiness authority；它們只從已接受的 spec-local artifacts 與 review evidence 綜整。
+5.4 **(新增) AI / Security / Privacy / Log Compliance Intake**：若本次工作涉及 AI 系統、security/cybersec、PII/personal-data、privacy、logging、external controls、或 regulatory compliance，必須導入 `iso-ai-security-auditor` 作為 requirements input。
+   - 在 `requirements.md` 記錄需要向組織索取的文件：ISMS/AI scope、policy、risk register、SoA 或等價文件、data/AI system inventory、supplier/outsourcing evidence、incident/logging/retention evidence、PIA/DPIA/AI impact assessment、privacy notice、cross-border transfer evidence。
+   - 若文件缺失，不停止需求整理；以 `assumed-baseline` 標示一般業界標準與適用國家/地區法規假設，並以 `missing-evidence` 標出待補證據。
+   - `requirements.md` 只能宣告 compliance inventory obligations 與 evidence needs；不得宣稱法律適用性已由 agent 最終裁決，也不得宣稱 CNS/ISO certification readiness。
 6. **(新增) 規格漂移宣告**：若此需求修改了舊有 Specs 的邏輯，必須在文件中明確宣告 `[Impacts: {舊spec名稱}]`。
-7. **(新增) CR Intake Gate**：若需求影響 `[Completed]` spec、shared contract 或 external contract 假設，必須先在當前 active spec 中建立 / 更新 `Open Change Requests` 摘要，再進入 requirements approval。完整欄位請參考 [輕量 CR template](../../spec-registry-manager/references/change-request-template.md)。
+7. **(新增) CR Intake Gate**：若需求影響 `[Completed]` spec、shared contract 或 external contract 假設，必須先在當前 active spec 中建立 / 更新 `Open Change Requests` 摘要，再進入 requirements approval。完整欄位請參考 [輕量 CR template](../../../engineering/spec-registry-manager/references/change-request-template.md)。
    - **Impact Triage**：先將每個變更分類為：`Depends On only`、`Impacts completed/shared baseline`、`External contract assumption impact`。
    - 只有後兩者需要開 CR；單純 `Depends On` 不應濫開 CR。
    - 若需要開 CR，完整內容固定放在 `.agents/specs/{linked-active-spec}/change-requests/{cr-id}.md`，且 `Target Identifier` 必須使用標準格式。
@@ -63,7 +67,7 @@
 - [Impacts: old-spec-name] (如果有影響舊有邏輯)
 - [Open Change Requests: CR-2026-004] (若影響 completed spec / shared contract / external contract)
 
-> 完整 CR 內容應依 [輕量 CR template](../../spec-registry-manager/references/change-request-template.md) 撰寫；本處只保留摘要引用。
+> 完整 CR 內容應依 [輕量 CR template](../../../engineering/spec-registry-manager/references/change-request-template.md) 撰寫；本處只保留摘要引用。
 
 ## Repo-side Closure vs External Execution
 

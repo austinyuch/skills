@@ -26,6 +26,10 @@
    - 沿設計決策樹**逐題追問**：架構選型 → 契約邊界 / SSOT → 元件職責 → 失敗模式 → 可觀測性。一次只問一題、每題附建議答案、能從 codebase 查到的先查不問。
    - 以 **CEO 高階價值視角** 挑戰技術前提：這個架構/方案為何優於替代方案（與下方 alternatives 呼應）？哪些可逆 (雙向門) 可快速決定、哪些不可逆 (單向門：資料模型、對外契約、安全邊界) 需放慢逼出更多資訊？
    - 訪談結論落地為 `design.md` 的設計決策與理由；被排除的替代方案以一行「為何排除」記錄，方便追溯。
+4.2 **(新增) Compliance Inventory Design Hook**：若 Phase 1 觸發 `iso-ai-security-auditor`，必須把其 control / legal / log / AI governance inventory 轉成設計期的 evidence boundary，而不是只放在附錄。
+   - 在 `design.md` 納入 AI component boundary、PII/data flow、log/telemetry flow、trust boundary、external-control owner、evidence refs、以及 missing-evidence items。
+   - 區分 code-implemented control、external-implemented control、organization-process evidence、與 assumed-baseline；不得把 vendor feature、planned task、或未提供文件寫成已實作控制。
+   - 若需要修改整體 architecture docs，交由 `system-architect`；若需要新增正式 remediation tasks，進入 Phase 3 tasks planning。
 5. 讀取最新的 `{workspace}/.agents/specs/NEXT_STEPS.md`（若存在），確認 current phase、候選 impacted specs、open CRs、以及上次 session 留下的 resume hint；若內容已過時，必須以 `SPECS.md` 與 active spec 文件校正。
 5.1 若本次設計涉及治理 artifacts、需求追溯、issue-log promotion / fold-back、RTM refresh、或 registry/test rollup，必須讀取 `../reference/SPEC_GOVERNANCE_ARTIFACTS_GUIDE.md`，並在 `design.md` 中明確說明本 spec 的 artifact authority model。
 6. 創建 `.agents/specs/{spec-directory}/design.md` 文件。文件開頭必須說明相關章節的引用參照。
@@ -53,7 +57,7 @@
 
 8. **相依與防漂移檢查 (Drift Prevention)**：
    - 在設計過程中，若發現需改動現有邏輯，必須在 `design.md` 中註明 `[Impacts: 舊spec名稱]`。
-   - 若影響對象是 `[Completed]` spec、shared contract 或 external contract 假設，必須在 design 中引用對應 `Open Change Requests` 摘要，而不是把舊 spec 當成可直接覆寫的工作區。完整 CR 結構請沿用 [輕量 CR template](spec-registry-manager skill 的 references/change-request-template.md)。
+   - 若影響對象是 `[Completed]` spec、shared contract 或 external contract 假設，必須在 design 中引用對應 `Open Change Requests` 摘要，而不是把舊 spec 當成可直接覆寫的工作區。完整 CR 結構請沿用 [輕量 CR template](../../../engineering/spec-registry-manager/references/change-request-template.md)。
    - 若改動了既有的 Contract，必須標註後續實作階段需執行全局型別檢查以修復漂移。
    - 在設計定稿前，必須重讀一次最新 `SPECS.md`，確認沒有新增的 overlapping CR、dependency 變化，或 external `Pin/Version` 漂移。
    - 若本 spec 涉及 external execution，design 必須明確標示 repo-side closure 的完成訊號、external execution 的權威執行位置、以及 authoritative handoff path；不得只寫模糊的「之後到外部驗證」。

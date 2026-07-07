@@ -1,9 +1,10 @@
 #!/bin/bash
 # Install aclab skills into a coding agent's skill home.
 # Usage:
-#   bash scripts/install.sh [opencode|claude|codex|kiro] [--with-cli]
+#   bash scripts/install.sh [opencode|claude|codex|kiro] [--layout flat|hierarchical] [--with-cli]
 #   SKILLS_TARGET=/custom/path bash scripts/install.sh     # explicit target wins
 #   --with-cli also fetches code-review's review-cli binary via `gh` (needs auth).
+#   SKILLS_LAYOUT or --layout selects install layout; default: hierarchical.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,14 +13,22 @@ MANIFEST="$REPO_ROOT/skills-manifest.json"
 SOURCE="$REPO_ROOT/skills"
 
 CLI_REPO="austinyuch/skills"; CLI_TAG="review-cli-v0.15.0"
-AGENT="opencode"; WITH_CLI=0
-for a in "$@"; do
+AGENT="opencode"; WITH_CLI=0; LAYOUT="${SKILLS_LAYOUT:-hierarchical}"
+while [ "$#" -gt 0 ]; do
+  a="$1"
   case "$a" in
     --with-cli) WITH_CLI=1 ;;
+    --layout) shift; LAYOUT="${1:-}"; [ -n "$LAYOUT" ] || { echo "❌ --layout requires flat|hierarchical"; exit 1; } ;;
+    --layout=*) LAYOUT="${a#--layout=}" ;;
     -*) echo "❌ Unknown flag: $a"; exit 1 ;;
     *) AGENT="$a" ;;
   esac
+  shift
 done
+case "$LAYOUT" in
+  flat|hierarchical) ;;
+  *) echo "❌ Invalid layout: $LAYOUT (use flat|hierarchical)"; exit 1 ;;
+esac
 case "$AGENT" in
   opencode) DEFAULT_TARGET="$HOME/.config/opencode/skills" ;;
   claude)   DEFAULT_TARGET="$HOME/.claude/skills" ;;
@@ -34,6 +43,7 @@ TARGET="${SKILLS_TARGET:-${OPENCODE_SKILLS:-$DEFAULT_TARGET}}"
 echo "📦 Installing aclab skills from: $REPO_ROOT"
 echo "🤖 Agent: $AGENT"
 echo "🎯 Target: $TARGET"
+echo "🧭 Layout: $LAYOUT"
 echo ""
 
 [ -f "$MANIFEST" ] || { echo "❌ Manifest not found: $MANIFEST"; exit 1; }
@@ -42,15 +52,25 @@ mkdir -p "$TARGET"
 
 INSTALLED=0; SKIPPED=0; MISSING=0
 
+skill_dst() { # $1=category-or-family $2=skill
+  if [ "$LAYOUT" = "flat" ]; then printf '%s\n' "$TARGET/$2"; else printf '%s\n' "$TARGET/$1/$2"; fi
+}
+
+standalone_dst() { # $1=file $2=category $3=target_path
+  if [ "$LAYOUT" = "flat" ]; then printf '%s\n' "$TARGET/$1"; else printf '%s\n' "$TARGET/$2/$3"; fi
+}
+
 install_one() { # $1=group(families|categories) prints results
   local group="$1"
   for key in $(jq -r ".$group | keys[]" "$MANIFEST" 2>/dev/null); do
     local group_dir="$SOURCE/$key"
     for skill in $(jq -r ".$group.\"$key\".skills[]" "$MANIFEST" 2>/dev/null); do
-      local src="$group_dir/$skill" dst="$TARGET/$skill"
+      local src="$group_dir/$skill" dst
+      dst="$(skill_dst "$key" "$skill")"
       if [ ! -d "$src" ]; then echo "   ⚠️  Missing: $key/$skill"; ((MISSING++)) || true; continue; fi
-      if [ -d "$dst" ] && diff -rq "$src" "$dst" >/dev/null 2>&1; then echo "   ⏭️  Unchanged: $skill"; ((SKIPPED++)) || true; continue; fi
-      rsync -a --delete "$src/" "$dst/"; echo "   ✅ Installed: $skill"; ((INSTALLED++)) || true
+      if [ -d "$dst" ] && diff -rq "$src" "$dst" >/dev/null 2>&1; then echo "   ⏭️  Unchanged: $key/$skill"; ((SKIPPED++)) || true; continue; fi
+      mkdir -p "$(dirname "$dst")"
+      rsync -a --delete "$src/" "$dst/"; echo "   ✅ Installed: $key/$skill"; ((INSTALLED++)) || true
     done
   done
 }
@@ -61,9 +81,10 @@ echo ""; echo "🔧 Installing categorized skills..."; install_one categories
 echo ""; echo "📄 Installing standalone files..."
 for row in $(jq -c '.standalone_files[]' "$MANIFEST" 2>/dev/null); do
   file=$(echo "$row" | jq -r '.file'); category=$(echo "$row" | jq -r '.category'); target_path=$(echo "$row" | jq -r '.target_path')
-  src="$SOURCE/$category/$target_path"; dst="$TARGET/$file"
+  src="$SOURCE/$category/$target_path"; dst="$(standalone_dst "$file" "$category" "$target_path")"
   if [ ! -f "$src" ]; then echo "   ⚠️  Missing file: $file"; ((MISSING++)) || true; continue; fi
-  cp "$src" "$dst"; echo "   ✅ Installed: $file"; ((INSTALLED++)) || true
+  mkdir -p "$(dirname "$dst")"
+  cp "$src" "$dst"; echo "   ✅ Installed: ${dst#$TARGET/}"; ((INSTALLED++)) || true
 done
 
 echo ""
@@ -72,12 +93,13 @@ echo "📊 Install Summary — ✅ $INSTALLED  ⏭️  $SKIPPED  ⚠️  $MISSIN
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Skills are now available in: $TARGET"
 
-if [ -d "$TARGET/code-review" ]; then
+CODE_REVIEW_DIR="$(skill_dst code-review code-review)"
+if [ -d "$CODE_REVIEW_DIR" ]; then
   if [ "$WITH_CLI" = "1" ]; then
     os=$(uname -s | tr '[:upper:]' '[:lower:]'); case "$os" in darwin) os=darwin;; linux) os=linux;; *) os=unsupported;; esac
     m=$(uname -m); case "$m" in x86_64|amd64) arch=amd64;; arm64|aarch64) arch=arm64;; *) arch=unsupported;; esac
     asset="review-cli-${os}-${arch}"
-    dest="$TARGET/code-review/scripts"
+    dest="$CODE_REVIEW_DIR/scripts"
     if [ "$os" = unsupported ] || [ "$arch" = unsupported ]; then
       echo "   ⚠️  unsupported platform for review-cli ($os/$m)"
     elif ! command -v gh >/dev/null; then

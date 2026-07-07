@@ -98,7 +98,19 @@ These are line/structure heuristics, not a full AST. Treat thresholds as convers
 starters: a 70-line function may be fine, a 30-line one may not. The deterministic pass
 finds candidates; severity is best confirmed with `--explain` or human judgement. Comment
 density and language idioms (idiomatic Go `if err != nil`) are intentionally not counted as
-nesting/branching to keep false positives low.
+nesting/branching to keep false positives low. `MAGIC_NUMBER` counts literals in **code only** —
+digits inside string literals (dates/URLs/versions/log-format strings) and trailing comments are
+stripped before counting, so a config dict of URLs is never mis-flagged (`_code_only`, per language);
+interpolation **expressions** (`f"{x/86400}"`, `` `${…}` ``, `$"{…}"`) are kept because they are code.
+Known non-AST limits (backstopped by `--explain`): digits inside a **multiline** string
+(triple-quoted / raw-backtick spanning lines) or a C# verbatim `@"...""..."` may still be counted.
+
+The false-positive boundary is an **executable contract**: `scripts/test_run.py` ships a
+`TestPrecisionGuards` suite of clean-but-structured inputs each smell must **not** flag (numbers in
+strings/comments → not `MAGIC_NUMBER`, short repeated struct rows → not `DUPLICATED_BLOCK`, a small
+class → not `GOD_FILE`, a tidy branchy function → nothing) plus a paired `TestRecallHeld` suite
+proving the real smells still fire (in-code magic numbers; a TS `#private` field is code, not a
+comment). A smell advisor that cries wolf on tidy code gets muted — these guard against that. [CR-077]
 
 ## Optional LLM explanation, mock mode, install, testing
 

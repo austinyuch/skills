@@ -56,7 +56,8 @@ pipx run --spec git+https://github.com/austinyuch/skills aclab-skills codex</cod
 <pre><code>git clone https://github.com/austinyuch/skills.git &amp;&amp; cd skills
 bash scripts/install.sh claude       # macOS / Linux
 pwsh scripts/install.ps1 claude      # Windows PowerShell</code></pre>
-<p>Each skill installs as <code>&lt;skill-home&gt;/&lt;skill-name&gt;/</code> and the agent picks it up automatically. Override the destination anywhere with <code>SKILLS_TARGET=/custom/path</code>. (OpenCode users can also use the community tool: <code>npx skills@latest add austinyuch/skills</code>.)</p>
+<p>By default, skills install with the same hierarchical layout as this repo: <code>&lt;skill-home&gt;/&lt;category-or-family&gt;/&lt;skill-name&gt;/</code>. This matches multi-level skill discovery in modern Codex / Claude / OpenCode environments. For older flat skill homes, pass <code>--layout flat</code> (or set <code>SKILLS_LAYOUT=flat</code>) to install as <code>&lt;skill-home&gt;/&lt;skill-name&gt;/</code>.</p>
+<p>Override the destination anywhere with <code>SKILLS_TARGET=/custom/path</code>. (OpenCode users can also use the community tool: <code>npx skills@latest add austinyuch/skills</code> when that tool's layout matches their runtime.)</p>
 <h3>Native binaries (GitHub Releases, not in git)</h3>
 <p>A few skills rely on <strong>prebuilt native binaries / models that are intentionally not committed</strong> here — they are large and platform-specific, so they are gitignored. This keeps <code>git clone</code>, <code>npx</code>, and <code>uvx</code> fast and <strong>LFS-free</strong> (no git-lfs dependency, no pointer-stub breakage). They are distributed via <strong>GitHub Releases, never git LFS.</strong></p>
 <ul><li><strong><code>code-review</code></strong> uses a <code>review-cli-&lt;os&gt;-&lt;arch&gt;</code> binary (+ a ~128 MB embedding model). Installing it</li></ul>

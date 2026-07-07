@@ -39,9 +39,17 @@ def review_cli_asset() -> str | None:
     return f"review-cli-{o}-{a}" + (".exe" if o == "windows" else "")
 
 
-def fetch_review_cli(target: Path) -> None:
+def skill_dest(target: Path, group: str, skill: str, layout: str) -> Path:
+    return target / skill if layout == "flat" else target / group / skill
+
+
+def standalone_dest(target: Path, row: dict, layout: str) -> Path:
+    return target / row["file"] if layout == "flat" else target / row["category"] / row["target_path"]
+
+
+def fetch_review_cli(target: Path, layout: str) -> None:
     asset = review_cli_asset()
-    dest = target / "code-review" / "scripts"
+    dest = skill_dest(target, "code-review", "code-review", layout) / "scripts"
     if not asset:
         print("   ⚠️  unsupported platform for review-cli"); return
     if not dest.exists():
@@ -99,6 +107,12 @@ def main() -> int:
     p.add_argument("--target", help="explicit destination dir (wins over <agent>)")
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--with-cli", action="store_true", help="also fetch code-review's review-cli binary via gh (needs auth)")
+    p.add_argument(
+        "--layout",
+        choices=("flat", "hierarchical"),
+        default=os.environ.get("SKILLS_LAYOUT", "hierarchical"),
+        help="install layout inside the skill home (default: hierarchical; env: SKILLS_LAYOUT)",
+    )
     args = p.parse_args()
 
     target = args.target or os.environ.get("SKILLS_TARGET")
@@ -117,6 +131,7 @@ def main() -> int:
     print(f"📦 aclab skills from: {root}")
     print(f"🤖 Agent: {'custom' if args.target or os.environ.get('SKILLS_TARGET') else args.agent}")
     print(f"🎯 Target: {target}{'  (dry-run)' if args.dry_run else ''}\n")
+    print(f"🧭 Layout: {args.layout}\n")
     if not args.dry_run:
         target.mkdir(parents=True, exist_ok=True)
 
@@ -127,6 +142,7 @@ def main() -> int:
         if not src.is_dir():
             print(f"   ⚠️  missing: {name}"); missing += 1; return
         if not args.dry_run:
+            dst.parent.mkdir(parents=True, exist_ok=True)
             if dst.exists():
                 shutil.rmtree(dst)
             shutil.copytree(src, dst)
@@ -135,25 +151,25 @@ def main() -> int:
     for group in ("families", "categories"):
         for key, val in (manifest.get(group) or {}).items():
             for skill in val.get("skills", []):
-                copy_dir(source / key / skill, target / skill, skill)
+                copy_dir(source / key / skill, skill_dest(target, key, skill, args.layout), f"{key}/{skill}")
 
     for row in manifest.get("standalone_files", []):
         src = source / row["category"] / row["target_path"]
-        dst = target / row["file"]
+        dst = standalone_dest(target, row, args.layout)
         if not src.is_file():
             print(f"   ⚠️  missing file: {row['file']}"); missing += 1; continue
         if not args.dry_run:
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src, dst)
-        print(f"   ✅ {row['file']}"); installed += 1
+        print(f"   ✅ {dst.relative_to(target)}"); installed += 1
 
     print("\n" + "━" * 32)
     print(f"📊 {'Would install' if args.dry_run else 'Installed'}: {installed}   ⚠️  Missing: {missing}")
     print("━" * 32)
     print(f"Skills {'would be' if args.dry_run else 'are now'} in: {target}")
-    if (target / "code-review").exists() and not args.dry_run:
+    if skill_dest(target, "code-review", "code-review", args.layout).exists() and not args.dry_run:
         if args.with_cli:
-            fetch_review_cli(target)
+            fetch_review_cli(target, args.layout)
         else:
             print('ℹ️  code-review\'s review-cli binary is not bundled — re-run with --with-cli to fetch it '
                   '(needs gh auth; the repo is private). See README "Native binaries".')

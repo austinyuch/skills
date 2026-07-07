@@ -26,7 +26,10 @@ This skill is the **deliverable agent skill bundle** for `aclab-uat-demo-agent`.
 - `${UATDEMO_BIN:-uatdemo} run windows-vm-computer-use --file <scenario.json> [--vm-instance <domain-or-instance>]`
 - `${UATDEMO_BIN:-uatdemo} report show --file <report.json>`
 - `${UATDEMO_BIN:-uatdemo} report show --bundle <bundle.json>`
-- `${UATDEMO_BIN:-uatdemo} report verify-computer-use-bundle --bundle <bundle.json>`
+- `${UATDEMO_BIN:-uatdemo} report verify-computer-use-bundle --bundle <bundle.json> [--min-unique-screenshots <n>]` (strict evidence gate; fails closed on loopback targets by default)
+- `${UATDEMO_BIN:-uatdemo} report publish --bundle <bundle.json>` (`--sync-rollup` opt-in; otherwise curated specs are not rewritten)
+
+For an **authenticated** web target, add a `steps[]` entry with `actionType: "login"` + `loginConfig` (form login before protected-route captures; `approvalToken` gates credential entry, `isSecret: true` on a field forces that gate regardless of selector text). For a one-command **external runtime proof** against an already-running non-loopback target, use `scripts/prove_external_web_target.sh` (public single-route, or `--target-config-file` for authenticated multi-route). See `references/commands.md`.
 
 Read `references/commands.md` when you need the operator cookbook, input prep rules, and post-run verification flow.
 Read `references/skill-integration.md` when the current workspace is the `aclab-uat-demo-agent` source repo and you need to cooperate with `spec-master`, `spec-driven-development`, `spec-registry-manager`, `user-manual-skill`, or `project-review-skill`.

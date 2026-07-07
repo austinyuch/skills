@@ -31,12 +31,12 @@ Read these, if present:
 - `.agents/specs/**/requirements.md`
 - `.agents/specs/**/design.md`
 - `.agents/specs/**/review.md`
-- `skills/iso-ai-security-auditor/SKILL.md` and relevant references when the architecture scope includes AI systems, security/cybersec, PII/personal-data, privacy, logging, external controls, or regulatory compliance
+- `skills/security-compliance/iso-ai-security-auditor/SKILL.md` and relevant references when the architecture scope includes AI systems, security/cybersec, PII/personal-data, privacy, logging, external controls, or regulatory compliance
 - `docs/PROJECT_REVIEW_GUIDE.md`
 - existing `.agents/steering/product.md`, `.agents/steering/tech.md`, `.agents/steering/structure.md`
 - existing `.agents/steering/product.html`, `.agents/steering/tech.html`, `.agents/steering/structure.html`
 - legacy/equivalent `docs/architecture.md`, `docs/architecture/index.md`, `docs/architecture/index.html`
-- `skills/spec-driven-development/references/system-architecture-lifecycle.md`
+- `skills/spec-master/spec-driven-development/references/system-architecture-lifecycle.md`
 
 When the workspace uses another active spec root, use that root. Do not create a parallel architecture surface when the repo already declares an equivalent path. Prefer `.agents/steering/` for new OpenCode workspaces; treat `docs/architecture*` as legacy/equivalent input unless repo instructions explicitly keep it canonical.
 

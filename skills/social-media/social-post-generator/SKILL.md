@@ -522,6 +522,7 @@ description: 基於受害者家屬權益新聞追蹤結果，每日生成3個社
 - **[references/post-templates.md](references/post-templates.md)**：各風格發文模板庫與範例
 - **[references/content-guidelines.md](references/content-guidelines.md)**：內容撰寫準則與品質管理
 - **[references/hashtag-strategy.md](references/hashtag-strategy.md)**：Hashtag策略與分類建議
+- **image-selection-guide**：圖片選擇與版權指南（reference candidate；若 repo 提供此檔再連結）
 - **[references/victim-rights-9-demands.md](references/victim-rights-9-demands.md)**：被害人法庭程序九大權利缺失（核心倡議知識）
 
 ### 工具腳本

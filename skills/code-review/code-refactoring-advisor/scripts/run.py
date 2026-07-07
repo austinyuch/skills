@@ -117,6 +117,40 @@ NUM = re.compile(r"(?<![\w.])-?\d+(?:\.\d+)?(?![\w.])")
 BOOL_OP = re.compile(r"&&|\|\||\band\b|\bor\b")
 TRIVIAL_NUMS = {"0", "1", "2", "-1", "100", "1000", "10", "255", "0.0", "1.0"}
 
+# Blank string literals ("...", '...', `...`) so digits inside dates/URLs/versions/log-format
+# strings are not counted as magic numbers — the top false-positive source for this smell. A real
+# magic number lives in code, so stripping strings/comments costs no recall. [CR-2026-07-05-077]
+_STRING_SPAN = re.compile(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|`[^`]*`')
+_INTERP_BODY = re.compile(r"\$?\{([^{}]*)\}")
+_COMMENT_MARK = {"python": "#", "go": "//", "ts": "//", "csharp": "//"}
+
+
+def _keep_interp(m):
+    """Replace a string literal with ONLY its interpolation bodies (f-string `{expr}`, template
+    `${expr}`, C# `$"{expr}"`) — code, not literal text — so a real magic number inside an
+    interpolated expression is still counted. Extracting only from WITHIN the matched string span
+    avoids double-counting code braces (a dict/set literal `{1,2}` isn't a string, so it's untouched).
+    The text after the first `:` in a body is a format spec (`{x:.0f}`) or brace-string data
+    (`{"port":8080}`), not a code literal, so it is dropped — keeping `{a/86400:.0f}` counting 86400
+    but not the `.0f` and not a JSON value after a key colon."""
+    return " ".join(b.split(":", 1)[0] for b in _INTERP_BODY.findall(m.group(0)))
+
+
+def _code_only(line, language):
+    """Return the line with string literals replaced by their interpolation code (if any) and any
+    trailing line comment removed, so magic-number counting sees only real code literals. Strings are
+    handled BEFORE the comment cut, so a `//`/`#` inside a string (or a TS `#private` field) is never
+    mistaken for a comment. NON-AST limits (backstopped by `--explain`): digits inside a MULTILINE
+    string (triple-quoted / raw-backtick spanning lines) or a C# verbatim `@"...""..."` may still be
+    counted, since the scan is per physical line."""
+    line = _STRING_SPAN.sub(_keep_interp, line)
+    mark = _COMMENT_MARK.get(language)
+    if mark:
+        idx = line.find(mark)
+        if idx != -1:
+            line = line[:idx]
+    return line
+
 
 def fail(msg, code=2):
     print(f"code-refactoring-advisor: {msg}", file=sys.stderr)
@@ -275,7 +309,7 @@ def detect(path, content, language, th):
         if nest > th["deep_nesting"]:
             add(findings, "DEEP_NESTING", path, ln0, fn["sig"].strip(),
                 f"`{fn['name']}` nests ~{nest} levels deep (> {th['deep_nesting']}); guard clauses flatten the logic.", 0.6)
-        mags = [t for ln in fn["body"] for t in NUM.findall(ln) if t not in TRIVIAL_NUMS]
+        mags = [t for ln in fn["body"] for t in NUM.findall(_code_only(ln, language)) if t not in TRIVIAL_NUMS]
         if len(mags) > th["magic_numbers"]:
             add(findings, "MAGIC_NUMBER", path, ln0, ", ".join(mags[:6]),
                 f"`{fn['name']}` carries {len(mags)} unexplained numeric literals; name them so intent survives.", 0.45)

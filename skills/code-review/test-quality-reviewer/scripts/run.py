@@ -74,6 +74,59 @@ LANG = {
 }
 
 MYSTERY = re.compile(r"""(/home/|/Users/|/etc/|/var/|/tmp/[\w./-]+|[A-Za-z]:\\\\|https?://|mongodb://|postgres://|mysql://|redis://|jdbc:)""")
+# A locator (path/URL/DSN) is only a Mystery Guest if the test READS it at runtime. Require a real
+# I/O CALL somewhere in the same test body (block-level, so a locator assigned on one line and read
+# on the next still counts), so a path/URL passed as INPUT to the code under test (`parse("https://x")`)
+# or named in a comment is not mistaken for a hidden external dependency. Verbs are matched in CALL
+# form (`open(`) or as a known I/O library member, so a bare identifier `open`/`read` or a generic
+# `obj.get(...)` does not over-match. [CR-2026-07-05-078]
+IO_CALL = re.compile(
+    r"\b(?:open|urlopen|fetch|glob|walk|Open|ReadFile|ReadAll|WriteFile|ReadDir|readFile|"
+    r"readFileSync|createReadStream|Dial|NewRequest|Exec|ExecContext|Query|QueryContext)\s*\("
+    r"|\.(?:read|read_text|read_bytes|readFile|readFileSync|ReadFile|ReadAll)\s*\("
+    r"|\brequests?\.(?:get|post|put|patch|delete|head|request|session)\s*\("
+    r"|\b(?:urllib\.request|httptest\.NewServer|sql\.Open|pgxpool|http\.Get|http\.Post|axios\.(?:get|post))\s*\(",
+    re.I)
+_ASSIGN = re.compile(r"^\s*(?:const |let |var |final |auto )?([A-Za-z_]\w*)\s*(?::=|=)(?!=)")
+_STRING_SPAN = re.compile(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|`[^`]*`')
+_COMMENT_MARK = {"python": "#", "go": "//", "ts": "//", "csharp": "//"}
+
+
+def _strip_comment(line, language):
+    """Drop a trailing line comment (per-language marker) WITHOUT cutting inside a string, so a
+    locator that appears only in a comment is not treated as a runtime dependency. Strings are
+    blanked first, so a `//` inside `http://…` or a `#` inside a quoted value is never a comment."""
+    mark = _COMMENT_MARK.get(language)
+    if not mark:
+        return line
+    idx = _STRING_SPAN.sub('""', line).find(mark)
+    return line if idx == -1 else line[:idx]
+
+
+def _mystery_offset(body, language):
+    """Body offset of a Mystery-Guest locator line, else None. A path/URL/DSN is a hidden dependency
+    only when the test READS it: either the locator and an I/O call are on the SAME line, or the
+    locator is assigned to a variable a later I/O call reads (`path := "/x"` … `os.ReadFile(path)`).
+    A locator merely passed as INPUT to the code under test — no I/O on it — is not a Mystery Guest,
+    which is why block-wide 'any I/O + any locator' would over-flag. Dep hidden in a helper or via
+    env is a known limit (needs dataflow the heuristic lacks)."""
+    assigned = {}  # var -> offset of the line that assigns it a locator-bearing string
+    for off, ln in enumerate(body):
+        code = _strip_comment(ln, language)
+        if not MYSTERY.search(code):
+            continue
+        if IO_CALL.search(code):
+            return off
+        m = _ASSIGN.match(ln)
+        if m:
+            assigned[m.group(1)] = off
+    for ln in body:
+        code = _strip_comment(ln, language)
+        if IO_CALL.search(code):
+            for var, voff in assigned.items():
+                if re.search(r"\b" + re.escape(var) + r"\b", code):
+                    return voff
+    return None
 # E2E / integration machinery that should not appear in a *unit* test.
 E2E = re.compile(r"\b(playwright|selenium|webdriver|cypress|puppeteer|page\.goto|browser\.new|chromedriver)\b", re.I)
 INTEG = re.compile(r"\b(httptest\.NewServer|sql\.Open|pgxpool|docker|podman|testcontainers|amqp|net\.Dial|\.Listen\()\b", re.I)
@@ -173,13 +226,12 @@ def detect(path, content, language):
                     "cannot tell which check failed (Assertion Roulette).",
                     "Split into focused tests / subtests (t.Run / it blocks), or add failure messages.", 0.6)
 
-        for off, ln in enumerate(body[1:], start=1):
-            if MYSTERY.search(ln):
-                add(findings, "MYSTERY_GUEST", path, s + off + 1, ln.strip(),
-                    "The test depends on an external file/URL/DB not created in its own setup — it is "
-                    "not Repeatable and fails on another machine or offline (Mystery Guest).",
-                    "Use a temp dir / in-memory fixture / mock; construct inputs inside the test.", 0.75)
-                break
+        moff = _mystery_offset(body, language)
+        if moff is not None:
+            add(findings, "MYSTERY_GUEST", path, s + moff + 1, body[moff].strip(),
+                "The test depends on an external file/URL/DB not created in its own setup — it is "
+                "not Repeatable and fails on another machine or offline (Mystery Guest).",
+                "Use a temp dir / in-memory fixture / mock; construct inputs inside the test.", 0.75)
 
         cond_hits = [(off, ln) for off, ln in enumerate(body[1:], start=1) if spec["cond"].search(ln)]
         if cond_hits:
@@ -190,13 +242,23 @@ def detect(path, content, language):
                 "Use table-driven cases / parametrize so each case is its own explicit assertion.",
                 0.55 if language == "go" else 0.6)
 
-        m = LONG_STR.search(body_text)
-        if m:
-            line_no = s + body_text[:m.start()].count("\n") + 1
-            add(findings, "FRAGILE_ASSERTION", path, line_no, m.group(0)[:60] + "…",
-                "Asserting against a long literal string couples the test to cosmetic output; a "
-                "harmless formatting change breaks it (Fragile Test).",
-                "Assert on parsed/structured fields or a stable subset, not the whole rendered blob.", 0.5)
+        # Only an ASSERTION against a long literal is fragile — a long INPUT/fixture string on a
+        # non-assert line (e.g. `blob = "…80 chars…"`) is not. The literal is on the assert line, or
+        # wraps onto the next line of a CONTINUED assert (prev line ends with `(`/`==`/`\`/`+`) — an
+        # unrelated preceding assert that already ended does not count. [CR-2026-07-05-078]
+        for off, ln in enumerate(body):
+            m = LONG_STR.search(ln)
+            if not m:
+                continue
+            here = spec["assert"].search(ln)
+            prev_cont = (off >= 1 and spec["assert"].search(body[off - 1])
+                         and body[off - 1].rstrip().endswith(("(", "==", "\\", "+")))
+            if here or prev_cont:
+                add(findings, "FRAGILE_ASSERTION", path, s + off + 1, m.group(0)[:60] + "…",
+                    "Asserting against a long literal string couples the test to cosmetic output; a "
+                    "harmless formatting change breaks it (Fragile Test).",
+                    "Assert on parsed/structured fields or a stable subset, not the whole rendered blob.", 0.5)
+                break
 
         if RANGE_NAME.search(decl) and asserts == 1:
             add(findings, "BOUNDARY_SIGNAL_WEAK", path, s + 1, decl,

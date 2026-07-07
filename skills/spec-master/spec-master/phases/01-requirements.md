@@ -33,8 +33,12 @@
 5. **(新增) 唯一需求 ID (REQ-ID)**：為每個需求編列唯一的識別碼（如 `REQ-AUTH-001`）。
 5.1 **(新增) Source of Truth 邊界**：`requirements.md` 是 requirement source of truth；即使 workspace 存在 `RTM.md`，也不得在此階段把 RTM 當成需求的 authoring 來源。
  5.2 **(新增) Branch-spec 執行邊界宣告**：若本次工作涉及另一台機器、CI runner、registry、雲端帳號、硬體特定環境、或任何 external execution，必須在 `requirements.md` 先明確寫出：哪些屬於 repo-local closure、哪些屬於 external execution、以及哪些只是 external blocker。這個區分必須先在 branch-spec artifact 建立，不能等 `tasks.md` 才補。
+5.3 **(新增) AI / Security / Privacy / Log Compliance Intake**：若本次工作涉及 AI 系統、security/cybersec、PII/personal-data、privacy、logging、external controls、或 regulatory compliance，必須導入 `iso-ai-security-auditor` 作為 requirements input。
+   - 在 `requirements.md` 記錄需要向組織索取的文件：ISMS/AI scope、policy、risk register、SoA 或等價文件、data/AI system inventory、supplier/outsourcing evidence、incident/logging/retention evidence、PIA/DPIA/AI impact assessment、privacy notice、cross-border transfer evidence。
+   - 若文件缺失，不停止需求整理；以 `assumed-baseline` 標示一般業界標準與適用國家/地區法規假設，並以 `missing-evidence` 標出待補證據。
+   - `requirements.md` 只能宣告 compliance inventory obligations 與 evidence needs；不得宣稱法律適用性已由 agent 最終裁決，也不得宣稱 CNS/ISO certification readiness。
 6. **(新增) 規格漂移宣告**：若此需求修改了舊有 Specs 的邏輯，必須在文件中明確宣告 `[Impacts: {舊spec名稱}]`。
-7. **(新增) CR Intake Gate**：若需求影響 `[Completed]` spec、shared contract 或 external contract 假設，必須先在當前 active spec 中建立 / 更新 `Open Change Requests` 摘要，再進入 requirements approval。完整欄位請參考 [輕量 CR template](spec-registry-manager skill 的 references/change-request-template.md)。
+7. **(新增) CR Intake Gate**：若需求影響 `[Completed]` spec、shared contract 或 external contract 假設，必須先在當前 active spec 中建立 / 更新 `Open Change Requests` 摘要，再進入 requirements approval。完整欄位請參考 [輕量 CR template](../../../engineering/spec-registry-manager/references/change-request-template.md)。
    - **Impact Triage**：先將每個變更分類為：`Depends On only`、`Impacts completed/shared baseline`、`External contract assumption impact`。
    - 只有後兩者需要開 CR；單純 `Depends On` 不應濫開 CR。
    - 若需要開 CR，完整內容固定放在 `.agents/specs/{linked-active-spec}/change-requests/{cr-id}.md`，且 `Target Identifier` 必須使用標準格式。
@@ -59,7 +63,7 @@
 - [Impacts: old-spec-name] (如果有影響舊有邏輯)
 - [Open Change Requests: CR-2026-004] (若影響 completed spec / shared contract / external contract)
 
-> 完整 CR 內容應依 [輕量 CR template](spec-registry-manager skill 的 references/change-request-template.md) 撰寫；本處只保留摘要引用。
+> 完整 CR 內容應依 [輕量 CR template](../../../engineering/spec-registry-manager/references/change-request-template.md) 撰寫；本處只保留摘要引用。
 
 ## Repo-side Closure vs External Execution
 

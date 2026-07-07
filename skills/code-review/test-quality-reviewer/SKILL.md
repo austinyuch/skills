@@ -59,12 +59,24 @@ report next to the code findings. For low-confidence rules (`BOUNDARY_SIGNAL_WEA
 surface it. High-severity rules (`NO_ASSERTION`, `MYSTERY_GUEST`) are reliable deterministic
 calls and can be reported without the LLM pass.
 
+**Precision boundary (executable contract).** `MYSTERY_GUEST` fires only when a path/URL/DB
+locator co-occurs with an **I/O verb** (`open`/`read`/`requests.get`/`sql.Open`/…), so a locator
+passed as *input* to the code under test (`parse("https://…")`, `normalize("/etc/hosts")`) or named
+in a comment is not mistaken for a hidden dependency. `FRAGILE_ASSERTION` fires only on a long
+literal that is on an **assertion** line, not a long *input* fixture. `scripts/test_run.py` locks
+these with a `TestPrecisionGuards` suite (clean tests that must not be flagged) and a paired
+`TestRecallHeld` suite (the real Mystery-Guest I/O + fragile-assertion cases still fire). A test-smell
+reviewer that flags good tests gets muted — these guard against that. Known non-AST limits (use
+`--explain`/judgement): an external dependency whose I/O is hidden inside a helper (`newRepo(cfg)`) or
+resolved from the environment, and locators inside multiline/triple-quoted strings or `/* … */` block
+comments, are not detected by the per-line/​per-block heuristic. [CR-078]
+
 ## Optional LLM explanation (`--explain`)
 
 Off by default (deterministic-only, exit 0, no network). Pass `--explain` (or set
 `TEST_QUALITY_REVIEWER_EXPLAIN=1`) to ask the configured provider to recalibrate severity
 and reasoning. Provider selection reuses `CODE_REVIEW_LLM_*` (Bedrock-first); see
-[../capability-mapper/SKILL.md](../capability-mapper/SKILL.md) for the provider table. When
+the `capability-mapper` skill for the provider table. When
 `--explain` is set but the provider is unconfigured, the run **fails closed** rather than
 emitting un-calibrated findings as if a model had reviewed them.
 

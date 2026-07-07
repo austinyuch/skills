@@ -18,7 +18,7 @@
 
 - **有完整 composer pipeline 的 shape**（ships `schema.ts` + `scripts/compose.ts` + `styles.css` + `inputs.example.json`）：目前主要是 **`open-design-landing`** 與 **`open-design-landing-deck`**。這類可直接跑：
   ```bash
-  cd ~/projects/open-design/design-templates/open-design-landing
+  cd .vendor/open-design/design-templates/open-design-landing
   npx tsx scripts/placeholder.ts ./out/assets/             # $0 placeholder 圖（或 imagegen.ts 走 fal.ai）
   npx tsx scripts/compose.ts inputs.json ./out/index.html  # inputs + styles.css → 自包含 HTML
   ```
@@ -30,7 +30,7 @@
 
 ## Target C — gstack / Pretext（單檔 HTML，需真實 line-break / reflow / contenteditable 重排）
 
-走 gstack `/design-html` 慣例（`~/projects/gstack/design-html/SKILL.md`）：
+走 gstack `/design-html` 慣例（`.vendor/gstack/design-html/SKILL.md`）：
 
 - render 引擎 **Pretext**（`vendor/pretext.js`，30KB 零依賴；inline 或 `https://esm.sh/@chenglou/pretext`）——做真實高度 / 斷行計算、`contenteditable` + MutationObserver 重排、ResizeObserver relayout。
 - "Always include"：CSS 變數 tokens、Google Fonts via `<link>` + `document.fonts.ready` gate、語意 HTML5 + ARIA + heading 階層 + `focus-visible`、responsive 375/768/1024/1440、dark mode + reduced-motion、真實內容。
@@ -60,7 +60,7 @@
   - **Giant 品牌 token 不在 open-design**（152 套裡沒有 `giant`）：來自 catalog 的 `stylePreset` + `brand-guideline-company` skill（公司 CIS）。不要去 open-design 找 giant token。
   - Compose：Go fluent composer `a2ui.NewSurface(id, GiantCatalogID).SetData(...).AddComponents(...).Build()`；或直接寫對 `giant_catalog.json` 的 JSONL（root `id:"root"`，用 `Container/Section/...`，非 standard catalog 的 `Column/TextField`——本檔上方 JSONL 範例是 standard/Lit dialect，Giant dialect 元件名不同）。
   - **Patch lifecycle**：之後 patch = 再送一批 message：`updateComponents` 換掉某些 id 的元件、`updateDataModel`（`op: replace|add|remove` + JSON Pointer path）改資料；`A2UIRenderer.process(msgs)` 對同一 surface 增量套用（draft 流程用 `preview`→`commit`/`discard`）。
-  - Render + 看：`new A2UIRenderer().process(msgs)` → `renderSurface(id)`（`frontend/lib/a2ui/`，站點 `frontend/app/agent/page.tsx`）。要跑起來看：`cd ~/projects/giant-template-orchestrator/frontend && pnpm install && pnpm dev`（:3000；經 `local-infra-registry-governance` 取 port）。
+  - Render + 看：`new A2UIRenderer().process(msgs)` → `renderSurface(id)`（`frontend/lib/a2ui/`，站點 `frontend/app/agent/page.tsx`）。要跑起來看：`cd .vendor/giant-template-orchestrator/frontend && pnpm install && pnpm dev`（:3000；經 `local-infra-registry-governance` 取 port）。
 - **Lit web-components**（WebView / native canvas）：對 `standard_catalog_definition.json` compose。`pnpm canvas:a2ui:bundle` → 開 `src/canvas-host/a2ui/index.html` → `window.openclawA2UI.applyMessages(msgs)`；`reset()` 清空。
 
 ## 共通收尾

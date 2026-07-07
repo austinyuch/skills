@@ -14,7 +14,7 @@ review 觸及前端變更：`.css`/`.scss`/`.less`、`.html`、`.jsx`/`.tsx`、`
 
 - **Tokens**：顏色 / 間距 / 圓角是否用 CSS var / design-system token，而非 raw hex / 魔術數字。
 - **shadcn 規則**（若專案用 shadcn）：semantic token（禁 `bg-blue-500`）、Field/InputGroup 正確組合、必要 a11y Title/`sr-only`。來源：`shadcn` skill `rules/*`。
-- **Anti-slop**：font blacklist、AI-slop blacklist（見 [anti-slop-checklist.md](anti-slop-checklist.md)）。gstack `~/projects/gstack/review/design-checklist.md` 是 grep 得到的清單，可直接對照。
+- **Anti-slop**：font blacklist、AI-slop blacklist（見 [anti-slop-checklist.md](anti-slop-checklist.md)）。gstack `.vendor/gstack/review/design-checklist.md` 是 grep 得到的清單，可直接對照。
 - **WCAG POUR baseline**：對照 [anti-slop-checklist.md](anti-slop-checklist.md) §C（WCAG 2.2 AA / POUR）逐項——文字對比 4.5:1、**非文字 / 相鄰色對比 ≥ 3:1（contrast 不能太近）**、不可只靠顏色、heading 階層、ARIA、`focus-visible`、`prefers-reduced-motion`、target size。來源整合 open-design `craft/accessibility-baseline.md` + WCAG SC 編號。
 
 ### Lane 2 — Visual（render → 截圖 → 用眼睛評）
@@ -26,13 +26,13 @@ review 觸及前端變更：`.css`/`.scss`/`.less`、`.html`、`.jsx`/`.tsx`、`
 **最快：服務本地 build 的 HTML 再截圖**（適合複核本地前端產物）：
 ```bash
 # prove_..._bundle.py 會起本地 HTTP server 服務你的 HTML，跑 Playwright，strict-verify
-python ~/projects/aclab-uat-demo-agent/scripts/prove_external_computer_use_runtime_bundle.py \
+python .vendor/aclab-uat-demo-agent/scripts/prove_external_computer_use_runtime_bundle.py \
   --target-url http://localhost:<port>/<page>  --ready-selector <css> --capture-selector <css> \
   --work-dir temp/frontend-review
 # → JSON: bundlePath / reportPath / 截圖 PNG（bytes ok）
 ```
 
-**對任意 URL / 已跑起來的頁面**：寫一份最小 web plan 給 `uatdemo run uat --file plan.json`（step 欄位 `url`/`readySelector`/`captureSelector`/`loginConfig`），或直接用 `webapp-testing` 的 Playwright 截圖。BINARY：`~/projects/aclab-uat-demo-agent/skills/uat-demo-agent/scripts/uatdemo-<os>-<arch>`。
+**對任意 URL / 已跑起來的頁面**：寫一份最小 web plan 給 `uatdemo run uat --file plan.json`（step 欄位 `url`/`readySelector`/`captureSelector`/`loginConfig`），或直接用 `webapp-testing` 的 Playwright 截圖。BINARY：`.vendor/aclab-uat-demo-agent/skills/uat-demo-agent/scripts/uatdemo-<os>-<arch>`。
 
 截好圖後，Read PNG 並評：
 - **Layout**：有無重疊 / 破版 / 溢出 / 對齊亂 / 空間節奏不對。
@@ -57,7 +57,7 @@ python ~/projects/aclab-uat-demo-agent/scripts/prove_external_computer_use_runti
 
 ## 與 code-review 家族的接法（迴向注意）
 
-理想上本 skill 作為 `code-review` 的前端 domain-expert sibling（如 `test-quality-reviewer`）。但要**正式讓 `code-review` 自動把它當 sibling input**，是改 `code-review` 家族行為——其 source-of-truth 在 `~/projects/aclab/aclab-code-review-private/`，該變更必須**迴向該 repo 適當位置**，不可只改本 workspace 的 vendored 副本。在 wiring 完成前，spec Phase 5 可手動呼叫本 skill 當前端複核輸入。
+理想上本 skill 作為 `code-review` 的前端 domain-expert sibling（如 `test-quality-reviewer`）。但要**正式讓 `code-review` 自動把它當 sibling input**，是改 `code-review` 家族行為——其 source-of-truth 在 upstream repo（`aclab-code-review-private`），該變更必須以 change-request **迴向該 repo 適當位置**，不可只改本 workspace 的 vendored 副本。在 wiring 完成前，spec Phase 5 可手動呼叫本 skill 當前端複核輸入。（此為 governance 指標，非資源路徑。）
 
 ## 反模式
 

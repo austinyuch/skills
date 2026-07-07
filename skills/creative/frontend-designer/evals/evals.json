@@ -18,6 +18,30 @@
       "prompt": "我要一個 agent 動態產生、可以之後再 patch 的表單 UI，用我們 giant 的品牌，最好是 shadcn 外觀。",
       "expected_output": "Phase 2 選 A2UI render target（React/shadcn renderer + giant_catalog.json，因為要動態 patch + catalog-driven + shadcn 外觀）；compose ServerMessage[]（createSurface→updateComponents flat 樹→updateDataModel JSON Pointer，root id=root），用 giant stylePreset 品牌，render via A2UIRenderer。",
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "我的專案有 components.json，幫我做一個 pricing card 元件，符合品牌。",
+      "expected_output": "依 Delegation Contract：偵測 components.json → 透過 Skill tool 調用 `shadcn`（元件組合 + semantic-token 規則），而非自己重寫 shadcn 細節；把 Phase 1 tokens 餵進去；收尾附一行 `Composed via:`（例：shadcn(元件規則)）。若 shadcn 不可用，走三態降級（resource-fallback 讀其 rules/*）並誠實標記，不宣稱已達 shadcn 品質。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "幫我複核這段前端：卡片背景 #f2f2f2 疊在 #ffffff 上、disabled 灰字 #cfcfcf，桌面橫向 nav 用純 CSS :hover 展開子選單，窄螢幕沒有收合。",
+      "expected_output": "Phase 3 static+WCAG POUR：flag SC 1.4.11「非文字/相鄰色對比不能太近」——相鄰 surface #f2f2f2 vs #ffffff 對比 <3:1（幾乎看不出卡片邊界）為 finding；RWD 導覽 flag SC 1.4.10 + 純 `:hover` 展開（觸控點不開、無 `aria-expanded`、窄螢幕未收合成 hamburger）。findings-only（不下 PASS/FAIL），建議附實測對比比值；若有 render backend 另跑 375/1440 兩態截圖。",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "這個畫面想走 Apple 原生風格，能不能過 Apple 的設計規範？順便幫我把配色調得更協調。",
+      "expected_output": "觸發 frontend-designer，並調用 open-design lens：`apple-hig`（HIG 遵循檢查，wrapper-registered，讀 .vendor/open-design/skills/apple-hig）+ `color-expert`（palette / 相鄰色可辨，補強 WCAG 對比）。三態：未 bootstrap `.vendor/` → wrapper 回 unavailable 誠實降級。收尾 `Composed via: apple-hig(HIG) + color-expert(palette)`。",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "我有一份採購管理系統的 PRD，幫我做成可互動的 HTML 原型，有表格、表單驗證、CRUD。",
+      "expected_output": "niche delegation：這是 B2B 供應鏈 PRD→互動 HTML 原型（AT-UI/AntD/Element Plus、CRUD、表單驗證、mock data）→ 透過 Skill tool 整段 delegate 回 `ui-skill`（其本業），frontend-designer 只在產出上補 design-system / anti-slop / a11y 把關；收尾 `Composed via: ui-skill(...)`。不自己從零手刻該 niche。",
+      "files": []
     }
   ]
 }

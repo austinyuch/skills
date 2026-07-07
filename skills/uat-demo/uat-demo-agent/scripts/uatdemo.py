@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import platform
 import shutil
@@ -69,12 +70,74 @@ def resolve_binary() -> list[str]:
         bundled = SCRIPT_DIR / bundled_name
         if bundled.exists():
             return [str(bundled)]
+        # ISSUE-DIST-004: the platform binaries are delivered as GitHub release assets, not
+        # committed to git. If this host's binary is absent, self-heal by fetching it from the
+        # release (SHA-256-verified) into SCRIPT_DIR on first use, then use it.
+        fetched = try_fetch_bundle_binary(bundled_name)
+        if fetched is not None:
+            return [str(fetched)]
     path_binary = shutil.which("uatdemo")
     if path_binary:
         return [path_binary]
     raise SystemExit(
-        "uatdemo wrapper could not resolve a CLI binary via UATDEMO_BIN, global config, bundled binaries, or PATH"
+        "uatdemo wrapper could not resolve a CLI binary via UATDEMO_BIN, global config, bundled "
+        "binaries, PATH, or a GitHub-release fetch. Run "
+        "`bash install-bundle.sh gh:<owner/repo>@latest <scripts-dir>` or set UATDEMO_BIN."
     )
+
+
+def bundle_release_pointer() -> dict:
+    """Read the committed bundle-release.json pointer (where release binaries live)."""
+    path = SCRIPT_DIR / "bundle-release.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def bundle_sources() -> list[str]:
+    """Ordered candidate sources for fetching this host's uatdemo binary.
+
+    UATDEMO_BUNDLE_SOURCE overrides everything (a local dir / https prefix / gh:owner/repo@tag);
+    otherwise derive from the pointer: prefer the latest release, then a pinned tag if set.
+    """
+    override = os.environ.get("UATDEMO_BUNDLE_SOURCE", "").strip()
+    if override:
+        return [override]
+    pointer = bundle_release_pointer()
+    repo = str(pointer.get("repo", "")).strip()
+    sources: list[str] = []
+    if repo:
+        if pointer.get("preferLatest", True):
+            sources.append(f"gh:{repo}@latest")
+        pinned = pointer.get("pinnedTag")
+        if pinned:
+            sources.append(f"gh:{repo}@{pinned}")
+    return sources
+
+
+def try_fetch_bundle_binary(binary_name: str) -> Path | None:
+    """Best-effort fetch of the host binary from a release into SCRIPT_DIR; None on failure."""
+    installer = SCRIPT_DIR / "install-bundle.sh"
+    if not installer.exists() or shutil.which("bash") is None:
+        return None
+    for source in bundle_sources():
+        print(f"uatdemo: binary not bundled; fetching from {source} ...", file=sys.stderr)
+        try:
+            subprocess.run(
+                ["bash", str(installer), source, str(SCRIPT_DIR)],
+                check=True,
+                stdout=sys.stderr,
+                stderr=sys.stderr,
+            )
+        except (subprocess.CalledProcessError, OSError):
+            continue
+        candidate = SCRIPT_DIR / binary_name
+        if candidate.exists():
+            return candidate
+    return None
 
 
 def discover_project_root(start: Path) -> Path:
@@ -200,7 +263,10 @@ def runtime_gitignore_entries(relative_dir: str) -> set[str]:
     for part in parts:
         current.append(part)
         prefix = "/".join(current)
-        accepted.update({prefix, f"{prefix}/", f"/{prefix}", f"/{prefix}/"})
+        accepted.add(prefix)
+        accepted.add(f"{prefix}/")
+        accepted.add(f"/{prefix}")
+        accepted.add(f"/{prefix}/")
     return accepted
 
 

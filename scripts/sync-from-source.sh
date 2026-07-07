@@ -17,8 +17,18 @@ TEXT_EXT="md json txt sh mjs js py html yaml yml toml css"
 #   LICENSE / NOTICE  — Apache-2.0 files carried by the code-review family
 #   viewer            — pre-built graph-explorer webapp bundle (hashed assets pinned in
 #                       .gitleaksignore); refresh it deliberately, not via routine sync.
-RSYNC_EXCLUDES=( --exclude=LICENSE --exclude=NOTICE --exclude=viewer )
-DIFF_EXCLUDES=( --exclude=LICENSE --exclude=NOTICE --exclude=viewer )
+#   model payloads    — code-review ships model/tokenizer payloads through release bundles,
+#                       not this public source repo; keep only README.md + manifest.json.
+MODEL_PAYLOAD_EXCLUDES=(
+    --exclude=assets/models/baai-bge-small-en-v1-5/model.onnx
+    --exclude=assets/models/baai-bge-small-en-v1-5/config.json
+    --exclude=assets/models/baai-bge-small-en-v1-5/special_tokens_map.json
+    --exclude=assets/models/baai-bge-small-en-v1-5/tokenizer.json
+    --exclude=assets/models/baai-bge-small-en-v1-5/tokenizer_config.json
+    --exclude=assets/models/baai-bge-small-en-v1-5/vocab.txt
+)
+RSYNC_EXCLUDES=( --exclude=LICENSE --exclude=NOTICE --exclude=viewer "${MODEL_PAYLOAD_EXCLUDES[@]}" )
+DIFF_EXCLUDES=( --exclude=LICENSE --exclude=NOTICE --exclude=viewer "${MODEL_PAYLOAD_EXCLUDES[@]}" )
 
 echo "🔄 Syncing skills from: $SOURCE"
 echo "📦 Target repo: $REPO_ROOT"
@@ -88,6 +98,27 @@ deploy_skill() {
     ((SYNCED++)) || true
 }
 
+# source_skill_dir <category-or-family> <skill>
+# The live OpenCode source now uses the same multi-level layout as this public
+# repo. Keep a flat fallback during migration so older machines can still sync.
+source_skill_dir() {
+    local group="$1" skill="$2"
+    if [ -d "$SOURCE/$group/$skill" ]; then
+        printf '%s\n' "$SOURCE/$group/$skill"
+    else
+        printf '%s\n' "$SOURCE/$skill"
+    fi
+}
+
+source_standalone_file() {
+    local file="$1" category="$2" target_path="$3"
+    if [ -f "$SOURCE/$category/$target_path" ]; then
+        printf '%s\n' "$SOURCE/$category/$target_path"
+    else
+        printf '%s\n' "$SOURCE/$file"
+    fi
+}
+
 # Sync family skills
 echo "📂 Syncing family skills..."
 
@@ -96,7 +127,7 @@ for family in $(jq -r '.families | keys[]' "$MANIFEST" 2>/dev/null); do
     mkdir -p "$family_dir"
 
     for skill in $(jq -r --arg f "$family" '.families[$f].skills[]' "$MANIFEST" 2>/dev/null); do
-        deploy_skill "$family/$skill" "$SOURCE/$skill" "$family_dir/$skill"
+        deploy_skill "$family/$skill" "$(source_skill_dir "$family" "$skill")" "$family_dir/$skill"
     done
 done
 
@@ -110,7 +141,7 @@ for category in $(jq -r '.categories | keys[]' "$MANIFEST"); do
     mkdir -p "$category_dir"
 
     for skill in $(jq -r --arg c "$category" '.categories[$c].skills[]' "$MANIFEST" 2>/dev/null); do
-        deploy_skill "$category/$skill" "$SOURCE/$skill" "$category_dir/$skill"
+        deploy_skill "$category/$skill" "$(source_skill_dir "$category" "$skill")" "$category_dir/$skill"
     done
 done
 
@@ -122,7 +153,7 @@ for row in $(jq -c '.standalone_files[]' "$MANIFEST" 2>/dev/null); do
     category=$(echo "$row" | jq -r '.category')
     target_path=$(echo "$row" | jq -r '.target_path')
 
-    src="$SOURCE/$file"
+    src="$(source_standalone_file "$file" "$category" "$target_path")"
     dst="$TARGET/$category/$target_path"
 
     if [ ! -f "$src" ]; then

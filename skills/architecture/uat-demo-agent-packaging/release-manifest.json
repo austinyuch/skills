@@ -1,6 +1,6 @@
 {
   "skill_name": "uat-demo-agent-packaging",
-  "release_id": "20260609-122108",
+  "release_id": "20260706-070608",
   "bundle_dir": "uat-demo-agent-packaging",
   "files": [
     "SKILL.md",

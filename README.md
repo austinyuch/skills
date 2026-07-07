@@ -37,9 +37,13 @@ bash scripts/install.sh claude       # macOS / Linux
 pwsh scripts/install.ps1 claude      # Windows PowerShell
 ```
 
-Each skill installs as `<skill-home>/<skill-name>/` and the agent picks it up automatically.
+By default, skills install with the same hierarchical layout as this repo:
+`<skill-home>/<category-or-family>/<skill-name>/`. This matches multi-level skill discovery in modern
+Codex / Claude / OpenCode environments. For older flat skill homes, pass `--layout flat` (or set
+`SKILLS_LAYOUT=flat`) to install as `<skill-home>/<skill-name>/`.
+
 Override the destination anywhere with `SKILLS_TARGET=/custom/path`. (OpenCode users can also use the
-community tool: `npx skills@latest add austinyuch/skills`.)
+community tool: `npx skills@latest add austinyuch/skills` when that tool's layout matches their runtime.)
 
 ### Native binaries (GitHub Releases, not in git)
 

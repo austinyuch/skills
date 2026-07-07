@@ -17,7 +17,7 @@
 set -eu
 
 here=$(dirname -- "$0"); here=$(cd -- "$here" && pwd)
-release="${REVIEW_CLI_RELEASE:-gh://austinyuch/skills@review-cli-v0.15.0}"
+release="${REVIEW_CLI_RELEASE:-gh://austinyuch/aclab-code-review-private@v0.11.2}"
 
 if [ ! -f "$here/install-bundle.sh" ]; then
   echo "install.sh: missing install-bundle.sh next to it (bundle incomplete)" >&2

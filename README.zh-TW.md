@@ -34,8 +34,13 @@ bash scripts/install.sh claude       # macOS / Linux
 pwsh scripts/install.ps1 claude      # Windows PowerShell
 ```
 
-每個技能會安裝成 `<skill-home>/<skill-name>/`，agent 會自動載入。可用 `SKILLS_TARGET=/custom/path`
-覆寫目的地。（OpenCode 使用者也可用社群工具：`npx skills@latest add austinyuch/skills`。）
+預設會用與本 repo 相同的多階層 layout 安裝：
+`<skill-home>/<category-or-family>/<skill-name>/`，以配合現代 Codex / Claude / OpenCode 的多階層
+skill discovery。若要給舊版 flat skill home 使用，可加 `--layout flat`，或設定 `SKILLS_LAYOUT=flat`，
+改安裝為 `<skill-home>/<skill-name>/`。
+
+可用 `SKILLS_TARGET=/custom/path` 覆寫目的地。（OpenCode 使用者也可用社群工具：
+`npx skills@latest add austinyuch/skills`，前提是該工具的 layout 與 runtime 相容。）
 
 ### Native binaries（放在 GitHub Releases，不進 git）
 
@@ -59,7 +64,7 @@ pwsh scripts/install.ps1 claude      # Windows PowerShell
 
 > 🔐 **本 repository 是 private。** `npx`／`uvx`／`git clone` **以及** `--with-cli` 下載 binary 都需要
 > GitHub 驗證。`--with-cli` 透過 **`gh` CLI**（`gh auth login`）從
-> [`review-cli-v0.11.0`](https://github.com/austinyuch/skills/releases/tag/review-cli-v0.11.0)
+> [`review-cli-v0.15.0`](https://github.com/austinyuch/skills/releases/tag/review-cli-v0.15.0)
 > release 抓 asset；沒有 `gh` 時會印出可直接執行的 `gh release download …` 指令。除非把 repo（或 release）
 > 設為 public，否則無法匿名安裝。
 

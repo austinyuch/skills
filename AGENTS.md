@@ -3,7 +3,9 @@
 This is **aclab's collection of Agent Skills** for coding agents (OpenCode, Claude Code, Codex, Kiro,
 and compatible runtimes). It is not an application — it is the skills, their docs, a methodology, and
 the glue that catalogs and installs them. It is **agent-agnostic**: install with
-`scripts/install.sh <opencode|claude|codex|kiro>`. Read this before editing.
+`scripts/install.sh <opencode|claude|codex|kiro>`. Installers default to the repo's hierarchical
+`<category-or-family>/<skill>` layout and also support `--layout flat` / `SKILLS_LAYOUT=flat` for
+older flat skill homes. Read this before editing.
 
 > 本 repo 是給程式代理人使用的 **Agent Skills 合集**；以下規則同時適用於人類與 agent。
 

@@ -66,7 +66,7 @@ uat-demo-agent 只有 uniqueness hash。要真 VRT：存一張核可 baseline PN
 
 ## 5. Resource-absent fallback（外部 repo / 工具不在時誠實降級）
 
-本 skill 大量依賴 `~/projects/*`（uat-demo-agent / open-design / gstack / giant-orchestrator）與 Playwright。任一缺席時**誠實降級、不靜默跳過**：
+本 skill 大量依賴 `.vendor/*`（gitignored symlink → uat-demo-agent / open-design / gstack / giant-orchestrator 的本機 clone；見 resources.md）與 Playwright。任一缺席時（含 `.vendor/` 未 bootstrap）**誠實降級、不靜默跳過**：
 
 - **無 Playwright / uat-demo-agent / webapp-testing** → 無法跑 Lane 2 visual：只做 Lane 1 static，於 findings 明記「visual review unavailable（no render backend）」，並建議補上。
 - **無 open-design / gstack** → craft 規則 / 版型來源缺席：改用 anti-slop-checklist.md（已內建於本 skill，不依賴外部）當最小準則，記「external craft sources absent」。

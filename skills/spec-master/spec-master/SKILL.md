@@ -1,6 +1,6 @@
 ---
 name: spec-master
-description: 把這個 skill 當成 spec 工作的前門與路由入口，並在需要 branch-spec authoring / resume / improvement classification 時指向本目錄的 `WORKFLOW.md`。當使用者要建立新 spec、續做做到一半的 spec、根據 `NEXT_STEPS.md` 詢問下一步、盤點或更新 `SPECS.md`、建立或整理 `RTM.md`，或遇到 review rejection、retro finding、tech debt、known issue、test gap、CR follow-up 等 continuous-improvement 請求而不確定應該併回既有 owner、走 CR overlay、先進 issue log，還是真的需要開新 spec 時使用。把 project-level system architecture / `.agents/steering/{product,tech,structure}` / architecture review / 架構 HTML 導向 `system-architect`，把 `ISSUE_LOG.md` 治理導向 `issue-log-manager`，把 `TESTS.md` 治理導向 `test-registry-manager`，把 `SPECS.md` registry sync 導向 `spec-registry-manager`，並在真正需要 local dev / UAT / E2E runtime allocation 時轉交 `local-infra-registry-governance`。不要用在單純 folder-level `TESTS.md` 維護、單純 `SPECS.md` 更新、或單純 local env 操作這些已明確屬於下游 skill 的情況。
+description: 把這個 skill 當成 spec 工作的前門與路由入口，並在需要 branch-spec authoring / resume / improvement classification 時指向本目錄的 `WORKFLOW.md`。當使用者要建立新 spec、續做做到一半的 spec、根據 `NEXT_STEPS.md` 詢問下一步、盤點或更新 `SPECS.md`、建立或整理 `RTM.md`，或遇到 review rejection、retro finding、tech debt、known issue、test gap、CR follow-up 等 continuous-improvement 請求而不確定應該併回既有 owner、走 CR overlay、先進 issue log，還是真的需要開新 spec 時使用。把 project-level system architecture / `.agents/steering/{product,tech,structure}` / architecture review / 架構 HTML 導向 `system-architect`，把 AI/security/privacy/PII/log/regulatory compliance inventory / internal-audit gap table 導向 `iso-ai-security-auditor`，把 `ISSUE_LOG.md` 治理導向 `issue-log-manager`，把 `TESTS.md` 治理導向 `test-registry-manager`，把 `SPECS.md` registry sync 導向 `spec-registry-manager`，並在真正需要 local dev / UAT / E2E runtime allocation 時轉交 `local-infra-registry-governance`。不要用在單純 folder-level `TESTS.md` 維護、單純 `SPECS.md` 更新、單純 compliance legal advice/certification verdict、或單純 local env 操作這些已明確屬於下游 skill 的情況。
 ---
 
 # Spec Master
@@ -17,6 +17,7 @@ description: 把這個 skill 當成 spec 工作的前門與路由入口，並在
 - 在開始前提醒正確的 truth surface：`requirements.md` / `design.md` / `tasks.md` / `review.md`、`TESTS.md`、`SPECS.md`、`NEXT_STEPS.md`、`RTM.md` 各自的權責不同。
 - 在需要 resume 時，優先用 active root 下的 `NEXT_STEPS.md` + 現有 spec 狀態判斷恢復入口。
 - 把工作交給正確的既有 skill，而不是在這裡重寫下游規則。
+- 當請求是 AI/security/privacy/PII/log/regulatory compliance 盤點、內部稽核表、或 repo + 組織文件 gap check 時，導向 `iso-ai-security-auditor`；若還需要正式 spec 變更，再回到 SDD。
 
 你不負責：
 - 自己撰寫完整的 `requirements.md` / `design.md` / `tasks.md` / `review.md` phase 規則。
@@ -76,6 +77,15 @@ description: 把這個 skill 當成 spec 工作的前門與路由入口，並在
 - 用 Agile/YAGNI 邊界採用 IBM SAA good parts，而不是建立 heavyweight blueprint
 
 `system-architect` 是 architecture communication snapshot 的 authoring / review owner；它不取代 spec-local `design.md`、`review.md`、或 `code-review` 的 graph/static-analysis evidence。
+
+### 4.5 `iso-ai-security-auditor`
+當使用者要：
+- 盤點 repo 內 security、cybersec、privacy、PII/personal-data protection、logging、AI governance、或 regulatory compliance 的最低基線
+- 彙整 CNS/ISO 27001、27002、42001、NIST AI RMF / GenAI Profile、EU AI Act、GDPR/ePrivacy、Taiwan PDPA/cybersecurity law、US state privacy / Colorado AI 等適用性與 evidence gap
+- 要求提供組織文件作為輸入，並在缺文件時用 `assumed-baseline` 標示一般業界標準與適用國家/地區法規假設
+- 區分 repo/code 已實作、外部系統委外實作、組織流程證據缺失、與法律/認證不可裁決事項
+
+`iso-ai-security-auditor` 是 internal-audit readiness inventory / gap table owner，不是法律意見、ISO/CNS 認證 verdict、或 code-level exploit finder。若盤點發現 architecture docs/data-flow/trust-boundary 不足，組合 `system-architect`；若發現具體程式碼安全風險，組合 `security-review`；若需要新增/修改正式 branch spec、tasks、或 governance wording，回到本 skill 的 SDD workflow。
 
 ### 5. Intake-only downstream artifact targets
 當 Loop Engineering Intake route table 顯示主要工作面是 stakeholder/operator artifact refresh，而不是 branch-spec authoring 本身時，可在保留 `review.md` / `RTM.md` / `SPECS.md` authority boundary 的前提下，交給：

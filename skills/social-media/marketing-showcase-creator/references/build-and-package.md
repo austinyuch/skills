@@ -225,7 +225,7 @@ Showcase 常有**深色 section**（hero、stats bar、`.bg-dark`、CTA），做
 4. **Print visual/contrast check**：跑本 skill 的 visual helper，產生 screen + print screenshots 與 computed contrast report：
 
    ```bash
-   python skills/marketing-showcase-creator/scripts/check_showcase_print_visual.py \
+   python skills/social-media/marketing-showcase-creator/scripts/check_showcase_print_visual.py \
      docs/showcase/index.html \
      --out temp/showcase-print-visual/current
    ```
@@ -255,7 +255,7 @@ chromium --headless --disable-gpu --no-sandbox \
 結構檢查（不能取代 PDF 目視，但能先擋掉 template 漏洞）：
 
 ```bash
-python skills/marketing-showcase-creator/scripts/check_showcase_contract.py docs/showcase/index.html
+python skills/social-media/marketing-showcase-creator/scripts/check_showcase_contract.py docs/showcase/index.html
 ```
 
 檢查內容包含：`#print-button`、`printShowcase()` + `window.print()`、`.lang-en` / `.lang-zh` 數量一致、`@media print`、`print-color-adjust: exact`、隱藏 Print 按鈕、列印對比修正與底線連結。

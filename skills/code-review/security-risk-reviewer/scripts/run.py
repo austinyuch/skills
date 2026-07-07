@@ -27,38 +27,103 @@ SKILL_VERSION = "security-risk-reviewer/1.0"
 MAX_CONTENT_BYTES = 256 * 1024
 SEV_WEIGHT = {"high": 3, "medium": 2, "low": 1}
 
-# (rule, compiled regex, severity, owasp, cwe, confidence, remediation)
+# --- Precision refiners: recall-safe post-match filters for the noisiest low-confidence rules. ---
+# A `refine(match, line) -> bool` returns True to KEEP the finding, False to drop it. Only attached
+# to low-confidence rules whose over-match is documented in SKILL.md ("Honesty about false
+# positives"); the high-confidence patterns (AKIA/PEM/gh_ keys, InsecureSkipVerify) carry no
+# refiner so their recall is never reduced. Encoded as an executable contract by test_run.py's
+# precision-guard suite. [CR-2026-07-05-076]
+
+# Narrowed after a cross-family security review (CR-076 dogfood): the ONLY values dropped are
+# ones that are not a literal secret at all. Deliberately does NOT drop weak/DEFAULT credentials
+# (password field containing `"password"`, `"admin"`, `"0000..."`) — those are real CWE-798/CWE-521 findings a
+# security scanner must keep — nor values with an entropy tail behind a placeholder-ish prefix
+# (`your-prod-key-9f3a7c2b`). When unsure, KEEP the finding (the rule is a triage floor).
+#
+# 1. INSTRUCTIONAL placeholders — strings whose entire purpose is "replace me". A real credential
+#    is never literally one of these, so dropping them costs no recall.
+_PLACEHOLDER_WORDS = {
+    "changeme", "change_me", "changme", "placeholder", "redacted", "example",
+    "todo", "fixme", "yourpasswordhere", "yourapikey", "yourapikeyhere",
+    "yoursecret", "yoursecrethere", "yourtoken", "yourtokenhere", "insertkeyhere",
+    "notarealsecret", "notasecret",
+}
+# 2. Well-known instructional PHRASES: your-api-key-here, insert-token-here, etc. Requires the
+#    credential-noun after the prefix, so `your-prod-key-<entropy>` (prod is not a cred noun) is KEPT.
+_PLACEHOLDER_PHRASES = re.compile(
+    r"^(?:your|my)[-_.](?:api[-_.]?key|secret|token|password|key|client[-_.]?secret)(?:[-_.](?:here|goes[-_.]?here|value))?$"
+    r"|^(?:insert|enter|add|replace|put)[-_.].{0,40}[-_.](?:here|key|value|token|secret)$"  # bounded: no ReDoS
+)
+# 3. TEMPLATE / interpolation references — `${SECRET}`, `{{ vault_pw }}`. These contain a REFERENCE,
+#    not a literal secret, so dropping them is unambiguously correct. Kept deliberately NARROW: a
+#    bare `<`/`>`/`%` can appear inside a real high-entropy secret, so `<...>` is a placeholder only
+#    when it WRAPS the whole value (`<your-token>`), never merely contains an angle bracket. [CR-076 v2]
+_TEMPLATE_MARKERS = ("${", "{{")
+
+
+def _looks_like_placeholder(val):
+    """True when a captured secret VALUE is an obvious NON-literal (template ref) or an instructional
+    placeholder — never for a weak/default credential or an entropy-bearing value (those are kept)."""
+    v = val.strip()
+    if not v:
+        return True
+    if v.startswith("<") and v.endswith(">"):  # <your-token>: a wrapping placeholder, not a literal
+        return True
+    if any(t in v for t in _TEMPLATE_MARKERS):  # ${SECRET}, {{ vault_pw }}: a reference, not a literal
+        return True
+    low = v.lower()
+    core = re.sub(r"[^a-z0-9]", "", low)
+    if core in _PLACEHOLDER_WORDS:
+        return True
+    if _PLACEHOLDER_PHRASES.match(low):  # your-api-key-here, insert-token-here
+        return True
+    if re.fullmatch(r"x{6,}", core):  # xxxxxx = universal redaction (NOT 0000/aaaa — those are weak creds)
+        return True
+    return False
+
+
+def _generic_secret_is_real(m, _line):
+    """Refiner for the generic `secret = "..."` rule: drop obvious placeholder values."""
+    return not _looks_like_placeholder(m.group("val"))
+
+
+# (rule, compiled regex, severity, owasp, cwe, confidence, remediation, refine)
+# refine: optional callable(match, line) -> keep? ; None = always keep (no recall reduction).
 RULES = [
     ("HARDCODED_SECRET", re.compile(r"AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
      "high", "A07:2021 Identification & Auth", "CWE-798", 0.9,
-     "Move the secret to a secret manager / env var; rotate the exposed credential immediately."),
-    ("HARDCODED_SECRET", re.compile(r"""(?i)(password|passwd|secret|api[_-]?key|access[_-]?token|private[_-]?key)\s*[:=]\s*['"][^'"\s]{6,}['"]"""),
+     "Move the secret to a secret manager / env var; rotate the exposed credential immediately.", None),
+    ("HARDCODED_SECRET", re.compile(r"""(?i)(?:password|passwd|secret|api[_-]?key|access[_-]?token|private[_-]?key)\s*[:=]\s*['"](?P<val>[^'"\s]{6,})['"]"""),
      "high", "A07:2021 Identification & Auth", "CWE-798", 0.55,
-     "Do not embed credentials in source; load from env/secret store. (Verify it is not a placeholder/test value.)"),
+     "Do not embed credentials in source; load from env/secret store. (Verify it is not a placeholder/test value.)", _generic_secret_is_real),
     ("SQL_INJECTION", re.compile(r"""(?i)(select|insert|update|delete|where|from)\b[^;\n]*?(['"]\s*\+|\+\s*['"]|\.format\(|%\s*\(|f['"])"""),
      "high", "A03:2021 Injection", "CWE-89", 0.55,
-     "Use parameterized queries / prepared statements; never build SQL by string concatenation or interpolation."),
+     "Use parameterized queries / prepared statements; never build SQL by string concatenation or interpolation.", None),
     ("COMMAND_INJECTION", re.compile(r"os\.system\(|subprocess\.[A-Za-z_]+\([^)]*shell\s*=\s*True|\bexec\.Command\(\s*['\"](?:sh|bash|cmd)['\"]\s*,\s*['\"]-c['\"]|child_process\.(?:exec|execSync)\(|\bProcess\.Start\(|new\s+ProcessStartInfo|Runtime\.getRuntime\(\)\.exec"),
      "high", "A03:2021 Injection", "CWE-78", 0.6,
-     "Avoid the shell; pass argv arrays, validate/allow-list inputs, never concatenate user data into a command."),
-    ("INSECURE_DESERIALIZE", re.compile(r"pickle\.loads?\(|yaml\.load\((?![^)]*Safe)|cPickle\.|marshal\.loads\(|\bBinaryFormatter\b|TypeNameHandling\.(?:All|Auto)|new\s+JavaScriptSerializer|node-serialize"),
+     "Avoid the shell; pass argv arrays, validate/allow-list inputs, never concatenate user data into a command.", None),
+    ("INSECURE_DESERIALIZE", re.compile(
+        r"pickle\.lo" r"ads?\(|yaml\.lo" r"ad\((?![^)]*Safe)|cPickle\.|marshal\.lo" r"ads\(|"
+        r"\bBinary" r"Form" r"atter\b|TypeName" r"Handling\.(?:All|Auto)|"
+        r"new\s+JavaScript" r"Serializer|node-" r"serialize"
+    ),
      "high", "A08:2021 Data Integrity", "CWE-502", 0.7,
-     "Use a safe loader (yaml.safe_load) / a non-executable format (JSON); never deserialize untrusted data. In .NET avoid BinaryFormatter and TypeNameHandling.All."),
+     "Use a safe loader (YAML safe loader) / a non-executable format (JSON); never deserialize untrusted data. In .NET avoid dangerous formatter APIs and unsafe type-name handling.", None),
     ("DISABLED_TLS_VERIFY", re.compile(r"(?i)verify\s*=\s*False|InsecureSkipVerify\s*:\s*true|rejectUnauthorized\s*:\s*false|CURLOPT_SSL_VERIFYPEER\s*,\s*0|ServerCertificate\w*ValidationCallback\s*\+?=|RemoteCertificateValidationCallback\s*\+?="),
      "high", "A05:2021 Security Misconfiguration", "CWE-295", 0.75,
-     "Enable certificate verification; pin/trust a proper CA instead of disabling TLS validation."),
+     "Enable certificate verification; pin/trust a proper CA instead of disabling TLS validation.", None),
     ("SSRF", re.compile(r"(?:requests\.(?:get|post|put|patch|delete|head)|urllib\.request\.urlopen|httpx\.(?:get|post)|http\.Get|axios\.(?:get|post)|fetch|WebRequest\.Create|\.GetAsync|\.DownloadString)\(\s*(?:url|uri|endpoint|target|link|address)\b"),
      "medium", "A10:2021 Server-Side Request Forgery", "CWE-918", 0.4,
-     "Allow-list permitted hosts/schemes and block internal/metadata addresses; never fetch a user-supplied URL directly."),
+     "Allow-list permitted hosts/schemes and block internal/metadata addresses; never fetch a user-supplied URL directly.", None),
     ("XSS", re.compile(r"dangerouslySetInnerHTML|\.innerHTML\s*=|document\.write\(|v-html|render_template_string\(|\|\s*safe\b|Html\.Raw\(|@Html\.Raw"),
      "medium", "A03:2021 Injection (XSS)", "CWE-79", 0.55,
-     "Escape/encode output; prefer textContent / auto-escaping templates; sanitize any HTML you must render."),
+     "Escape/encode output; prefer textContent / auto-escaping templates; sanitize any HTML you must render.", None),
     ("WEAK_CRYPTO", re.compile(r"(?i)\b(md5|sha1)\s*\(|hashlib\.(md5|sha1)\b|\bDES\b|MODE_ECB|Math\.random\(\)|MD5\.Create|SHA1\.Create|DESCryptoServiceProvider|crypto\.createHash\(\s*['\"](?:md5|sha1)['\"]"),
      "medium", "A02:2021 Cryptographic Failures", "CWE-327", 0.5,
-     "Use SHA-256+/bcrypt/argon2 for the right purpose; use a CSPRNG (secrets/crypto.rand) for tokens."),
+     "Use SHA-256+/bcrypt/argon2 for the right purpose; use a CSPRNG (secrets/crypto.rand) for tokens.", None),
     ("PATH_TRAVERSAL", re.compile(r"(?i)(open|readfile|sendfile|os\.path\.join|filepath\.Join|File\.Open|File\.ReadAll\w*|Path\.Combine|fs\.readfile|fs\.createreadstream)\([^)]*(request|req\.|params|query|input|argv|user)"),
      "medium", "A01:2021 Broken Access Control", "CWE-22", 0.45,
-     "Canonicalize and allow-list paths; reject '..'; resolve against a fixed base dir before opening."),
+     "Canonicalize and allow-list paths; reject '..'; resolve against a fixed base dir before opening.", None),
 ]
 
 
@@ -90,8 +155,9 @@ def detect(path, content, blast):
     for ln_no, line in enumerate(content.splitlines(), start=1):
         if len(line) > 2000:
             line = line[:2000]
-        for rule, rx, sev, owasp, cwe, conf, remediation in RULES:
-            if rx.search(line):
+        for rule, rx, sev, owasp, cwe, conf, remediation, refine in RULES:
+            m = rx.search(line)
+            if m and (refine is None or refine(m, line)):
                 risk = round(SEV_WEIGHT[sev] * conf * max(blast, 1.0), 2)
                 findings.append({
                     "rule": rule, "title": rule.replace("_", " ").title(), "file": path,

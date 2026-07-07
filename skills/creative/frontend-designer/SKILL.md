@@ -25,7 +25,7 @@ description: 整合的前端「設計 + 工程 + 視覺複核」domain expert。
 
 1. **既有 `DESIGN.md`**（gstack 慣例；若 repo 有就讀它，通常已被 `CLAUDE.md` 要求先讀）。
 2. **公司 CIS** → 交給 `brand-guideline-company`（company 官方色 / 字 / logo / grid 為 authoritative）。
-3. **open-design token 系統** → 讀 `~/projects/open-design/design-systems/<name>/{DESIGN.md,tokens.css}`（152 套品牌 token，直接採用其 hex / type / radius，不要自己發明）。
+3. **open-design token 系統** → 讀 `.vendor/open-design/design-systems/<name>/{DESIGN.md,tokens.css}`（152 套品牌 token，直接採用其 hex / type / radius，不要自己發明）。
 4. **都沒有** → 走 direction-pick：`frontend-design-skill`（aesthetic 方向）+ open-design `craft/*.md` + gstack 的品味 taxonomy，產出一份最小 design direction + tokens。
 
 無論來源為何，**tokens 一律輸出成 CSS custom properties**，並套用共用 craft 準則（見 anti-slop-checklist）。資源實際路徑與消費方式見 [references/resources.md](references/resources.md)。
@@ -81,11 +81,11 @@ description: 整合的前端「設計 + 工程 + 視覺複核」domain expert。
 
 （`canvas-design` 不列入：它只做靜態 PNG/PDF 藝術，與 web UI 不重疊；`uat-demo-agent` 是 `webapp-testing` 之外的 render+screenshot 後端，二者擇一。）
 
-### open-design 設計 lens skills（path-reference / capability-gated）
+### open-design 設計 lens skills（wrapper-registered / capability-gated）
 
-以下設計 lens 來自 upstream `~/projects/open-design`（其 132-skill catalog）。**注意：opencode 的 skill loader 不會註冊 symlink 進來的 skill**（已用 `opencode debug skill` 驗證，symlink 目錄不進 registry），因此這些 open-design skills **不是**獨立的 Skill-tool registry 條目，而是以 **path-reference** 使用——需要時讀取 `~/projects/open-design/skills/<name>/SKILL.md` 並依其指引執行（即 Delegation Contract 的 `resource-fallback` 狀態）。upstream 為 source-of-truth；未 clone open-design 的機器視為 `unavailable`（三態降級，不得硬相依）。只列與前端設計相關的少數。
+以下 6 個設計 lens 來自 upstream open-design（其 132-skill catalog）。因為 **opencode 的 skill loader 不註冊 symlink 進來的 skill**（已用 `opencode debug skill` 驗證），改以 **gitignored wrapper stub** surface 進 registry：`scripts/link-resources.sh` 生成薄 `skills/<name>/SKILL.md`（body 指向 `.vendor/open-design/skills/<name>`），因此這 6 個是 **registry 正式條目、可被 Skill tool 直接調用 / 自動觸發**（已驗證 registry 134 = 128+6）。upstream 為 source-of-truth；未跑 bootstrap / 未 clone open-design 的機器上，wrapper 誠實回報 `unavailable`（三態降級，不得硬相依）。只選前端設計相關的少數，避免整個 132-catalog 的 always-in-context 描述稅。
 
-| 觸發 | open-design skill（讀其 SKILL.md by path） | 貢獻（attribution 對象） |
+| 觸發 | open-design skill（wrapper-registered，可 invoke） | 貢獻（attribution 對象） |
 |---|---|---|
 | Apple / native / HIG 風格 UI；design-review 要 HIG lens | `apple-hig` | Apple Human Interface Guidelines 遵循檢查 |
 | Phase 1 從零定 aesthetic 方向 / decoration / motion taxonomy | `design-consultation` | 美學方向諮詢（本 skill design-phase 已按 path 引用，現可直接調用） |
@@ -93,7 +93,7 @@ description: 整合的前端「設計 + 工程 + 視覺複核」domain expert。
 | 挑色 / palette / 相鄰色可辨（配合 WCAG 對比） | `color-expert` | 色彩專業（補強 anti-slop §C 的對比門檻） |
 | 高階創意方向 / brief 收斂 | `creative-director`、`design-brief` | 創意總監視角 + design brief 收斂 |
 
-使用這些時走 `resource-fallback`（讀 upstream SKILL.md by path）或 `unavailable` 兩態，並在 `Composed via:` 標明來源（例：`Composed via: apple-hig(HIG) + color-expert(palette)`）。若要讓某個 open-design skill 成為 opencode registry 中可被 Skill tool 直接調用 / 自動觸發的正式條目，需在 skill home 放一個**真實 wrapper stub 目錄**（一個薄 `SKILL.md`，body 指向 upstream path 並要求讀取執行；**symlink 無效**）——預設不做，避免每個 registry 條目的 always-in-context 描述稅；需要時再逐一加。
+調用這些時：wrapper 在場即 `invoked`（透過 Skill tool），wrapper 會導你讀 `.vendor/open-design/skills/<name>` 的 upstream 內容執行；未 bootstrap → wrapper 回 `unavailable`。在 `Composed via:` 標明來源（例：`Composed via: apple-hig(HIG) + color-expert(palette)`）。要新增其他 open-design lens：把名稱與描述加進 `scripts/link-resources.sh` 的 `LENS_DESC` 再重跑 bootstrap；**勿把整個 132-catalog 裝入**（描述稅）。
 
 ### 獨立性（三態降級）
 
@@ -116,5 +116,5 @@ description: 整合的前端「設計 + 工程 + 視覺複核」domain expert。
 - **Review 不下 verdict**：Phase 3 只提供 findings；`review.md` / `code-review` 仍是 authority（與 `security-risk-reviewer` 同）。
 - **Playwright 受 gate**：Phase 3 若要起本地 runtime，遵守 `local-infra-registry-governance`；截圖 render 屬 read-only observation，不要亂改被審 repo。
 - **Attribution 不可省**：每次產出附 `Composed via:` 行；借來能力誠實標記三態，不得 overclaim。
-- **迴向上游**：若要把本 skill 正式**接進 `code-review` 家族**（讓 code-review 自動把前端 domain expert 當 sibling input），該 `code-review` 變更的 source-of-truth 在 `~/projects/aclab/aclab-code-review-private/`，必須迴向該 repo 的適當位置，不可只改本 workspace 的 vendored 副本。
+- **迴向上游**：若要把本 skill 正式**接進 `code-review` 家族**（讓 code-review 自動把前端 domain expert 當 sibling input），該 `code-review` 變更的 source-of-truth 在其 upstream repo（`aclab-code-review-private`），必須以 change-request 迴向該 repo 的適當位置，不可只改本 workspace 的 vendored 副本。（此為 governance 指標，非本 skill 讀取的資源路徑。）
 - **A2UI 三種方言**：Google standard（Lit）、Giant v0.10（React/shadcn，`giant_catalog.json`）、go-cms-ai-site 的 `uiType`/`mutationVariables`。**先選 renderer，再對該 renderer 的 exact catalog compose**。

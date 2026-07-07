@@ -40,6 +40,7 @@
 - **程式碼規範評估**：檢查程式碼是否符合專案的編碼規範、最佳實踐
 - **程式碼品質評估**：評估程式碼的可讀性、可維護性、效能、安全性等
 - **FMEA 緩解覆蓋評估**：若 design / tasks 含有 lightweight FMEA，必須檢查 high/major risk 是否已有 mitigation evidence、negative-case validation、或清楚標記的 residual risk / accepted fallback
+- **AI / Security / Privacy / Log Compliance Inventory Review**：若 requirements/design 觸發 `iso-ai-security-auditor`，必須檢查其 inventory / gap table 是否已被納入 review inputs，且狀態值只使用 `implemented`、`external-implemented`、`partial`、`planned`、`missing-evidence`、`not-applicable`、`assumed-baseline`。確認 review 清楚區分 repo evidence、organization-document gaps、external-control dependencies、legal/regulatory assumptions、與 certification/legal-advice caveat；不得因文字完整就宣稱 CNS/ISO certification readiness 或 legal compliance PASS。
 - **Acceptance Status 覆核**：若 spec 採用 `TESTS.md` / `SPECS.md` / `RTM.md` 治理模型，必須明確區分 authoritative verdict (`review.md`) 與 derived snapshots (`SPECS.md`, `RTM.md`)
 - **ISSUE_LOG Lifecycle 覆核**：若本工作源自或產生 unresolved improvement，必須確認 issue row disposition：仍 holding、`Folded`、`Promoted`、`Closed`、或 `Dropped`。未經 SDD 正式化的 issue row 不得出現在 RTM requirement traceability 或 SPECS stable entry 中。
 - **NEXT_STEPS Lifecycle 覆核**：確認 `NEXT_STEPS.md` 只保留目前 resume / blocker / handoff / closure state，不是歷史日誌、task ledger、second registry、或 issue log。
@@ -128,6 +129,7 @@
 - **Acceptance Status**：per-spec 與 per-REQ 的 verdict，必須明確指出其 authority source 與 derived snapshot writeback 範圍
 - **Repo-side Closure vs External Execution State**：明確聲明 repo-side closure 是否完成、external execution 是 pending / completed elsewhere / blocked、authoritative handoff path 在哪裡、以及 repo 內是否仍有任何可執行本地工作
 - **FMEA Coverage**：高風險 failure modes 的 mitigation 狀態、未解決 residual risk、以及是否仍需 conservative downgrade
+- **AI / Security / Privacy / Log Compliance Inventory**：若適用，摘要 `iso-ai-security-auditor` 的 scope、organization documents reviewed/missing、repo evidence refs、external-control table、assumed-baseline items、legal/regulatory caveats、以及 priority remediation backlog。
 - **符合度分析**：詳細對比需求、設計與實作的一致性
 - **問題清單**：發現的所有問題，按嚴重程度分類
 - **改進建議**：具體的優化建議和修改方案
