@@ -17,12 +17,9 @@ echo "[1] manifest <-> filesystem"
 python3 - <<'PY' || FAIL=1
 import json, glob, os, sys
 m = json.load(open("skills-manifest.json"))
-listed = set()
-for g in ("families", "categories"):
-    for v in m.get(g, {}).values():
-        listed |= set(v.get("skills", []))
-allow = {"NPO-marketing-guide"}  # standalone reference, shipped via standalone_files
-disk = {os.path.basename(os.path.dirname(p)) for p in glob.glob("skills/*/*/SKILL.md")}
+listed = set(m.get("skills", []))  # flat single-level layout
+allow = set()  # standalone reference files ship via standalone_files, not as skills
+disk = {os.path.basename(os.path.dirname(p)) for p in glob.glob("skills/*/SKILL.md")}
 missing = sorted(s for s in listed if s not in disk and s not in allow)
 orphan  = sorted(s for s in disk if s not in listed)
 bad = False

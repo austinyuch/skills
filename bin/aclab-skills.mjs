@@ -27,17 +27,9 @@ function reviewCliAsset() {
   return `review-cli-${o}-${a}${o === 'windows' ? '.exe' : ''}`;
 }
 
-function skillDest(target, group, skill, layout) {
-  return layout === 'flat' ? path.join(target, skill) : path.join(target, group, skill);
-}
-
-function standaloneDest(target, row, layout) {
-  return layout === 'flat' ? path.join(target, row.file) : path.join(target, row.category, row.target_path);
-}
-
-function fetchReviewCli(target, layout) {
+function fetchReviewCli(target) {
   const asset = reviewCliAsset();
-  const dest = path.join(skillDest(target, 'code-review', 'code-review', layout), 'scripts');
+  const dest = path.join(target, 'code-review', 'scripts');
   if (!asset) { console.log(`   ⚠️  unsupported platform for review-cli (${process.platform}/${process.arch})`); return; }
   if (!fs.existsSync(dest)) { console.log('   ⚠️  code-review not installed — skipping --with-cli'); return; }
   try {
@@ -65,16 +57,18 @@ function usage(code = 0) {
   console.log(`aclab-skills — install aclab skills into a coding agent's skill home
 
 Usage:
-  aclab-skills <agent> [--target <dir>] [--layout flat|hierarchical] [--dry-run]
+  aclab-skills <agent> [--target <dir>] [--dry-run]
   <agent> = opencode | claude | codex | kiro   (default: opencode)
+
+  Layout is flat single-level (<target>/<skill>/SKILL.md) — required by one-level
+  skill loaders (Claude Code, most agent homes) and also works on recursive ones.
 
 Examples:
   npx -y github:austinyuch/skills claude
   bunx github:austinyuch/skills codex
   SKILLS_TARGET=/custom/path npx -y github:austinyuch/skills
 
-Env:  SKILLS_TARGET overrides the destination (wins over <agent>).
-      SKILLS_LAYOUT selects flat|hierarchical layout (default: hierarchical).`);
+Env:  SKILLS_TARGET overrides the destination (wins over <agent>).`);
   process.exit(code);
 }
 
@@ -94,14 +88,16 @@ function findDataRoot(start) {
 function main() {
   const argv = process.argv.slice(2);
   let agent = null, target = process.env.SKILLS_TARGET || null, dryRun = false, withCli = false;
-  let layout = process.env.SKILLS_LAYOUT || 'hierarchical';
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '-h' || a === '--help') usage(0);
     else if (a === '--dry-run') dryRun = true;
     else if (a === '--with-cli') withCli = true;
-    else if (a === '--layout') layout = argv[++i];
-    else if (a.startsWith('--layout=')) layout = a.slice('--layout='.length);
+    // --layout kept for backward compatibility: flat is the only supported layout.
+    else if (a === '--layout' || a.startsWith('--layout=')) {
+      const v = a === '--layout' ? argv[++i] : a.slice('--layout='.length);
+      if (v !== 'flat') { console.error(`✖ Only --layout flat is supported (skills are flat single-level); got '${v}'`); process.exit(2); }
+    }
     else if (a === '--target') target = argv[++i];
     else if (a.startsWith('--target=')) target = a.slice('--target='.length);
     else if (!a.startsWith('-') && !agent) agent = a;
@@ -112,10 +108,6 @@ function main() {
     process.exit(2);
   }
   if (!target) target = AGENT_HOMES[agent]();
-  if (!['flat', 'hierarchical'].includes(layout)) {
-    console.error(`✖ Invalid layout: ${layout} (use flat|hierarchical)`);
-    process.exit(2);
-  }
 
   const root = findDataRoot(__dirname);
   if (!root) {
@@ -128,7 +120,7 @@ function main() {
   console.log(`📦 aclab skills from: ${root}`);
   console.log(`🤖 Agent: ${target === process.env.SKILLS_TARGET ? 'custom' : agent}`);
   console.log(`🎯 Target: ${target}${dryRun ? '  (dry-run)' : ''}\n`);
-  console.log(`🧭 Layout: ${layout}\n`);
+  console.log(`🧭 Layout: flat (single-level)\n`);
   if (!dryRun) fs.mkdirSync(target, { recursive: true });
 
   let installed = 0, missing = 0;
@@ -141,16 +133,12 @@ function main() {
     console.log(`   ✅ ${name}`); installed++;
   };
 
-  for (const group of ['families', 'categories']) {
-    for (const [key, val] of Object.entries(manifest[group] || {})) {
-      for (const skill of val.skills || []) {
-        copyDir(path.join(source, key, skill), skillDest(target, key, skill, layout), `${key}/${skill}`);
-      }
-    }
+  for (const skill of manifest.skills || []) {
+    copyDir(path.join(source, skill), path.join(target, skill), skill);
   }
   for (const row of manifest.standalone_files || []) {
-    const src = path.join(source, row.category, row.target_path);
-    const dst = standaloneDest(target, row, layout);
+    const src = path.join(source, row.file);
+    const dst = path.join(target, row.target_path);
     if (!fs.existsSync(src)) { console.log(`   ⚠️  missing file: ${row.file}`); missing++; continue; }
     if (!dryRun) { fs.mkdirSync(path.dirname(dst), { recursive: true }); fs.copyFileSync(src, dst); }
     console.log(`   ✅ ${path.relative(target, dst)}`); installed++;
@@ -160,8 +148,8 @@ function main() {
   console.log(`📊 ${dryRun ? 'Would install' : 'Installed'}: ${installed}   ⚠️  Missing: ${missing}`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
   console.log(`Skills ${dryRun ? 'would be' : 'are now'} in: ${target}`);
-  if (!dryRun && fs.existsSync(skillDest(target, 'code-review', 'code-review', layout))) {
-    if (withCli) fetchReviewCli(target, layout);
+  if (!dryRun && fs.existsSync(path.join(target, 'code-review'))) {
+    if (withCli) fetchReviewCli(target);
     else console.log(`ℹ️  code-review's review-cli binary is not bundled — re-run with --with-cli to fetch it (needs gh auth; the repo is private). See README "Native binaries".`);
   }
 }

@@ -3,9 +3,10 @@
 This is **aclab's collection of Agent Skills** for coding agents (OpenCode, Claude Code, Codex, Kiro,
 and compatible runtimes). It is not an application — it is the skills, their docs, a methodology, and
 the glue that catalogs and installs them. It is **agent-agnostic**: install with
-`scripts/install.sh <opencode|claude|codex|kiro>`. Installers default to the repo's hierarchical
-`<category-or-family>/<skill>` layout and also support `--layout flat` / `SKILLS_LAYOUT=flat` for
-older flat skill homes. Read this before editing.
+`scripts/install.sh <opencode|claude|codex|kiro>`. Installers use a **flat, single-level** layout —
+`<skill-home>/<skill>/SKILL.md` — which one-level loaders (Claude Code, most agent homes) require and
+recursive loaders (OpenCode) also accept. Do not reintroduce a nested `<category>/<skill>/` tree: it
+is invisible to flat loaders. Read this before editing.
 
 > 本 repo 是給程式代理人使用的 **Agent Skills 合集**；以下規則同時適用於人類與 agent。
 
@@ -15,8 +16,8 @@ older flat skill homes. Read this before editing.
 
 | Path | What it is |
 |---|---|
-| `skills/<category>/<skill>/` | One skill per folder; each has a `SKILL.md` (the contract) plus optional `references/`, `scripts/`, `evals/`, `phases/`, `index.html`. |
-| `skills-manifest.json` | The **authoritative catalog**: families, categories, and which skill names belong where. Keep it in sync with the filesystem. |
+| `skills/<skill>/` | One skill per folder (flat, single-level — no category dir); each has a `SKILL.md` (the contract) plus optional `references/`, `scripts/`, `evals/`, `phases/`, `index.html`. |
+| `skills-manifest.json` | The **authoritative catalog**: the flat `skills` list, logical `groups` (family/category — metadata only, not a path), and `standalone_files`. Keep it in sync with the filesystem. |
 | `methodology.html` | Bilingual EN/繁中 landing page for **The Spec Master Method**. |
 | `docs/` | Methodology article (`agentic-delivery-methodology.md`) and Mermaid diagrams. |
 | `CREDITS.md` | Upstream attribution and per-component licenses. |
@@ -62,8 +63,9 @@ Full narrative: [`methodology.html`](methodology.html) · [`docs/agentic-deliver
    of absolute paths such as `/home/<user>/...`.
 2. Every skill needs a `SKILL.md` with valid frontmatter (`name`, `description`). The `description`
    is what triggers the skill — keep it specific about *when to use* and *when not to*.
-3. After adding/removing/renaming a skill, **update `skills-manifest.json`** (the right family/category
-   list) and the matching list + counts in `README.md`. Keep the manifest and the filesystem in sync —
+3. After adding/removing/renaming a skill, **update `skills-manifest.json`** (add/remove the name in the
+   flat `skills` list, and optionally its logical `groups` entry) and the matching list + counts in
+   `README.md`. Keep the manifest and the filesystem in sync —
    no manifest entry should point at a missing folder, and no installed skill should be absent from the
    manifest.
 4. Install paths like `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.kiro/skills/` inside

@@ -55,7 +55,7 @@ pipx run --spec git+https://github.com/austinyuch/skills aclab-skills codex</cod
 <pre><code>git clone https://github.com/austinyuch/skills.git &amp;&amp; cd skills
 bash scripts/install.sh claude       # macOS / Linux
 pwsh scripts/install.ps1 claude      # Windows PowerShell</code></pre>
-<p>預設會用與本 repo 相同的多階層 layout 安裝： <code>&lt;skill-home&gt;/&lt;category-or-family&gt;/&lt;skill-name&gt;/</code>，以配合現代 Codex / Claude / OpenCode 的多階層 skill discovery。若要給舊版 flat skill home 使用，可加 <code>--layout flat</code>，或設定 <code>SKILLS_LAYOUT=flat</code>， 改安裝為 <code>&lt;skill-home&gt;/&lt;skill-name&gt;/</code>。</p>
+<p>技能一律以 <strong>flat 單層</strong> 安裝：<code>&lt;skill-home&gt;/&lt;skill-name&gt;/SKILL.md</code>，與本 repo 的 layout 相同。 這是必要的——單層 skill loader（Claude Code 及多數 agent home）只掃描單一目錄層級，巢狀的 <code>&lt;category&gt;/&lt;skill&gt;/</code> 結構對它們不可見、會靜默隱藏 skill。flat 在遞迴 loader（OpenCode 能探索 depth-1） 上也能運作，因此單一 flat layout 即可服務所有 agent。技能的分組（family/category）是 <code>skills-manifest.json</code> 內的中繼資料，不是安裝路徑的一部分。</p>
 <p>可用 <code>SKILLS_TARGET=/custom/path</code> 覆寫目的地。（OpenCode 使用者也可用社群工具： <code>npx skills@latest add austinyuch/skills</code>，前提是該工具的 layout 與 runtime 相容。）</p>
 <h3>Native binaries（放在 GitHub Releases，不進 git）</h3>
 <p>少數 skill 依賴<strong>預編譯的 native binary／模型，這些刻意不 commit 進來</strong> —— 它們很大且依平台而異， 所以已 gitignore。這讓 <code>git clone</code>、<code>npx</code>、<code>uvx</code> 保持快速且<strong>不需 git LFS</strong>（沒有 git-lfs 相依、不會 拿到 pointer 假檔）。它們改用 <strong>GitHub Releases 發佈，絕不用 git LFS。</strong></p>

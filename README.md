@@ -37,10 +37,12 @@ bash scripts/install.sh claude       # macOS / Linux
 pwsh scripts/install.ps1 claude      # Windows PowerShell
 ```
 
-By default, skills install with the same hierarchical layout as this repo:
-`<skill-home>/<category-or-family>/<skill-name>/`. This matches multi-level skill discovery in modern
-Codex / Claude / OpenCode environments. For older flat skill homes, pass `--layout flat` (or set
-`SKILLS_LAYOUT=flat`) to install as `<skill-home>/<skill-name>/`.
+Skills install **flat, single-level** — `<skill-home>/<skill-name>/SKILL.md` — matching this repo's
+layout. This is required because one-level skill loaders (Claude Code, and most agent homes) only scan
+a single directory level: a nested `<category>/<skill>/` tree would be invisible to them and silently
+hide skills. Flat also works on recursive loaders (OpenCode discovers depth-1 skills), so one flat
+layout serves every agent. Skill grouping (family/category) is metadata in `skills-manifest.json`, not
+part of the install path.
 
 Override the destination anywhere with `SKILLS_TARGET=/custom/path`. (OpenCode users can also use the
 community tool: `npx skills@latest add austinyuch/skills` when that tool's layout matches their runtime.)
@@ -306,7 +308,7 @@ The core anti-false-green rule: **evidence flows one way** — `ISSUE_LOG → sp
 
 ### Publishing New Skills
 
-1. Add the skill to `skills-manifest.json` in the appropriate category
+1. Add the skill name to the flat `skills` list in `skills-manifest.json` (optionally tag its logical `groups` entry)
 2. Place the skill in `~/.config/opencode/skills/<skill-name>/`
 3. Run the sync script:
 
