@@ -39,17 +39,9 @@ def review_cli_asset() -> str | None:
     return f"review-cli-{o}-{a}" + (".exe" if o == "windows" else "")
 
 
-def skill_dest(target: Path, group: str, skill: str, layout: str) -> Path:
-    return target / skill if layout == "flat" else target / group / skill
-
-
-def standalone_dest(target: Path, row: dict, layout: str) -> Path:
-    return target / row["file"] if layout == "flat" else target / row["category"] / row["target_path"]
-
-
-def fetch_review_cli(target: Path, layout: str) -> None:
+def fetch_review_cli(target: Path) -> None:
     asset = review_cli_asset()
-    dest = skill_dest(target, "code-review", "code-review", layout) / "scripts"
+    dest = target / "code-review" / "scripts"
     if not asset:
         print("   ⚠️  unsupported platform for review-cli"); return
     if not dest.exists():
@@ -107,12 +99,9 @@ def main() -> int:
     p.add_argument("--target", help="explicit destination dir (wins over <agent>)")
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--with-cli", action="store_true", help="also fetch code-review's review-cli binary via gh (needs auth)")
-    p.add_argument(
-        "--layout",
-        choices=("flat", "hierarchical"),
-        default=os.environ.get("SKILLS_LAYOUT", "hierarchical"),
-        help="install layout inside the skill home (default: hierarchical; env: SKILLS_LAYOUT)",
-    )
+    # --layout kept for backward compatibility: flat is the only supported layout
+    # (one-level loaders like Claude Code cannot discover a nested category tree).
+    p.add_argument("--layout", choices=("flat",), default="flat", help=argparse.SUPPRESS)
     args = p.parse_args()
 
     target = args.target or os.environ.get("SKILLS_TARGET")
@@ -131,7 +120,7 @@ def main() -> int:
     print(f"📦 aclab skills from: {root}")
     print(f"🤖 Agent: {'custom' if args.target or os.environ.get('SKILLS_TARGET') else args.agent}")
     print(f"🎯 Target: {target}{'  (dry-run)' if args.dry_run else ''}\n")
-    print(f"🧭 Layout: {args.layout}\n")
+    print("🧭 Layout: flat (single-level)\n")
     if not args.dry_run:
         target.mkdir(parents=True, exist_ok=True)
 
@@ -148,14 +137,12 @@ def main() -> int:
             shutil.copytree(src, dst)
         print(f"   ✅ {name}"); installed += 1
 
-    for group in ("families", "categories"):
-        for key, val in (manifest.get(group) or {}).items():
-            for skill in val.get("skills", []):
-                copy_dir(source / key / skill, skill_dest(target, key, skill, args.layout), f"{key}/{skill}")
+    for skill in manifest.get("skills", []):
+        copy_dir(source / skill, target / skill, skill)
 
     for row in manifest.get("standalone_files", []):
-        src = source / row["category"] / row["target_path"]
-        dst = standalone_dest(target, row, args.layout)
+        src = source / row["file"]
+        dst = target / row["target_path"]
         if not src.is_file():
             print(f"   ⚠️  missing file: {row['file']}"); missing += 1; continue
         if not args.dry_run:
@@ -167,9 +154,9 @@ def main() -> int:
     print(f"📊 {'Would install' if args.dry_run else 'Installed'}: {installed}   ⚠️  Missing: {missing}")
     print("━" * 32)
     print(f"Skills {'would be' if args.dry_run else 'are now'} in: {target}")
-    if skill_dest(target, "code-review", "code-review", args.layout).exists() and not args.dry_run:
+    if (target / "code-review").exists() and not args.dry_run:
         if args.with_cli:
-            fetch_review_cli(target, args.layout)
+            fetch_review_cli(target)
         else:
             print('ℹ️  code-review\'s review-cli binary is not bundled — re-run with --with-cli to fetch it '
                   '(needs gh auth; the repo is private). See README "Native binaries".')

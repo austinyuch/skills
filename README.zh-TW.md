@@ -34,10 +34,11 @@ bash scripts/install.sh claude       # macOS / Linux
 pwsh scripts/install.ps1 claude      # Windows PowerShell
 ```
 
-預設會用與本 repo 相同的多階層 layout 安裝：
-`<skill-home>/<category-or-family>/<skill-name>/`，以配合現代 Codex / Claude / OpenCode 的多階層
-skill discovery。若要給舊版 flat skill home 使用，可加 `--layout flat`，或設定 `SKILLS_LAYOUT=flat`，
-改安裝為 `<skill-home>/<skill-name>/`。
+技能一律以 **flat 單層** 安裝：`<skill-home>/<skill-name>/SKILL.md`，與本 repo 的 layout 相同。
+這是必要的——單層 skill loader（Claude Code 及多數 agent home）只掃描單一目錄層級，巢狀的
+`<category>/<skill>/` 結構對它們不可見、會靜默隱藏 skill。flat 在遞迴 loader（OpenCode 能探索 depth-1）
+上也能運作，因此單一 flat layout 即可服務所有 agent。技能的分組（family/category）是
+`skills-manifest.json` 內的中繼資料，不是安裝路徑的一部分。
 
 可用 `SKILLS_TARGET=/custom/path` 覆寫目的地。（OpenCode 使用者也可用社群工具：
 `npx skills@latest add austinyuch/skills`，前提是該工具的 layout 與 runtime 相容。）

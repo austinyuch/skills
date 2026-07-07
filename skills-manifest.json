@@ -1,9 +1,87 @@
 {
-  "version": "1.2.0",
+  "version": "2.0.0",
+  "description": "Open-source skills collection for AI agents (flat single-level layout)",
   "source": "~/.config/opencode/skills",
   "target_repo": "~/projects/aclab/skills",
-  "description": "Open-source skills collection for AI agents",
-  "families": {
+  "layout": "flat",
+  "skills": [
+    "agentic-scrum-governance",
+    "backend-patterns",
+    "brand-guidelines-naelt",
+    "capability-mapper",
+    "clickhouse-io",
+    "code-refactoring-advisor",
+    "code-review",
+    "code-summarizer",
+    "coding-standards",
+    "committee-decision-making",
+    "container-image-janitor",
+    "continuous-learning",
+    "continuous-learning-v2",
+    "cross-agent-review",
+    "cross-agents-symlink-bridge",
+    "cross-platform-dev-scripts",
+    "database-modernization-strangler",
+    "devops-container-orchestration",
+    "epic-breakdown-skill",
+    "eval-harness",
+    "find-skills",
+    "frontend-designer",
+    "frontend-patterns",
+    "go-rust-optimizer",
+    "golang-patterns",
+    "golang-testing",
+    "iso-ai-security-auditor",
+    "issue-log-manager",
+    "iterative-retrieval",
+    "k8s-security-patterns",
+    "kiro-skill",
+    "local-infra-registry-governance",
+    "local-llm-agent-migrator",
+    "marketing-showcase-creator",
+    "microsoft-foundry",
+    "name-skill",
+    "node-rust-optimizer",
+    "pm-skill",
+    "podman-rootless",
+    "postgres-patterns",
+    "prd-skill",
+    "project-review-naelt",
+    "project-review-skill",
+    "python-rust-optimizer",
+    "requirements-workflow-skill",
+    "scrum-developer-skill",
+    "scrum-master-skill",
+    "security-review",
+    "security-risk-reviewer",
+    "shadcn",
+    "shared-governance",
+    "skill-migration-workflow",
+    "social-media-platforms",
+    "social-post-generator",
+    "sonarqube-bridge",
+    "spec-driven-development",
+    "spec-master",
+    "spec-registry-manager",
+    "strategic-compact",
+    "system-architect",
+    "taiwan-civic-budget-tracker",
+    "tdd-workflow",
+    "test-design-generator",
+    "test-quality-reviewer",
+    "test-registry-manager",
+    "uat-demo-agent",
+    "uat-demo-agent-packaging",
+    "uat-demo-target-governance-template",
+    "ui-skill",
+    "user-manual-skill",
+    "verification-loop",
+    "vibe-skill",
+    "victim-rights-news-tracker",
+    "workflow-skill-creator",
+    "writer-skill"
+  ],
+  "groups": {
     "spec-master": {
       "description": "Spec Master family: routing and spec-driven development",
       "skills": [
@@ -24,14 +102,12 @@
       ]
     },
     "scrum": {
-      "description": "Scrum family: agile team workflows",
+      "description": "Scrum and agile team workflows",
       "skills": [
         "scrum-master-skill",
         "scrum-developer-skill"
       ]
-    }
-  },
-  "categories": {
+    },
     "engineering": {
       "description": "Core software engineering workflows",
       "skills": [
@@ -142,13 +218,6 @@
         "local-llm-agent-migrator"
       ]
     },
-    "scrum": {
-      "description": "Scrum and agile team workflows",
-      "skills": [
-        "scrum-master-skill",
-        "scrum-developer-skill"
-      ]
-    },
     "user-experience": {
       "description": "User profiles, manuals, and interaction",
       "skills": [
@@ -172,18 +241,15 @@
   "standalone_files": [
     {
       "file": "aws-bedrock-model-ids.md",
-      "category": "domain-expert",
-      "target_path": "references/aws-bedrock-model-ids.md"
+      "target_path": "aws-bedrock-model-ids.md"
     },
     {
       "file": "NPO-marketing-guide.md",
-      "category": "social-media",
-      "target_path": "references/NPO-marketing-guide.md"
+      "target_path": "NPO-marketing-guide.md"
     },
     {
       "file": "INTEGRATION-GUIDE.md",
-      "category": "tools",
-      "target_path": "references/INTEGRATION-GUIDE.md"
+      "target_path": "INTEGRATION-GUIDE.md"
     }
   ]
 }

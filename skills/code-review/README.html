@@ -38,45 +38,99 @@ img{max-width:100%}
   </span>
 </div>
 <main>
-<h1>The Code Review Family</h1>
-<blockquote><strong>Make review deterministic about evidence — not just more verbose about opinions.</strong> 讓複核對「證據」是確定性的——而不是對「意見」更囉嗦。</blockquote>
-<p>This README is the <strong>canonical source</strong> for the family's landing page (<a href="index.html"><code>index.html</code></a> is generated from it — edit this first).</p>
-<p><code>code-review</code> is the orchestrator; five sibling skills turn the vague instruction "review this properly" into <strong>deterministic, ranked, actionable findings</strong>. They are the <em>verify (left-shift)</em> layer of <a href="../../methodology.html">The Spec Master Method</a> — pulled into SDD Phase 4/5 so smells, weak tests, and security risk are caught <strong>before</strong> the readiness verdict is written.</p>
-<h2>Why a family, not one reviewer</h2>
-<p>A single "review the code" prompt produces opinions that vary run to run, bury the dangerous finding under style nits, and can't say <em>what to fix first</em>. In an agentic team that is expensive: reviews stop being trustworthy evidence. This family fixes that with two principles:</p>
-<ol><li><strong>Deterministic-first, LLM-optional.</strong> Each helper ships a deterministic detector that is the</li></ol>
-<p>   <strong>source of truth</strong>, needs no provider, and is safe in CI. An optional <code>--explain</code> / LLM pass only    <em>calibrates severity</em> and writes developer-actionable reasoning — it never invents findings.</p>
-<ol><li><strong>Risk-based triage.</strong> Findings are ranked (e.g. severity × confidence × blast-radius) so review</li></ol>
-<p>   effort goes to the highest-impact issue first. <em>What to review is judgement, not generation.</em></p>
-<h2>Family members</h2>
-<table><thead><tr><th>Skill</th><th>Question it answers</th><th>What it owns</th></tr></thead><tbody><tr><td><code>code-review</code></td><td>"What does this code <em>look like</em> — structure, dependencies, impact, bounded context?"</td><td>The orchestrator + program-graph / GraphRAG static analysis; folds in every sibling's findings. CLI binary (<code>review-cli-&lt;os&gt;-&lt;arch&gt;</code>) with an MCP runtime surface.</td></tr><tr><td><code>code-refactoring-advisor</code></td><td>"What should I <em>change</em>, and what test net must exist first?"</td><td>Deterministic Fowler smell detection → a <strong>named refactoring move</strong> + the <strong>test safety-net</strong> it requires before the move is safe.</td></tr><tr><td><code>test-quality-reviewer</code></td><td>"Are these tests <em>any good</em> — would a real defect survive them?"</td><td>Judges existing tests: assertion roulette, mystery guest, fragile/conditional tests, FIRST violations, test-pyramid inversion. "Green only means it ran."</td></tr><tr><td><code>test-design-generator</code></td><td>"<em>What should I test</em> — what are the real edge cases?"</td><td>Generates boundary-value, equivalence-partition, and pairwise cases from a parameter description; recommends an oracle strategy (property-based / metamorphic) when outputs can't be enumerated.</td></tr><tr><td><code>security-risk-reviewer</code></td><td>"Is this <em>secure</em> — where's the injection / secret / weak crypto?"</td><td>Deterministic OWASP Top-10 scan, <strong>ranked by risk score</strong> so the dangerous lines surface first. Each finding mapped to OWASP/CWE.</td></tr><tr><td><code>sonarqube-bridge</code></td><td>"Pull in our <em>SonarQube</em> findings and rank them with everything else."</td><td>An <strong>adapter, not a scanner</strong>: ingests Sonar findings and enriches each with code-graph blast-radius, business capability, and the project's remediation vocabulary. Never scans, never gates.</td></tr></tbody></table>
-<h2>How they compose</h2>
-<ul><li><code>code-review</code> builds the <strong>inventory</strong> ("what exists") — the program graph, capability/requirement</li></ul>
-<p>  traceability, bounded context. On its own it answers <em>structure</em>, not <em>quality</em>.</p>
-<ul><li>The helpers extend that inventory from "what exists" to <strong>"what should improve"</strong>:</li><li><code>code-refactoring-advisor</code> says <em>what to change</em>; <code>test-quality-reviewer</code> checks *the net you</li></ul>
-<p>    change it against*. They are natural partners.</p>
-<ul><li><code>test-design-generator</code> is the "what should I test?" complement to <code>test-quality-reviewer</code>'s</li></ul>
-<p>    "are these tests good?" — where a thin test is flagged, this produces the missing cases.</p>
-<ul><li><code>security-risk-reviewer</code> makes the orchestrator's prose security guidance <strong>executable</strong> — it</li></ul>
-<p>    finds the actual lines and prioritizes them.</p>
-<ul><li><code>sonarqube-bridge</code> is the connective tissue when the team already runs Sonar: Sonar owns the</li></ul>
-<p>    broad SAST and the <strong>blocking Quality Gate</strong>; this family adds Sonar's blind spots (program-graph     impact, capability traceability, refactoring/test vocabulary) and fuses both into one ranked report.</p>
-<h2>Scope boundary (read this)</h2>
-<p>This family is <strong>static analysis + review evidence</strong>, <em>not</em> a runtime readiness authority.</p>
-<ul><li>✅ Use it to answer: "What's the structure / impact?", "What should improve?", "Are the tests</li></ul>
-<p>  effective?", "What's the security risk, ranked?"</p>
-<ul><li>❌ Do <strong>not</strong> use it alone to answer: "Is the feature live-demo ready?" Authoritative</li></ul>
-<p>  <code>PASS / CONDITIONAL / FAIL</code> for runtime or live-demo readiness still comes from runtime-backed   review artifacts (<code>review.md</code>). Static green ≠ shipped.</p>
-<p>This is the same anti-false-green discipline as the rest of the method: evidence is layered, and a clean static report is not allowed to masquerade as readiness.</p>
-<h2>Relationship to the Spec Master Method</h2>
-<p>In <a href="../../docs/agentic-delivery-methodology.html">the six-phase flow</a>, this family is <strong>Phase 4/5 left-shift detection</strong>. <code>spec-driven-development</code> runs the lifecycle; when it reaches implementation and review, it pulls these skills in as <em>capability-gated inputs</em> (they don't need to be vendored into every workspace — once published to the skill home, they're available). <code>review.md</code> still owns the verdict; this family makes that verdict rest on deterministic evidence instead of one-shot opinion.</p>
-<h2>繁中摘要</h2>
-<p><code>code-review</code> 是協調者，五個 sibling skills 把「好好複核一下」變成<strong>確定性、可排序、可執行</strong>的發現， 是 <a href="../../methodology.html">Spec Master Method</a> 的<strong>驗證（左移）</strong>層（SDD Phase 4/5）。</p>
-<p>兩個核心原則：(1) <strong>deterministic-first、LLM-optional</strong> — 每個 helper 的確定性偵測器是事實來源， CI 安全、不需 provider；可選的 <code>--explain</code> 只校準嚴重度，不會無中生有。(2) <strong>risk-based triage</strong> — 依風險排序，先看最危險的；「要複核什麼」是判斷，不是生成。</p>
-<p>家族成員：<code>code-review</code>（程式圖／GraphRAG 靜態分析與協調）、<code>code-refactoring-advisor</code>（Fowler 異味 → 具名重構手法 + 必要測試安全網）、<code>test-quality-reviewer</code>（既有測試夠不夠好、真缺陷會不會存活）、 <code>test-design-generator</code>（該測哪些邊界／等價／pairwise 案例）、<code>security-risk-reviewer</code>（OWASP Top-10 依風險分數排序）、<code>sonarqube-bridge</code>（<strong>adapter 而非 scanner</strong>，融合 Sonar 發現與程式圖 blast-radius）。</p>
-<p><strong>邊界</strong>：這是靜態分析與複核證據，<strong>不是</strong> runtime readiness 權威；live-demo 的 <code>PASS / CONDITIONAL / FAIL</code> 仍由 runtime-backed 的 <code>review.md</code> 決定。靜態綠燈 ≠ 已交付。</p>
-<hr>
-<p><em>Attribution: this family is original work in this repository. Concept grounding (Fowler refactorings, FIRST, the test pyramid, OWASP/CWE) is credited in <a href="../../CREDITS.html"><code>../../CREDITS.md</code></a>.</em></p>
+<h1>Code Review Family</h1>
+<p><code>code-review</code> is the front door for a review-oriented skill family that helps agents inspect code structure, produce bounded-context handoffs, and apply deterministic review tooling without confusing that work with runtime readiness. The family exists because most review failures are coordination failures: the wrong concern gets the wrong owner, and the evidence arrives too late to be useful.</p>
+<p>This README is the packageable explanation for the family. It should travel with <code>skills/code-review/</code> when the skill is installed or redistributed.</p>
+<h2>One-Line Value Proposition</h2>
+<p>Code Review gives coding agents a governed way to analyze code, rank impact, surface maintainability and security issues, and hand off the right next action without pretending static analysis is the same thing as release readiness. The business value is shorter review cycles, fewer duplicated comments, and less time spent reconciling inconsistent tool outputs.</p>
+<h2>First Principles</h2>
+<p>Agentic AI changes code delivery from a mostly human review loop to a mixed human-agent review loop. More code now arrives through model-assisted generation, tool-driven edits, and agent-to-agent handoffs, which means defects can spread faster unless review becomes more structured.</p>
+<p>What becomes more valuable:</p>
+<ul><li>separating diagnosis from remediation</li><li>turning review evidence into something reusable by the next owner</li><li>keeping security, tests, and refactor risk visible at the same time</li><li>making readiness language stay outside the review bundle</li></ul>
+<p>What becomes more fragile:</p>
+<ul><li>a reviewer who becomes a bottleneck for every concern</li><li>a static-analysis tool being mistaken for a release gate</li><li>refactor advice arriving before defect analysis is clear</li><li>security and test signals collapsing into a single vague comment stream</li><li>vendor-specific coding-agent review behavior becoming the team's unreviewed quality process by accident</li></ul>
+<p>Role lens:</p>
+<ul><li>CEO: value is faster delivery with less duplicate review effort; risk is shipping more quickly while hiding latent quality debt</li><li>CIO: value is a standard review contract that can be reused across teams and repos; risk is fragmented authority if review and readiness are not separated</li><li>DevSecOps: value is a stronger evidence chain that keeps security and test signals intact; risk is false green review output that outruns actual readiness</li></ul>
+<p>Traditional agile practice has to tighten because agentic work increases the cost of ambiguity. CI/CD needs stronger evidence gates, not just faster builds. Code review needs more deterministic routing of evidence, not just more human comments. The point is to make the review path precise enough that one wrong signal does not get promoted into a release belief.</p>
+<p>Code Review answers that by separating review orchestration from test diagnosis, refactor advice, test design, and security preflight, then keeping graph and summary tooling in the role of inputs rather than verdicts.</p>
+<p>There is also a governance reason to own the review workflow locally. Coding agents change quickly, each vendor makes different orchestration choices, and many review decisions remain partly black-box. A team that relies only on tool behavior cannot reliably explain why a finding was ranked, why a test signal was trusted, or why a static-analysis result became action. Code Review gives the team an inspectable review contract, evidence trail, and retrospective surface so improvement belongs to the engineering team rather than to a vendor's hidden defaults.</p>
+<h2>Scrum Team Mapping</h2>
+<table><thead><tr><th>Scrum 角色</th><th>Code Review 的對應責任</th><th>產生的價值 / 風險控制</th></tr></thead><tbody><tr><td>Product Owner</td><td>取得可行的審查證據，判斷哪些風險需要先進 Backlog</td><td>讓優先順序建立在證據上，而不是印象上</td></tr><tr><td>Scrum Master</td><td>維持審查節奏、阻塞回報與跨角色協調</td><td>降低 review 卡關、重工與責任不清</td></tr><tr><td>Developers</td><td>消化審查結果、修補缺陷、拆分測試與重構工作</td><td>讓回饋直接變成行動，而不是只留在 comment</td></tr></tbody></table>
+<p>Code Review 強化的是 Scrum Team 的回饋迴路：審查不是最後一道評論，而是讓下一個 Sprint 更準確的決策輸入。</p>
+<h2>Agile Manifesto Mapping</h2>
+<table><thead><tr><th>Agile 價值</th><th>Code Review 如何支撐</th><th>如果沒做到會壞掉什麼</th></tr></thead><tbody><tr><td>Individuals and interactions over processes and tools</td><td>讓每個審查意見都能交給下一位工程師直接採取行動</td><td>Comment 變成訊息垃圾，沒有人真的被幫到</td></tr><tr><td>Working software over comprehensive documentation</td><td>以可驗證的缺陷、測試與安全證據支撐判定，而不是堆滿文字</td><td>文字很多，真正可交付的軟體品質卻不明</td></tr><tr><td>Customer collaboration over contract negotiation</td><td>把風險與取捨轉成可討論的審查輸出，方便和產品方對齊</td><td>需求與品質被切成兩套語言，決策成本上升</td></tr><tr><td>Responding to change over following a plan</td><td>當新證據出現時快速重排風險、重構與測試建議</td><td>舊判斷拖住新變更，修正會晚到變貴</td></tr></tbody></table>
+<p>這些對應說明的是：Agentic AI 下的敏捷，不是流程更少，而是回饋更快、更準、更能被下一位人或代理人接住。</p>
+<h2>Three Demand Dimensions</h2>
+<table><thead><tr><th>Dimension</th><th>What it means here</th><th>Executive value</th></tr></thead><tbody><tr><td>獲益</td><td>Faster review cycles, fewer duplicate comments, more predictable handoff</td><td>CEO 觀點(Chief Executive Officer)：更少審查阻力、更多吞吐量</td></tr><tr><td>任務</td><td>Analyze code, test quality, refactor risk, and security in one governed review path</td><td>CIO 觀點(Chief Information Officer)：不同團隊都能重用的單一審查契約</td></tr><tr><td>痛點</td><td>Fragmented tools, partial evidence, and blurred readiness language</td><td>DevSecOps 觀點：更強的證據鏈與更安全的交棒語言</td></tr></tbody></table>
+<p>CEO 觀點(Chief Executive Officer)：這會縮短程式變更到可行審查回饋之間的週期。</p>
+<p>CIO 觀點(Chief Information Officer)：這會標準化審查證據，讓不同團隊與不同專案都能使用同一份審查契約。</p>
+<p>DevSecOps 觀點：這會把測試品質、重構建議、安全預檢與掃描器接入維持在同一條證據鏈中，同時不模糊就緒宣稱。</p>
+<h2>Responsible AI 需求與解法</h2>
+<p>Responsible AI 在 Code Review 家族中的重點，是讓代理人產生或修改的程式碼不因速度變快而逃過透明、問責、安全、偏誤與可稽核要求。Code Review 不把自己宣稱成 release gate；它把 NIST AI RMF、OECD AI Principles 與 ISO/IEC 42001 常見的 trustworthy / responsible AI 要求轉成可重複的 review evidence 與 handoff contract。</p>
+<table><thead><tr><th>Responsible AI 需求</th><th>Code Review 解法</th><th>為什麼有商業價值</th></tr></thead><tbody><tr><td>Human oversight 人類監督</td><td>Review output 是 required input，不是自動合併決策；最終 acceptance / readiness 仍由 consuming repo 的 <code>review.md</code> 與人類治理流程裁決。</td><td>保留人類對 consequential code changes 的決策權，避免工具輸出變成自動放行。</td></tr><tr><td>Transparency / explainability 透明與可解釋</td><td>findings 必須指出檔案、行為、風險、證據來源與下一步；graph / summary 只能作為 input。</td><td>下一位工程師可以理解為什麼要修，不必重新猜測工具判斷。</td></tr><tr><td>Accountability 問責</td><td><code>code-review</code>、<code>test-quality-reviewer</code>、<code>security-risk-reviewer</code>、<code>code-refactoring-advisor</code> 各自保留清楚責任邊界。</td><td>缺陷、測試、重構與安全不再混成模糊評論，owner 更容易接手。</td></tr><tr><td>Robustness / safety 穩健與安全</td><td>用 deterministic review、test-quality、security preflight、Sonar ingest 與 refactor safety-net 捕捉 agent-generated code 的缺陷與安全風險。</td><td>降低快速變更把 regression、trust-boundary bug 或 insecure output 推進主線的機率。</td></tr><tr><td>Privacy / data governance 隱私與資料治理</td><td>review 不應輸出 secrets、PII 或 credentials；local state 與 graph artifacts 應遵守 repo-local state / version-control 邊界。</td><td>避免審查報告與打包文件成為敏感資訊擴散面。</td></tr><tr><td>Fairness / bias management 公平與偏誤管理</td><td>對 auth、RBAC、tenant boundary、input validation、data access、ranking / filtering logic 保留 security 與 test-design 檢查入口。</td><td>降低偏誤、越權、資料不當暴露或規則錯配造成的使用者傷害。</td></tr><tr><td>Auditability / continual improvement 可稽核與持續改善</td><td>review findings 可轉成 SDD tasks、test obligations、refactor work 或 issue log；輸出保持可重跑與可追蹤。</td><td>讓 review 不只是一次性評論，而是可衡量、可改善的品質系統。</td></tr></tbody></table>
+<p>因此 Code Review 家族的 Responsible AI 解法不是「相信工具」，而是把工具輸出限制在 evidence、diagnosis 與 handoff，並把 verdict 保留給 consuming repo 的正式治理面。</p>
+<p>參考來源：</p>
+<ul><li><a href="https://www.nist.gov/itl/ai-risk-management-framework">NIST AI Risk Management Framework</a></li><li><a href="https://oecd.ai/en/ai-principles">OECD AI Principles</a></li><li><a href="https://www.iso.org/standard/42001">ISO/IEC 42001:2023 AI management systems</a></li></ul>
+<h2>What You Lose If You Merge These</h2>
+<ul><li>If <code>test-quality-reviewer</code> and <code>test-design-generator</code> are merged, diagnosis and design get conflated, and the result is either vague recommendations or test ideas that never address the real coverage gap.</li><li>If <code>code-refactoring-advisor</code> is merged into <code>code-review</code>, the review conversation starts carrying refactor prescriptions before the underlying defect analysis is clear.</li><li>If <code>security-risk-reviewer</code> is merged with the main review orchestrator, security triage loses its own vocabulary and the output gets less reusable for the next owner.</li></ul>
+<p>The practical loss is slower review cycles, fuzzier ownership, and handoffs that carry more context but less decision quality.</p>
+<h2>Why This Family Exists</h2>
+<p>Large codebases fail in predictable ways:</p>
+<ul><li>Reviews get split across ad hoc tools with different assumptions, so engineers re-explain the same code path several times.</li><li>Impact and dependency reasoning becomes inconsistent across agents, which makes comments hard to trust.</li><li>Test smells and design gaps get missed until late, when the fix is already expensive.</li><li>Security triage and maintainability feedback drift apart, so the next owner gets an incoherent handoff.</li><li>Graph or summary artifacts are treated like verdicts instead of inputs, which produces false confidence.</li></ul>
+<p>This family keeps those responsibilities separate. That separation is deliberate: diagnosis, redesign, security preflight, and enriched handoff are different jobs and should not be forced into one opaque review pass.</p>
+<h2>Family Members</h2>
+<table><thead><tr><th>Skill</th><th>Role</th><th>Primary Output</th><th>Why it stays separate</th></tr></thead><tbody><tr><td><code>code-review</code></td><td>Main review orchestrator</td><td>Analysis, reports, bounded-context handoffs</td><td>Keeps the first pass focused on review routing and evidence shape</td></tr><tr><td><code>test-quality-reviewer</code></td><td>Judge existing tests</td><td>Smells, FIRST / pyramid gaps, boundary issues</td><td>Diagnosis of existing coverage is different from designing new tests</td></tr><tr><td><code>code-refactoring-advisor</code></td><td>Name code smells and likely refactor moves</td><td>Fowler move + test safety net</td><td>Refactor naming is advisory work; it should not hide the underlying defect analysis</td></tr><tr><td><code>test-design-generator</code></td><td>Turn review intent into test cases</td><td>Boundary / equivalence / pairwise candidates</td><td>Test design is generative, not evaluative</td></tr><tr><td><code>security-risk-reviewer</code></td><td>Offline OWASP-oriented preflight</td><td>Ranked security findings</td><td>Security review needs its own lens and vocabulary</td></tr><tr><td><code>sonarqube-bridge</code></td><td>Ingest Sonar output into the same schema</td><td>Sonar + graph-ranked findings</td><td>Sonar is an input source, not the authority itself</td></tr></tbody></table>
+<h2>Ponytail / YAGNI Minimality Boundary</h2>
+<p>The Ponytail Ladder belongs to the code-review family as a pre-review rubric for avoiding over-building. It supports Phase 2 option selection and Phase 4 implementation/refactoring; it does not directly participate as a Phase 5 verdict source.</p>
+<p>Use it before recommending a new abstraction, helper, dependency, wrapper, parser, lifecycle manager, class/module split, or test harness:</p>
+<ol><li>Does this need to exist? If no, skip it.</li><li>Can the standard library do it? Use it.</li><li>Can a native platform feature do it portably? Use it, or isolate OS/arch-specific code behind a small adapter with fallback.</li><li>Can an already-installed dependency do it? Use it.</li><li>Is it one line? Keep it one line.</li><li>Only then build the minimum custom implementation.</li></ol>
+<p><code>code-refactoring-advisor</code> carries this as <code>minimality_check</code> on each refactor finding. The field is advisory context, not a release gate. It must stay architecture/platform agnostic: native platform recommendations need portable behavior across the published skill targets, or an explicit adapter, guard, and fallback for OS/arch-specific behavior.</p>
+<p>Do not translate <code>minimality_check</code> into <code>PASS</code>, <code>FAIL</code>, <code>BLOCK</code>, or approval language. If the same change exposes a real compile, portability, runtime, or security regression, route that verdict to the build/test gates, <code>review-cli review</code>, <code>security-risk-reviewer</code>, SonarQube, or the consuming repo's formal review artifact.</p>
+<h2>Supporting Tooling</h2>
+<p>These are orchestrated by the family but are not the core review members:</p>
+<ul><li><code>capability-mapper</code></li><li><code>code-summarizer</code></li></ul>
+<p>Use them when you need capability graphs or file summaries as inputs to review or handoff work.</p>
+<h2>Operating Model</h2>
+<p>Use <code>code-review</code> first when the task is about structure, impact, bounded context, or review assistance. It is the review intake layer, not a generic code explainer.</p>
+<p>Typical routing:</p>
+<ul><li>Analyze a file or project -&gt; <code>code-review</code></li><li>Judge existing tests -&gt; <code>test-quality-reviewer</code></li><li>Suggest refactor moves with a safety net -&gt; <code>code-refactoring-advisor</code></li><li>Generate better test cases -&gt; <code>test-design-generator</code></li><li>Run offline security preflight -&gt; <code>security-risk-reviewer</code></li><li>Bring Sonar findings into the same ranking model -&gt; <code>sonarqube-bridge</code></li></ul>
+<p>Why this split helps: the same repository often needs diagnosis, redesign, and security triage at the same time. If one skill tries to do all three, the output gets vague and un-actionable. Separate skills let each comment answer one concrete question and give the next owner a cleaner handoff.</p>
+<p>The rule is simple: use deterministic review tooling for evidence, and keep acceptance / readiness judgments in the consuming repo's own review artifacts.</p>
+<h2>When To Use</h2>
+<p>Use <code>code-review</code> when:</p>
+<ul><li>you need a review front door for a file, directory, or project</li><li>the task is to inspect structure, impact, or bounded context before handoff</li><li>the repo needs one review contract that can absorb test, refactor, security, and scanner evidence</li></ul>
+<p>Do not use <code>code-review</code> when:</p>
+<ul><li>the task is only to write code without review analysis</li><li>the main work is test design, refactor planning, or security triage already owned by a sibling helper</li><li>you are trying to issue a runtime readiness verdict</li></ul>
+<p>If the question is "what is the evidence and what should the next reviewer do?", use <code>code-review</code>. If the question is already specific and narrow, go directly to the helper that owns that narrow job.</p>
+<h2>Outcome Signals</h2>
+<p>The family is doing useful work when you see:</p>
+<ul><li>fewer repeated comments on the same code path</li><li>cleaner handoffs because test, refactor, and security evidence stay distinct</li><li>fewer false claims because readiness language remains outside the review bundle</li></ul>
+<h2>Amazon Backwards Press Release</h2>
+<p><strong>CodeReview 團隊推出 Code Review Family to give coding agents a consistent review and handoff model</strong></p>
+<p>Taipei, June 18, 2026 - CodeReview 團隊 today introduced the Code Review family, a review skill bundle that helps engineering teams and coding agents inspect code, surface maintainability and security issues, and produce bounded-context handoffs without mixing static analysis with readiness claims.</p>
+<p>For teams using multiple agents, review quality often breaks down not because the code is impossible to read, but because the review process is fragmented. One tool comments on tests, another comments on structure, a third comments on security, and none of them share the same output shape. The Code Review family fixes that by giving agents one review surface and a coordinated set of sibling skills.</p>
+<p>"We wanted review output that is consistent, ranked, and useful to the next engineer," said the CodeReview 團隊. "The point is to reduce guesswork, not to pretend review output is a release gate."</p>
+<p>The front door itself runs a built-in <strong>AST-based review</strong> (<code>review-cli review</code>, for Go/Python/TypeScript/C#) as the primary deterministic pass. Around it, the family combines graph-backed structural analysis, maintainability guidance, test-quality inspection, test-design generation, offline security preflight, and Sonar ingestion. Those deeper passes are delivered by <strong>separately-installed sibling skills</strong> that <code>code-review</code> orchestrates but does not contain, so the combined capability assumes those siblings are installed alongside it. The result is a review workflow that is more deterministic, more reusable, and easier to hand off.</p>
+<p>Code Review is available as a packageable skill family rooted at <code>skills/code-review/</code>, with companion skills installed alongside it when the environment needs deeper review coverage.</p>
+<h2>FAQ</h2>
+<h3>Who is this for?</h3>
+<p>Teams that need review help on real repositories, especially when code structure, tests, and security need to be analyzed together.</p>
+<h3>Is this a runtime readiness gate?</h3>
+<p>No. It is static analysis and bounded-context tooling. Runtime readiness still comes from the consuming repo's review and runtime evidence.</p>
+<h3>Why separate <code>test-quality-reviewer</code> from <code>test-design-generator</code>?</h3>
+<p>One judges existing tests; the other generates candidate tests. Keeping them separate preserves the distinction between diagnosis and design. This matters because teams often confuse "we need more tests" with "our current tests are weak in these specific ways." The two actions have different costs and different owners.</p>
+<h3>Why include <code>sonarqube-bridge</code>?</h3>
+<p>Because Sonar issues are often the same review conversation in a different source system. Bridging them into the same ranking model keeps the handoff coherent.</p>
+<h3>Why separate <code>code-refactoring-advisor</code> from <code>code-review</code>?</h3>
+<p>Because naming a refactor move is not the same as making the review judgment. The advisor helps the next engineer act, but it should not replace the reviewer's explanation of why the smell matters.</p>
+<h3>Are <code>capability-mapper</code> and <code>code-summarizer</code> core family members?</h3>
+<p>No. They are supporting tooling that the family can orchestrate when graph or summary context is useful.</p>
+<h3>What should be packaged with this family?</h3>
+<p>At minimum, package <code>skills/code-review/</code>, its sibling review skills, and the supporting tooling if the target environment expects graph or summary enrichment.</p>
+<h2>Evidence And Claim Boundary</h2>
+<p>This README describes the review capability bundle. It does not claim that a consuming repository is production-ready, demo-ready, or free of regressions. Those claims belong to the consuming repo's own review artifacts and runtime evidence.</p>
+<h2>Maintenance</h2>
+<p>When the helper skill list, invocation contract, or packaging expectations change, update this README using <code>GENERATION_GUIDE.md</code>.</p>
 </main>
 
 </body>

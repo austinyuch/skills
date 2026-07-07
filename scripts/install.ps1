@@ -4,17 +4,18 @@
 .EXAMPLE
   ./scripts/install.ps1 claude
   ./scripts/install.ps1 codex
-  $env:SKILLS_TARGET = "C:\skills"; ./scripts/install.ps1 -Layout hierarchical
+  $env:SKILLS_TARGET = "C:\skills"; ./scripts/install.ps1 claude
 .NOTES
   <agent> = opencode | claude | codex | kiro   (default: opencode)
-  SKILLS_TARGET wins over <agent>. SKILLS_LAYOUT or -Layout selects flat|hierarchical.
+  SKILLS_TARGET wins over <agent>.
+  Layout is FLAT single-level only — every skill installs to <target>\<skill>\SKILL.md.
+  One-level skill loaders (Claude Code, and most agent homes) only scan a single
+  directory level, so a nested <category>\<skill>\ tree would be invisible to them.
 #>
 [CmdletBinding()]
 param(
   [Parameter(Position = 0)]
   [string]$Agent = "opencode",
-  [ValidateSet("flat", "hierarchical")]
-  [string]$Layout = $(if ($env:SKILLS_LAYOUT) { $env:SKILLS_LAYOUT } else { "hierarchical" }),
   [switch]$WithCli
 )
 $ErrorActionPreference = "Stop"
@@ -43,23 +44,13 @@ if (-not $Target) {
 Write-Host "📦 aclab skills from: $RepoRoot"
 Write-Host ("🤖 Agent: {0}" -f $(if ($env:SKILLS_TARGET) { "custom" } else { $Agent }))
 Write-Host "🎯 Target: $Target`n"
-Write-Host "🧭 Layout: $Layout`n"
+Write-Host "🧭 Layout: flat (single-level)`n"
 
 if (-not (Test-Path $Manifest)) { Write-Error "Manifest not found: $Manifest"; exit 1 }
 New-Item -ItemType Directory -Force -Path $Target | Out-Null
 
 $m = Get-Content -Raw -Path $Manifest | ConvertFrom-Json
 $installed = 0; $missing = 0
-
-function Skill-Dest([string]$group, [string]$skill) {
-  if ($Layout -eq "flat") { return (Join-Path $Target $skill) }
-  return (Join-Path $Target (Join-Path $group $skill))
-}
-
-function Standalone-Dest($row) {
-  if ($Layout -eq "flat") { return (Join-Path $Target $row.file) }
-  return (Join-Path $Target (Join-Path $row.category $row.target_path))
-}
 
 function Copy-Skill([string]$src, [string]$dst, [string]$name) {
   if (-not (Test-Path $src)) { Write-Host "   ⚠️  missing: $name"; $script:missing++; return }
@@ -69,23 +60,18 @@ function Copy-Skill([string]$src, [string]$dst, [string]$name) {
   Write-Host "   ✅ $name"; $script:installed++
 }
 
-foreach ($group in @("families", "categories")) {
-  if (-not $m.$group) { continue }
-  foreach ($key in $m.$group.PSObject.Properties.Name) {
-    foreach ($skill in $m.$group.$key.skills) {
-      Copy-Skill (Join-Path $Source (Join-Path $key $skill)) (Skill-Dest $key $skill) "$key/$skill"
-    }
-  }
+foreach ($skill in $m.skills) {
+  Copy-Skill (Join-Path $Source $skill) (Join-Path $Target $skill) $skill
 }
 
 if ($m.standalone_files) {
   foreach ($row in $m.standalone_files) {
-    $src = Join-Path $Source (Join-Path $row.category $row.target_path)
-    $dst = Standalone-Dest $row
+    $src = Join-Path $Source $row.file
+    $dst = Join-Path $Target $row.target_path
     if (-not (Test-Path $src)) { Write-Host "   ⚠️  missing file: $($row.file)"; $missing++; continue }
     New-Item -ItemType Directory -Force -Path (Split-Path -Parent $dst) | Out-Null
     Copy-Item -Force $src $dst
-    Write-Host "   ✅ $($row.category)/$($row.target_path)"; $installed++
+    Write-Host "   ✅ $($row.target_path)"; $installed++
   }
 }
 
@@ -94,13 +80,14 @@ Write-Host "📊 Installed: $installed   ⚠️  Missing: $missing"
 Write-Host ("━" * 32)
 Write-Host "Skills are now in: $Target"
 
-if (Test-Path (Skill-Dest "code-review" "code-review")) {
+$CodeReviewDir = Join-Path $Target "code-review"
+if (Test-Path $CodeReviewDir) {
   if ($WithCli) {
     if ($IsMacOS) { $os = "darwin"; $ext = "" } elseif ($IsLinux) { $os = "linux"; $ext = "" } else { $os = "windows"; $ext = ".exe" }
     $pa = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLower()
     $arch = if ($pa -eq "arm64") { "arm64" } elseif ($pa -in @("x64", "amd64")) { "amd64" } else { "unsupported" }
     $asset = "review-cli-$os-$arch$ext"
-    $dest = Join-Path (Skill-Dest "code-review" "code-review") "scripts"
+    $dest = Join-Path $CodeReviewDir "scripts"
     if ($arch -eq "unsupported") {
       Write-Host "   ⚠️  unsupported platform for review-cli ($pa)"
     } elseif (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
