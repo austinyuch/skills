@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Tracked git pre-commit hook. Enable with:
+#   git config core.hooksPath skills/shared-governance/scripts/githooks
+# Delegates to the parity runner (mirror + print parity).
+set -u
+HERE="$(cd "$(dirname "$0")" && pwd)"
+exec bash "$HERE/../pre-commit-parity.sh"

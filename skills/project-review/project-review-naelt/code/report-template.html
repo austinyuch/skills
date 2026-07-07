@@ -369,10 +369,27 @@
     }
     
     /* ── Print ────────────────────────────────────── */
+    /* Canonical block — byte-consistent with shared-governance/assets/print-friendly.css.
+       Fixes dark hero / dark table headers printing white-on-white. Keep in sync. */
     @media print {
-      nav, .hero-cta { display: none; }
-      section { break-inside: avoid; padding: 40px 0; }
+      *, *::before, *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      @page { margin: 12mm; }
+      body { background: #fff; }
+      nav, aside.sidebar, .sidebar, [role="navigation"] { position: static !important; }
+      nav, aside.sidebar, .sidebar,
+      #lang-toggle, .lang-toggle, [data-noprint], .no-print,
+      .hero-cta, .hero-btns, .cta-btns { display: none !important; }
+      [hidden] { display: none !important; }
+      .card, [class*="-card"], .stat, .feature-block, .arch-node,
+      tr, blockquote, figure { break-inside: avoid; page-break-inside: avoid; }
+      h1, h2, h3, h4 { break-after: avoid; page-break-after: avoid; }
+      img { max-width: 100% !important; height: auto !important; }
     }
+    /* project-review-specific print tweak (separate from canonical) */
+    @media print { section { break-inside: avoid; padding: 40px 0; } }
   </style>
 </head>
 <body>

@@ -1,0 +1,23 @@
+{
+  "skill_name": "frontend-designer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "幫我做一個 SaaS 產品的 landing page，要有 hero、feature、pricing、CTA，看起來專業不要很 AI 味。目前 repo 沒有既有的 DESIGN.md。",
+      "expected_output": "Phase 1 先確立 design system（因無 DESIGN.md → direction-pick，挑一個 open-design design-system 或提出有主張的方向 + CSS-var tokens），Phase 2 選 render target（open-design saas-landing 版型 compose.ts 或 shadcn），輸出遵守 anti-slop（避免紫藍漸層、三欄圓圈 icon、置中一切）、responsive、a11y。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "這個 React dashboard 元件我改了 CSS 和 layout，幫我在 code review 時看一下前端做得好不好，特別是排版跟有沒有符合我們的品牌。",
+      "expected_output": "進 Phase 3：static lane 檢查 tokens/shadcn 規則/anti-slop/a11y；visual lane 用 uat-demo-agent/webapp-testing render 出來截圖並 Read PNG 評 layout/階層/對比/品牌；輸出 findings（severity+位置+建議），不自行下 PASS/FAIL。若要正式接進 code-review，提醒該 wiring 需迴向 aclab repo。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "我要一個 agent 動態產生、可以之後再 patch 的表單 UI，用我們 giant 的品牌，最好是 shadcn 外觀。",
+      "expected_output": "Phase 2 選 A2UI render target（React/shadcn renderer + giant_catalog.json，因為要動態 patch + catalog-driven + shadcn 外觀）；compose ServerMessage[]（createSurface→updateComponents flat 樹→updateDataModel JSON Pointer，root id=root），用 giant stylePreset 品牌，render via A2UIRenderer。",
+      "files": []
+    }
+  ]
+}

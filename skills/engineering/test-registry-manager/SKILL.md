@@ -212,7 +212,7 @@ workspace `.agents/specs/TESTS.md` 應保留：
 - 若這次工作同時涉及多個 package 的 `TESTS.md`、workspace `.agents/specs/TESTS.md` rollup、或與 implementation lane 並行的 test governance refresh，預設使用 dedicated branch / worktree，避免把 row-level authority update 與其他 authoring lane 混在同一個工作目錄。
 - 允許使用 detached / read-only worktree 做 inventory、diff、gap audit；但 folder-level `TESTS.md` 與 workspace rollup 的正式 writeback，只能由 **一條 authoritative writable lane** 進行。
 - 若已有既有 worktree 可重用，必須先確認它對應同一條 lane、目前狀態乾淨且沒有其他 session 佔用；不要把別人的 writable lane 當成自己的 baseline。
-- 不要把 machine-local worktree path、暫存檔位置、或本機 runtime 狀態寫進 `TESTS.md` / workspace rollup。需要具體規則時，讀取 global skill 內建的 `shared-governance` skill 的 `references/git-worktree-guide.md`、`shared-governance` skill 的 `references/git-worktree-templates.md`、`shared-governance` skill 的 `references/concurrent-writable-lanes.md`、`shared-governance` skill 的 `references/pre-write-conflict-checklist.md`、`shared-governance` skill 的 `references/ownership-evidence-template.md` 與 `shared-governance` skill 的 `references/cross-artifact-regeneration-order.md`。
+- 不要把 machine-local worktree path、暫存檔位置、或本機 runtime 狀態寫進 `TESTS.md` / workspace rollup。需要具體規則時，讀取 `shared-governance` skill 的 `references/git-worktree-guide.md`、`references/git-worktree-templates.md`、`references/concurrent-writable-lanes.md`、`references/pre-write-conflict-checklist.md`、`references/ownership-evidence-template.md` 與 `references/cross-artifact-regeneration-order.md`。
 - 若另一條 lane 已擁有同一份 folder-level `TESTS.md` 或 workspace rollup 的正式 writeback 權，當前 lane 必須降級為 audit-only，僅提交 drift / evidence / stale-marker findings，不得搶寫 authority。
 - 正式刷新 workspace `.agents/specs/TESTS.md` 前，必須先留下 ownership evidence；這份 record 應落在 invoking workspace（預設 `.agents/specs/governance/ownership-evidence/` 或對應 spec reports），並依 cross-artifact regeneration order 先確認 folder-level authority 已更新完成。
 - 若需要 deterministic gate，應在正式 writeback 前執行 `shared-governance` skill 的 `scripts/validate_governance_writeback.py`，至少檢查 evidence file 是否位於 invoking workspace、欄位是否完整且非空、是否提供 `--expect-scope-token` 綁定當前 lane/scope、以及 upstream 中是否包含 folder-level `TESTS.md` 而非 derived artifact。若 script 失敗，禁止正式 writeback，必須先修正 repo/workspace 內的 evidence 或 upstream 問題。
@@ -234,5 +234,5 @@ workspace `.agents/specs/TESTS.md` 應保留：
 若工作同時牽涉 SDD / registry boundary，也應回讀：
 
 - `spec-master` skill 的 `reference/TEST_GOVERNANCE_GUIDE.md`
-spec-registry-manager skill
-spec-master skill references/routing-matrix.md
+- `spec-registry-manager` skill 的 `SKILL.md`
+- `spec-master` skill 的 `references/routing-matrix.md`

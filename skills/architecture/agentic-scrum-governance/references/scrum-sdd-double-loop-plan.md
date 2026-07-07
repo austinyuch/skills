@@ -115,6 +115,7 @@ This planning model is also informed by external agentic-engineering research an
 | `SPECS.md` | stable spec registry summary | live execution board |
 | `NEXT_STEPS.md` | rolling operational memo | stable registry or final verdict |
 | `RTM.md` | traceability rollup | independent readiness authority |
+| `docs/architecture.md` / `docs/architecture/index.html` | cross-spec architecture communication snapshot owned by `system-architect` workflow | readiness verdict, branch-spec design authority, or static-analysis substitute |
 | local infra registry | runtime allocation and governed env state | spec registry |
 
 ## 6. Ceremony-to-Artifact Mapping
@@ -166,17 +167,20 @@ Inputs:
 - demo evidence
 - test evidence
 - relevant `review.md`
+- architecture doc state when the increment changes module boundaries, shared contracts, runtime topology, trust boundaries, or cross-spec ownership
 
 Outputs:
 
 - stakeholder feedback
 - accepted / rejected / changed expectations
 - possible CR or follow-up spec
+- architecture doc refresh or `system-architect` follow-up when drift is detected
 
 Rule:
 
 - Sprint Review may influence the next change, but the formal readiness verdict remains in spec-local `review.md`.
 - Prefer reproducible demo/test artifacts over one-time verbal walkthroughs.
+- Architecture docs help humans understand the system, but stale diagrams or architecture HTML must not upgrade readiness claims.
 
 ### Sprint Retrospective
 
@@ -187,6 +191,7 @@ Inputs:
 - test evidence gaps
 - repetitive coordination pain
 - runtime governance friction
+- architecture drift, stale architecture docs, unclear cross-spec ownership, or repeated architecture handoff gaps
 - clarification loops / rework patterns
 
 Outputs:
@@ -195,6 +200,7 @@ Outputs:
 - process change candidate
 - checklist candidate
 - skill update candidate
+- `system-architect` refresh/review candidate when the issue is architecture communication or cross-spec coherence
 
 Rule:
 
@@ -252,11 +258,12 @@ Additional interpretation for the agentic era:
 4. Use `scrum-master-skill` to dispatch and monitor execution.
 5. Use `scrum-developer-skill` to implement via TDD and produce evidence.
 6. Refresh folder-level `TESTS.md` if test catalog/evidence changed.
-7. Refresh workspace `.agents/specs/TESTS.md` when rollup is needed.
-8. Update `RTM.md` / `SPECS.md` only as derived snapshots after upstream authority is complete.
-9. Decide actual readiness in `review.md`.
-10. Use Sprint Review for stakeholder validation.
-11. Use Sprint Retrospective for process/agent improvement.
+7. Use `system-architect` when the increment materially changes project-level architecture docs or code-review architecture context.
+8. Refresh workspace `.agents/specs/TESTS.md` when rollup is needed.
+9. Update `RTM.md` / `SPECS.md` only as derived snapshots after upstream authority is complete.
+10. Decide actual readiness in `review.md`.
+11. Use Sprint Review for stakeholder validation.
+12. Use Sprint Retrospective for process/agent improvement.
 
 ## 9. Agent Swarm Scrum Model
 
@@ -368,6 +375,7 @@ Examples:
 - add a standard Sprint Retro decision template
 - add an async standup/report artifact format for agent sessions
 - define stronger contract/evidence/risk-oriented planning prompts
+- add a standard architecture drift / ownership / handoff review prompt that delegates document refresh to `system-architect`
 
 ### B. Routing Boundary Changes
 

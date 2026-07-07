@@ -508,18 +508,18 @@ requirements-workflow-skill:
 ## 📚 Reference Documentation
 
 ### ba-analyst v3.0 Documentation
-- ba-analyst-skill/README.md (ba-analyst-skill 已移除) - v3.0.0 overview
-- ba-analyst-skill/SKILL.md (ba-analyst-skill 已移除) - Complete workflow
-- ba-analyst-skill/VERSION.md (ba-analyst-skill 已移除) - Change history
-- ba-analyst-skill/reference/ORCHESTRATION_GUIDE.md (ba-analyst-skill 已移除) - Quick reference
+- ba-analyst-skill/README.md (removed from this bundle) - v3.0.0 overview
+- ba-analyst-skill/SKILL.md (removed from this bundle) - Complete workflow
+- ba-analyst-skill/VERSION.md (removed from this bundle) - Change history
+- ba-analyst-skill/reference/ORCHESTRATION_GUIDE.md (removed from this bundle) - Quick reference
 
 ### Coordination Protocols
-- ba-analyst-skill/coordination/solution-designer-delegation.md (ba-analyst-skill 已移除)
-- ba-analyst-skill/coordination/spec-writer-delegation.md (ba-analyst-skill 已移除)
-- ba-analyst-skill/coordination/sme-coordination.md (ba-analyst-skill 已移除)
+- ba-analyst-skill/coordination/solution-designer-delegation.md (removed from this bundle)
+- ba-analyst-skill/coordination/spec-writer-delegation.md (removed from this bundle)
+- ba-analyst-skill/coordination/sme-coordination.md (removed from this bundle)
 
 ### Quality Gates
-- ba-analyst-skill/reference/QUALITY_GATES.md (ba-analyst-skill 已移除)
+- ba-analyst-skill/reference/QUALITY_GATES.md (removed from this bundle)
 
 ---
 

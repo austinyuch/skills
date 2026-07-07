@@ -1,0 +1,54 @@
+/* ============================================================================
+ * print-friendly.css — CANONICAL @media print block for stakeholder-facing
+ * self-contained HTML artifacts (showcase / project review / user manual).
+ * ----------------------------------------------------------------------------
+ * SINGLE SOURCE OF TRUTH. Consumer skills generate self-contained HTML (inline
+ * <style>), so they cannot <link> this file — instead they INLINE this exact
+ * block into their template/output <style>. Keep the copies byte-identical to
+ * this canonical block so a parity check can assert they haven't drifted
+ * (same discipline as the spec-master ↔ spec-driven-development shared refs).
+ * Skill-specific print tweaks go in a SEPARATE block, never by editing this one.
+ *
+ * THE BUG THIS FIXES ("部份 rendered 在 print 時會失蹤" / disappearing sections):
+ *   Dark hero / stat bars / dark table headers / CTA bands use white text on a
+ *   dark or gradient BACKGROUND. Browsers DEFAULT TO NOT PRINTING background
+ *   colors/images (ink saving) -> the background drops, the white text lands on
+ *   white paper -> the whole band looks blank/disappears. In the interactive
+ *   "Save as PDF" dialog "Background graphics" is OFF by default, so this bites
+ *   real users even when the screen looks perfect.
+ *   Fix = print-color-adjust:exact so backgrounds print and white text shows.
+ *
+ * Consumers (keep this list current): marketing-showcase-creator,
+ * project-review-skill, user-manual-skill.
+ * ========================================================================== */
+
+@media print {
+
+  /* 1) Force backgrounds/colors to print — un-hides white text on dark bands. */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important; /* Chrome/Safari legacy */
+    print-color-adjust: exact !important;         /* standard */
+  }
+
+  @page { margin: 12mm; }
+  body { background: #fff; }
+
+  /* 2) Neutralize sticky/fixed navigation (overlaps/repeats when printed). */
+  nav, aside.sidebar, .sidebar, [role="navigation"] { position: static !important; }
+
+  /* 3) Hide interactive-only chrome that means nothing on paper. */
+  nav, aside.sidebar, .sidebar,
+  #lang-toggle, .lang-toggle, [data-noprint], .no-print,
+  .hero-cta, .hero-btns, .cta-btns { display: none !important; }
+
+  /* 4) The non-selected language stays hidden (bilingual same-HTML pages). */
+  [hidden] { display: none !important; }
+
+  /* 5) Don't split a card / row / quote / figure across pages. */
+  .card, [class*="-card"], .stat, .feature-block, .arch-node,
+  tr, blockquote, figure { break-inside: avoid; page-break-inside: avoid; }
+  h1, h2, h3, h4 { break-after: avoid; page-break-after: avoid; }
+
+  /* 6) Images must not overflow the paper width. */
+  img { max-width: 100% !important; height: auto !important; }
+}

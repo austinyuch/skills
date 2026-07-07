@@ -78,6 +78,7 @@ Mark all that apply.
 - [ ] operational memo (`NEXT_STEPS.md`)
 - [ ] issue log
 - [ ] traceability rollup (`RTM.md`)
+- [ ] project architecture docs (`docs/architecture.md`, `docs/architecture/index.html`, `system-architect`)
 - [ ] runtime governance (local infra registry)
 - [ ] shared checklist/template
 - [ ] skill description or skill behavior candidate
@@ -111,6 +112,7 @@ Fill this before deciding any action.
 | `SPECS.md` |  |  | registry summary only |
 | `NEXT_STEPS.md` |  |  | rolling memo only |
 | `RTM.md` |  |  | traceability snapshot only |
+| `docs/architecture.md` / `docs/architecture/index.html` |  |  | cross-spec communication snapshot only; `system-architect` owns workflow |
 | local infra registry |  |  | runtime authority only |
 
 Decision rule:
@@ -155,6 +157,7 @@ List the evidence needed before any change is accepted.
 
 - relevant `review.md` sections:
 - related `TESTS.md` rows / evidence refs:
+- architecture doc state / `system-architect` review refs, if architecture drift is involved:
 - Sprint Review notes:
 - Sprint Retro notes:
 - runtime evidence from local infra registry (if applicable):
@@ -169,6 +172,7 @@ Before proposing a skill change, check whether the swarm should upgrade itself i
 - [ ] improve prompt / operating doc / playbook
 - [ ] improve memory / problem repository / lesson capture
 - [ ] improve test or review gate
+- [ ] improve architecture doc freshness or Architecture Context Packet through `system-architect`
 - [ ] improve runtime/env governance usage
 - [ ] adjust role boundaries or role roster
 - [ ] only then consider a shared skill update
@@ -271,6 +275,7 @@ Use these when the change is about agentic Scrum itself.
 - Does this improve contract clarity before execution?
 - Does this preserve orchestrator/worker separation?
 - Does this increase evidence-backed review rather than opinion-only review?
+- Does this make cross-spec architecture drift visible without turning architecture docs into readiness authority?
 - Does this help the swarm self-upgrade without unnecessary skill churn?
 
 ## 21. Review Checklist
@@ -282,6 +287,7 @@ Before accepting the change, confirm:
 - [ ] no derived-to-derived sync rule was introduced
 - [ ] readiness verdict still belongs to `review.md`
 - [ ] test evidence still points back to `TESTS.md`
+- [ ] architecture docs remain communication snapshots owned by `system-architect`
 - [ ] the change is proportionate to the repeated problem
 - [ ] the change improves agentic coordination rather than just adding ceremony overhead
 

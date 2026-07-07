@@ -100,7 +100,11 @@ NAELT envisions a society where:
 
 ### 3.1 Core Advocacy Areas [CONFIRMED]
 
-NAELT's "Nine Major Legislative Appeals" (九大修法訴求) include:
+NAELT's advocacy work operates on two complementary levels:
+
+**A. Legislative Appeals (九大修法訴求)** [CONFIRMED]
+
+Policy-level reform agenda from `core-appeals.json`:
 
 1. Strengthening victim participation rights in litigation
 2. Establishing victim protection order system
@@ -113,6 +117,26 @@ NAELT's "Nine Major Legislative Appeals" (九大修法訴求) include:
 9. Raising awareness of victim rights
 
 **Source:** `core-appeals.json`
+
+**B. Court Procedure Rights Deficits (九大法庭程序權利缺失)** [CONFIRMED]
+
+Procedure-level analysis documenting specific rights that victims lack in court because they are not recognized as "parties" (當事人) under current Criminal Procedure Law:
+
+1. **Dedicated Seat** (專屬席位) - No designated victim seating in courtrooms
+2. **Independent Appeal Right** (獨立上訴權) - Cannot appeal judgments independently
+3. **Right to Request Evidence Investigation** (聲請調查證據權) - Cannot request evidence investigation
+4. **Right to Cross-Examine** (詰問權) - Cannot directly cross-examine defendants or witnesses
+5. **Right to Protest/Complain** (抗告權) - Cannot independently file protests against court/prosecutor decisions
+6. **Right to Request Court Recording** (聲請法庭光碟權) - Cannot request court recordings
+7. **Right to Submit Written Statement** (問卷權) - No formal victim impact statement mechanism
+8. **Right to Request Judge Recusal** (聲請法官迴避權) - Cannot request judge recusal
+9. **Right to Review Deliberation Records** (聲請閱覽評議簿權) - Cannot review deliberation records
+
+**Core proposition:** "Because the victim is not a party, they have none of these rights." (因被害人不是當事人，故沒有這些權力。)
+
+**Source:** `references/naelt-court-rights-9-demands.md`
+
+**Relationship:** The "Strengthen victim participation rights" legislative appeal (Appeal 1) is designed to address these nine procedural deficits.
 
 ### 3.2 Advocacy Voice Characteristics [DERIVED]
 
@@ -357,10 +381,18 @@ Request official brand guidelines when:
 |----------|---------|--------|
 | `references/naelt-organizational-identity.md` | Detailed mission, values, history | **DERIVED** from seed data |
 | `references/naelt-service-framework.md` | Service descriptions and positioning | **CONFIRMED** from services.json |
-| `references/naelt-advocacy-positioning.md` | Legislative appeals and advocacy stance | **CONFIRMED** from core-appeals.json |
+| `references/naelt-advocacy-positioning.md` | Legislative appeals (九大修法訴求) | **CONFIRMED** from core-appeals.json |
+| `references/naelt-court-rights-9-demands.md` | Court procedure rights deficits (九大法庭權利缺失) | **CONFIRMED** organizational advocacy knowledge |
 | `references/naelt-digital-expression.md` | Colors, typography, UI patterns | **CONFIRMED/DERIVED** from theme files |
 | `references/naelt-channel-guidelines.md` | Channel-specific usage guidelines | **PROVISIONAL** |
 | `references/evidence-labeling-guide.md` | How to apply and interpret status labels | **PROVISIONAL** |
+
+**When to read `naelt-court-rights-9-demands.md`:**
+- Creating content about victim court participation rights
+- Discussing Criminal Procedure Law reform
+- Addressing specific procedural rights (seat, appeal, cross-examination, etc.)
+- Comparing Taiwan's system with international standards
+- Any mention of "被害人不是當事人" or "九大權利缺失"
 
 ---
 
@@ -375,6 +407,7 @@ Before completing brand-aligned outputs:
 - [ ] Logo uses correct observed assets (Section 5.2)
 - [ ] Tone matches stakeholder guidelines (Section 2.2)
 - [ ] Messaging aligns with pillars (Section 7.1)
+- [ ] **Advocacy content distinguishes between "Legislative Appeals" (修法訴求) and "Court Rights Deficits" (法庭權利缺失) when relevant**
 - [ ] No unsupported formal-brand claims made
 - [ ] Users informed when UNAVAILABLE items are encountered
 

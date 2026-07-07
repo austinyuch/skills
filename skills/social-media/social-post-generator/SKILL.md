@@ -96,6 +96,31 @@ description: 基於受害者家屬權益新聞追蹤結果，每日生成3個社
    
    整理成結構化格式供後續使用。
 
+### 重要：核心倡議知識引用
+
+**當新聞內容涉及以下主題時，必須讀取 `references/victim-rights-9-demands.md`**：
+
+- 被害人法庭地位、訴訟參與權
+- 司法程序中的權利缺失（席位、上訴、詰問等）
+- 刑事訴訟法修法相關新聞
+- 家屬在法庭上的經歷與困境
+
+**九大缺失與修法訴求的對應**：
+- 九大缺失（席位、上訴、證據、詰問、抗告、光碟、問卷、迴避、評議簿）
+- 全部對應 **「訴求1：強化被害人訴訟參與權」**
+- 訴求1是為了解決這九大缺失而提出的總體修法方向
+
+**引用原則**：
+- 嚴肅正式風格（選項A）：可直接引用具體權利缺失名稱與法律條文，連結訴求1的修法方向
+- 情感訴求風格（選項B）：將權利缺失轉化為「連...都沒有」的敘事，暗示訴求1的必要性
+- 行動呼籲風格（選項C）：連結具體權利缺失與訴求1的修法倡議，呼籲支持修法
+
+**避免**：
+- 一次列出全部九項權利缺失（資訊過載）
+- 未經消化直接複製法律條文
+- 忽略「被害人不是當事人」這個根本原因
+- 混淆「九大缺失」（程序問題）與「九大修法訴求」（立法方向）
+
 ### 工作流程 2：生成三風格發文 (Three-Style Generation)
 
 **使用時機**：根據素材生成3個不同風格的發文選項
@@ -497,7 +522,7 @@ description: 基於受害者家屬權益新聞追蹤結果，每日生成3個社
 - **[references/post-templates.md](references/post-templates.md)**：各風格發文模板庫與範例
 - **[references/content-guidelines.md](references/content-guidelines.md)**：內容撰寫準則與品質管理
 - **[references/hashtag-strategy.md](references/hashtag-strategy.md)**：Hashtag策略與分類建議
-- **[references/image-selection-guide.md](references/image-selection-guide.md)**：圖片選擇與版權指南
+- **[references/victim-rights-9-demands.md](references/victim-rights-9-demands.md)**：被害人法庭程序九大權利缺失（核心倡議知識）
 
 ### 工具腳本
 - **[scripts/post_generator.py](scripts/post_generator.py)**：自動化發文生成工具
