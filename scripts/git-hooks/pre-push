@@ -139,15 +139,14 @@ DENY={"docx","pdf","pptx","xlsx","mcp-builder","skill-creator","webapp-testing",
       "brand-guidelines","claude-api","doc-coauthoring","jsm-query-skill","user-profile-skill",
       "bi-analyst-skill","mes-domain-expert-skill","aws-agent-solution-architect"}
 m=json.load(open("skills-manifest.json"))
-listed=set()
-for fam in m.get("families",{}).values(): listed|=set(fam.get("skills",[]))
-for cat in m.get("categories",{}).values(): listed|=set(cat.get("skills",[]))
+# Flat single-level layout: authoritative install list is m["skills"].
+listed=set(m.get("skills",[]))
 # reference-only / standalone entries are allowed to lack a skill folder
 standalone={os.path.splitext(s.get("file",""))[0] for s in m.get("standalone_files",[])}
-# disk: skills/<category>/<skill>/SKILL.md
+# disk: skills/<skill>/SKILL.md (flat, single-level)
 disk=set()
-for p in glob.glob("skills/*/*/SKILL.md"):
-    disk.add(p.split("/")[2])
+for p in glob.glob("skills/*/SKILL.md"):
+    disk.add(p.split("/")[1])
 errors=[]
 # 1) orphan SKILL.md dirs not in manifest (dangerous: could be a re-added purged skill)
 orphans=sorted(disk-listed)
