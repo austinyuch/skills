@@ -22,6 +22,10 @@ $SectionEnd = "# cross-agents symlink bridge: claude-md end"
 $ManagedClaude = New-Object System.Collections.Generic.List[string]
 
 function Add-UniqueClaude([string]$Entry) {
+    $Entry = $Entry -replace '^\.[/\\]', ''
+    $Entry = $Entry -replace '\\', '/'
+    $Entry = $Entry.TrimStart('/')
+    $Entry = "/$Entry"
     if (-not $ManagedClaude.Contains($Entry)) {
         $ManagedClaude.Add($Entry) | Out-Null
     }
@@ -69,7 +73,7 @@ function Rewrite-GitignoreSection([string]$BeginMarker, [string]$EndMarker, [str
 }
 
 function Test-IsManagedAgentSubtree([string]$RelativePath) {
-    return $RelativePath -match '^(\.git|node_modules|\.claude|\.kiro|\.codex)([/\\]|$)'
+    return $RelativePath -match '^(\.git|node_modules|vendor|\.claude|\.kiro|\.codex)([/\\]|$)'
 }
 
 function Collect-ManagedClaudeSymlinks {

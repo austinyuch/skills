@@ -33,10 +33,13 @@ fi
 declare -a AGENTS_FILES=()
 declare -a MANAGED_CLAUDE=()
 
-FIND_PRUNE_EXPR=( \( -path './.git' -o -path './node_modules' -o -path './.claude' -o -path './.kiro' -o -path './.codex' \) -prune -o )
+FIND_PRUNE_EXPR=( \( -path './.git' -o -path './node_modules' -o -path './vendor' -o -path './.claude' -o -path './.kiro' -o -path './.codex' \) -prune -o )
 
 append_unique() {
     local value="$1"
+    value="${value#./}"
+    value="${value#/}"
+    value="/$value"
     local existing
     for existing in "${MANAGED_CLAUDE[@]:-}"; do
         if [ "$existing" = "$value" ]; then
@@ -61,10 +64,23 @@ rewrite_gitignore_section() {
         $0 == begin { skip = 1; next }
         $0 == end { skip = 0; next }
         !skip { print }
-    ' .gitignore > "$tmp_file"
+    ' .gitignore | awk '
+        { lines[++n] = $0 }
+        END {
+            while (n > 0 && lines[n] ~ /^[[:space:]]*$/) {
+                n--
+            }
+            for (i = 1; i <= n; i++) {
+                print lines[i]
+            }
+        }
+    ' > "$tmp_file"
 
     if [ ${#entries[@]} -gt 0 ]; then
-        printf "\n%s\n" "$begin_marker" >> "$tmp_file"
+        if [ -s "$tmp_file" ]; then
+            printf "\n" >> "$tmp_file"
+        fi
+        printf "%s\n" "$begin_marker" >> "$tmp_file"
         printf "%s\n" "${entries[@]}" >> "$tmp_file"
         printf "%s\n" "$end_marker" >> "$tmp_file"
     fi
