@@ -229,8 +229,6 @@ data: {"event_type":"agent.completed","session_id":"...","data":{...}}
 - `agent.completed`
 - `agent.sub_invoke.completed`
 
-See [SSE Events Specification](../../docs/SSE_EVENTS.md) for details.
-
 ## Performance
 
 - **Session Duration**: 30-60 seconds per round
@@ -244,9 +242,3 @@ API version is included in response headers:
 ```
 X-API-Version: 1.5.0
 ```
-
-## Related Documentation
-
-- [AGENT.md](../../AGENT.md) - Complete MCP server reference
-- [API_QUICK_REFERENCE.md](../../docs/API_QUICK_REFERENCE.md) - Quick reference
-- [SSE_EVENTS.md](../../docs/SSE_EVENTS.md) - Event specification

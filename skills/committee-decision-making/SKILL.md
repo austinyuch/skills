@@ -739,9 +739,6 @@ docker run -p 8000:8000 \
 
 ## Related Documentation
 
-- [AGENT.md](AGENT.md) - Complete MCP server reference
-- [docs/API_QUICK_REFERENCE.md](docs/API_QUICK_REFERENCE.md) - API documentation
-- [docs/SSE_EVENTS.md](docs/SSE_EVENTS.md) - Event specification
 - [examples/](examples/) - Client examples
 
 ## Support
