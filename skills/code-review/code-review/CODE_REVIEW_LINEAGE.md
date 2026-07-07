@@ -48,15 +48,15 @@ flowchart LR
   - `make build-all-zig` — 用 Zig cross-compiler 出 linux / windows 的 **tree-sitter AST** 版;darwin 因無 macOS SDK 降級為 **LSP-only**(Python/TS/C# 的 AST 規則在 darwin 降級並誠實標註)。
   - `make build-all-lsp` — 純 Go、無 CGO、全平台 LSP-only 版(fallback)。
 - 產出 **6 顆 binary**：`review-cli-{linux,darwin}-{amd64,arm64}` + `review-cli-windows-{amd64,arm64}.exe`。`make package-skill` 把它們放進 `.agents/skills/code-review/scripts/`。
-- **skill 家族的 canonical 撰寫處是 `.agents/skills/`**:`code-review`(binary 驅動的主 skill)+ 純 Python siblings(`capability-mapper`、`code-summarizer`、`test-quality-reviewer`、`code-refactoring-advisor`、`test-design-generator`、`security-risk-reviewer`、`sonarqube-bridge`)。siblings 由 `scripts/publish_code_review_skill.py` 的 SIBLING_SKILLS allow-list 定義。
+- **skill 家族的 canonical 撰寫處是 `.agents/skills/`**:`code-review`(binary 驅動的主 skill)+ 純 Python siblings(`capability-mapper`、`code-summarizer`、`test-quality-reviewer`、`code-refactoring-advisor`、`test-design-generator`、`security-risk-reviewer`、`sonarqube-bridge`)+ co-published companion skills(`cross-agent-review`、`security-review`、`iso-ai-security-auditor`)。發布集合由 `scripts/publish_code_review_skill.py` 的 `SIBLING_SKILLS` + `COMPANION_SKILLS` allow-list 定義。
 - **版本**由 git tag + `CHANGELOG.md` 管理(SemVer,pre-1.0)。binary 自報字串為 `Code Review System vX.Y.Z` —— 下游 drift-check 依此辨識新舊(舊版自報 "Giant Code Review System")。
 
 ## ② 發布到 global skills
 
-- 主要發布器:`scripts/publish_code_review_skill.py --build zig`(或 `--build lsp` / `--build none`),一次發到五個 global home：
-  `~/.claude/skills/`、`~/.config/opencode/skills/`、`~/.kiro/skills/`、`~/.codex/skills/`、`~/.gemini/antigravity/skills/`。
+- 主要發布器:`scripts/publish_code_review_skill.py --build zig`(或 `--build lsp` / `--build none`),一次發到八個 global home：
+  `~/.claude/skills/`、`~/.kiro/skills/`、`~/.codex/skills/`、`~/.config/opencode/skills/`、`~/.gemini/skills/`、`~/.gemini/antigravity/skills/`、`~/.copilot/skills/`、`~/.cline/skills/`。
 - 也有 Unix make 路徑:`make install-skill`(只發 `~/.config/opencode/skills/`),以及各 skill 的 `scripts/install.sh`。
-- 發布內容:`code-review` 帶 **SKILL.md + 6 顆 binary + viewer assets + references**;siblings 帶 **SKILL.md + run.py 等 runtime script**。
+- 發布內容:`code-review` 帶 **SKILL.md + 6 顆 binary + viewer assets + references**;siblings 帶 **SKILL.md + run.py 等 runtime script**;companion skills 帶各自的 **SKILL.md + scripts/references**。
 - 維護者觸發介面:`.agents/skills/code-review-publish/` skill(包裝上述 Python CLI)。
 
 ## ③ 下游專案 vendoring（消費端）

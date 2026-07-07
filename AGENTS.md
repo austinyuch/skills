@@ -86,7 +86,7 @@ Full narrative: [`methodology.html`](methodology.html) · [`docs/agentic-deliver
   (`.gitignore`: `review-cli-*`, `*.onnx`, `uatdemo-*`), so a clone/`npx`/`uvx` install ships the skill
   without them. Distribute such binaries out-of-band (GitHub Releases), not via LFS — LFS would break
   the no-dependency `git clone`/`npx`/`uvx` install flow.
-  - The 6 binaries are published as release **`review-cli-v0.11.0`**; installers fetch the matching one
+  - The 6 binaries are published as release **`review-cli-v0.15.0`**; installers fetch the matching one
     with `--with-cli` (Node/Python/bash) / `-WithCli` (ps1) via `gh release download`. The repo is
     **private**, so this needs `gh` auth. To cut a new build: `gh release create review-cli-vX.Y.Z
     skills/code-review/code-review/scripts/review-cli-* -R austinyuch/skills`, then bump `CLI_TAG`

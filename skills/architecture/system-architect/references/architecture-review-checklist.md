@@ -30,6 +30,13 @@ Use this to challenge architecture before or after writing `.agents/steering/pro
 - Are logs, metrics, traces, alerts, and dashboards in scope or explicitly out of scope?
 - Is there an authoritative handoff path for external execution or runtime proof?
 
+## AI/Security/Privacy/Log Compliance Boundaries
+
+- Are PII/personal-data flows, AI prompt/output/tool-call flows, and log/telemetry flows shown at architecture level?
+- Are model/provider, IdP, cloud, SIEM/SOC, CI/CD, DLP, vulnerability scanner, and other external-control dependencies named with owners and evidence refs?
+- Does the architecture distinguish repo-implemented controls from externally operated controls and missing organization evidence?
+- If `iso-ai-security-auditor` was used, do steering docs cite its inventory without turning it into certification, legal advice, or a readiness PASS?
+
 ## SAA Good Parts
 
 - Common User Access: are workflow terms and journeys consistent?

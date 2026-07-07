@@ -90,6 +90,10 @@ Deployment contexts, runtime assumptions, portability constraints, local/CI/clou
 
 PII/secrets/data stores, authz/authn boundary, execution boundary, third-party boundary.
 
+## AI/Security/Privacy/Log Compliance Boundaries
+
+AI components, model/provider boundaries, personal-data flows, log/telemetry flows, audit trail ownership, retention/redaction assumptions, externally operated controls, and evidence refs from `iso-ai-security-auditor` when that lens is in scope.
+
 ## Critical Flows
 
 For each flow: trigger -> components -> data -> failure modes -> evidence refs.
@@ -158,5 +162,7 @@ If there is no rendering pipeline, a hand-maintained single-file HTML is accepta
 - Historical architecture != current architecture.
 - RTM/SPECS summary != source truth.
 - Code graph evidence != runtime readiness.
+- Compliance checklist coverage != implemented architecture control.
+- External control claim != evidence unless the owner, system, interface, and source ref are named.
 
 Use `not_assessed` when evidence is missing.

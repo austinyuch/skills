@@ -166,15 +166,25 @@ This is producer-side only and deliberately stops before downstream workspace or
 
 ## Graph-Assisted Planning
 
-Use graph-assisted planning only when it helps the task.
+Use graph-assisted planning by default for architecture discovery, project design, impact analysis, broad code retrieval, spec handoff, and non-trivial implementation planning. For those tasks, graph init/preflight is mandatory unless the task is clearly narrow, the relevant files are already known, or graph state is unavailable and rebuilding would cost more than the task warrants. When a spec, design, review, or handoff artifact is produced, record either the graph query and trigger/preflight result or the reason graph use was skipped.
 
-1. Check graph freshness with `index <project-path> --status`.
-2. Rebuild with `index <project-path>` when state is stale or missing.
-3. Use `index <project-path> --no-embeddings` when the task requires deterministic graph-only state and no embedding/vector provider.
-4. Use `search-code <project-path> "<query>" --graph-only` for exact structural questions. Use normal `search-code` for broad semantic recall and ranking.
-5. If a subscribed coding-agent session produced semantic edges, validate and import them with `graph fragment validate/apply` before graph-only retrieval.
-6. In Phase 2, use `architecture`, `search-code`, and `developer-routing`.
-7. In Phase 3, use `search-code`, `developer-routing`, and `test-traceability`.
+1. Read the target repo's local instructions first. Some repos deliberately promote a shared `.code-review/graph.sqlite`, `.code-review/vector.sqlite`, and `.code-review/manifest.json` snapshot and wrap CLI operations with repo-owned commands.
+2. Run graph init/preflight before design or code changes. If a repo-owned shared snapshot exists, inspect the manifest and run the repo's status/doctor command before rebuilding it. Example shape: `python scripts/ops.py graphrag status-shared` or `python scripts/ops.py graphrag doctor-shared --embedding-provider mock`.
+3. If no repo wrapper exists, run `review-cli-<os>-<arch> init <project-path> --graph --trigger watch-once`. The command emits `graph_queryable`, `relation_coverage_status`, `snapshot_artifacts`, `recommended_query_mode`, `trigger_strategy`, and `skip_rationale_required`; by default it performs only a minimal graph-only refresh when graph state is missing or not queryable. Use `--status-only` when you only want classification and recommendations. `review-cli-<os>-<arch> graph init <project-path>` is the graph-namespace alias.
+4. Query before changing code. Use `search-code`, `architecture`, `developer-routing`, `bounded-context`, `impact`, `dependency-path`, `capability-inventory`, or `summary` according to the decision you are making.
+5. Prefer command-level init where available: use `--graph-init auto` by default, `--graph-init always` when state is stale, and `--graph-init skip` only when a read-only lifecycle is intentional and queryable graph state already exists.
+6. Select a trigger strategy for ongoing work. Acceptable triggers are a repo-owned refresh command, `review-cli-<os>-<arch> watch . --once --json` for a one-shot working-tree refresh, long-running `review-cli-<os>-<arch> watch .` during active edit sessions, or `review-cli-<os>-<arch> graph hook status` / explicit `graph hook install` for post-commit refresh where repo/user policy allows local hook installation. The init command recommends hook status checks but does not install hooks.
+7. Do not silently leave the graph stale after meaningful structural changes. If no trigger is enabled, run an explicit refresh/status check before closeout or record why this lane intentionally stayed direct-source-only.
+8. Use `search-code <project-path> "<query>" --graph-only` for exact structural questions. Use normal `search-code` for broad semantic recall and ranking.
+9. If a subscribed coding-agent session produced semantic edges, validate and import them with `graph fragment validate/apply` before graph-only retrieval.
+10. In Phase 2, use `architecture`, `search-code`, `impact`, and `developer-routing`.
+11. In Phase 3, use `search-code`, `developer-routing`, `bounded-context`, and `test-traceability`.
+
+Keep the authority boundary explicit: graph output is static-analysis evidence. It can guide where to inspect and what blast radius to expect, but it does not prove runtime readiness and does not outrank checked-out code, active specs, tests, or runtime evidence. Installing a Git hook changes local repository behavior, so use `graph hook status` freely but run `graph hook install` only when the repo/user policy allows it.
+
+For AX native-xref recall work, keep raw/derived evidence durable but local by default. Use `xref-normalize --out <target>/.code-review/artifacts/xref/<scope>.refs.csv --run-log <target>/.code-review/artifacts/xref/xref-normalize.jsonl` instead of `/tmp` when a result should be reused by later agents. Store graph-edge dumps under the same ignored artifact root. A large reusable target graph, such as giant-ax's `/home/user/projects/giant-ax/.code-review/graph.sqlite`, should be shared only by a target-repo decision using an exact GitLab/Git LFS path or equivalent artifact store; do not casually commit generated SQLite/vector/session/log siblings.
+
+When the same target repo repeatedly needs repo-specific graph bootstrap commands, durable `.code-review` snapshot rules, or trigger policy, recommend a repo-constitution update such as `AGENTS.md`, Kiro steering, or `CLAUDE.md`. The recommendation should name the concrete command and authority boundary to add. Do not silently edit those files unless the user explicitly authorized target-repo governance changes in the current task.
 
 ## Hallucination And Safety
 

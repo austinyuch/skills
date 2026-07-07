@@ -51,6 +51,41 @@ Use this skill to turn a vague “check security” request into a focused revie
 - `assets/examples/pr-code-review.md` — worked pull-request review with evidence and review comments.
 - `assets/examples/threat-model-assume-breach.md` — compact threat model using assume-breach posture.
 
+## Automated evidence layer (review-cli security)
+
+This skill routes and judges; it does not hand-run scanners. When the code-review family is
+published to this home, feed it deterministic evidence from the review-cli `security` command
+family (Spec #107 `local-devsecops-hardening`) and fold the findings into the lanes above:
+
+- `review-cli security audit --target <dir>` — DevSecOps posture gap inventory (SAST, secret,
+  dependency-vuln, SBOM, signing, OWASP-LLM agent-safety) → `references/infrastructure-supply-chain.md`.
+- `review-cli security scan --target <dir> [--delegate]` — multi-language SAST + secret +
+  dependency-vuln + SBOM; `--delegate` routes to the aclab-middlewares security-stack (`sectool` →
+  Dependency-Track/DefectDojo) when reachable, else local tools → the language + supply-chain lanes.
+- `review-cli security grounding --transcript <f>` — OWASP-LLM content-safety + hallucination gate
+  (fabricated refs LLM09, secret leakage LLM06, prompt-injection LLM01) → `references/ai-agent-mcp.md`.
+  Install as a Stop-hook on any agent: `review-cli security grounding --emit-hook <claude|codex|kiro|opencode>`
+  prints the ready-to-install config (Claude/Codex = JSON Stop hook; Kiro = hooks.stop; opencode = session.idle JS plugin).
+  To install it automatically (safe merge + backup + idempotent) run `python3 scripts/install_grounding_hooks.py --agent all`.
+
+These are **evidence, not verdict** — this skill (and the change's own review) keep authority. Absent
+tools degrade honestly (`tool-unavailable` / `local-fallback`); record that, never silent-skip.
+
+## Complementary persona: gstack CSO
+
+For periodic, org-wide, infrastructure-first security-officer audits (secrets archaeology, supply
+chain, CI/CD, skill supply-chain scanning, OWASP + STRIDE, daily/comprehensive modes, trend tracking),
+compose with the **gstack `cso`** skill (https://github.com/garrytan/gstack) when installed. Division
+of labour: this `security-review` skill is the **per-change trust-boundary reviewer**; `cso` is the
+**periodic whole-system audit persona**. Both consume the same review-cli `security` evidence above.
+Route the monthly deep pass to `cso`; do not duplicate its workflow here.
+
+## Maintenance / provenance
+
+This skill is **repo-owned** by `aclab-code-review-private` (`.agents/specs/local-devsecops-hardening`,
+Spec #107) and published to the global skill homes as a code-review **companion** via
+`scripts/publish_code_review_skill.py`. Edit it here (the source of truth), not in a global home.
+
 ## Minimum output contract
 
 Return a review that is specific to the changed trust boundaries, not a generic wall of bullets.

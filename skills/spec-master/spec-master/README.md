@@ -6,7 +6,7 @@ This README is designed as a packageable explanation and sales brief. It should 
 
 ## One-Line Value Proposition
 
-Spec Master gives coding agents one governed operating model for routing work, writing specs, refreshing registries, managing test evidence, holding unresolved issues, and allocating local runtime resources without confusing those responsibilities. The value is not abstraction for its own sake; it is reducing misroutes, stale evidence, and ownership drift on real multi-agent repos.
+Spec Master gives coding agents one governed operating model for routing work, writing specs, refreshing registries, managing test evidence, holding unresolved issues, maintaining project-level architecture steering, and allocating local runtime resources without confusing those responsibilities. The value is not abstraction for its own sake; it is reducing misroutes, stale evidence, and ownership drift on real multi-agent repos.
 
 ## First Principles
 
@@ -101,6 +101,7 @@ Responsible AI 在本家族中不是另開一套抽象倫理口號，而是把�
 - If `spec-master` and `spec-driven-development` are merged, the router starts acting like the spec author, and intake cost rises because every ambiguous request now drags a full workflow with it.
 - If `spec-registry-manager` and `test-registry-manager` are merged, registry wording and test evidence start sharing one authority model, which makes stale evidence harder to spot.
 - If `issue-log-manager` and `local-infra-registry-governance` are merged, unresolved work and runtime allocation get mixed together, which hides whether a problem is a planning gap or an operations gap.
+- If `system-architect` is merged into `spec-driven-development` or `project-review-skill`, project-level architecture steering starts competing with branch-spec `design.md` or executive narrative, and stale diagrams can become accidental readiness claims.
 
 The practical loss is not abstract: merged skills create more reroutes, more false confidence, and more backtracking when a repo grows beyond one owner’s head.
 
@@ -113,7 +114,7 @@ Large projects usually fail at coordination before they fail at syntax. Common f
 - Test summaries stay green while the underlying evidence is stale, so confidence rises faster than signal.
 - Follow-up issues become informal memory instead of governed work, which means the same gap gets rediscovered.
 - Runtime ports, local stacks, and demo state leak into spec or registry files, creating false authority.
-- Stakeholder-facing manuals and reviews overstate what the evidence proves, which hurts adoption and reuse.
+- Stakeholder-facing manuals, reviews, and architecture steering overstate what the evidence proves, which hurts adoption and reuse.
 
 The Spec Master family separates those responsibilities and reconnects them through explicit handoffs. Each subskill exists because one kind of drift needs one kind of owner, not because we wanted a larger menu.
 
@@ -127,6 +128,7 @@ The Spec Master family separates those responsibilities and reconnects them thro
 | `test-registry-manager` | `TESTS.md` catalog, traceability, freshness, and rollup governance | Folder-level `TESTS.md` first | Test evidence ages differently from spec text and must be maintained separately |
 | `issue-log-manager` | Holding surface for unresolved improvements without safe ownership yet | `.agents/specs/ISSUE_LOG.md` | Prevents half-owned gaps from becoming accidental specs |
 | `local-infra-registry-governance` | Local dev / UAT / E2E runtime allocation, reuse, release, and reconciliation | Local infra registry | Runtime state changes live outside spec governance |
+| `system-architect` | Cross-spec project architecture steering inspired by Kiro foundational steering, `.agents/steering/{product,tech,structure}` markdown/HTML, and code-review context packets | Accepted specs, reviews, code evidence, and steering docs | Architecture communication spans specs and should not be hidden inside one branch `design.md` or stakeholder review |
 | `shared-governance` | Reusable git/worktree, ownership, and derived-artifact guardrails | Shared governance references | Shared guardrails must apply across families, not sit inside one workflow |
 
 ## Operating Model
@@ -140,9 +142,10 @@ Typical routing:
 - `TESTS.md` rows, stale evidence, duplicate IDs, test traceability -> `test-registry-manager`
 - Known issue, retro finding, tech debt, or repeated gap without a safe owner -> `issue-log-manager`
 - Local backend/frontend/database/UAT/E2E allocation or reuse -> `local-infra-registry-governance`
+- Project-level architecture steering, `.agents/steering/{product,tech,structure}` markdown/HTML, stale architecture review, or code-review Architecture Context Packet -> `system-architect`
 - Cross-lane git/worktree ownership and writeback safety -> `shared-governance`
 
-Why this split helps: teams stop paying the cost of one agent rewriting another agent's authority surface. A routing skill is cheaper to maintain than a monolithic workflow, and it makes the downstream contract more legible when the same repo has specs, tests, runtime state, and review evidence in play.
+Why this split helps: teams stop paying the cost of one agent rewriting another agent's authority surface. A routing skill is cheaper to maintain than a monolithic workflow, and it makes the downstream contract more legible when the same repo has specs, tests, runtime state, architecture steering, and review evidence in play.
 
 The rule is simple: route by authority surface, not by whichever file was mentioned first.
 
@@ -150,7 +153,7 @@ The rule is simple: route by authority surface, not by whichever file was mentio
 
 Use `spec-master` when:
 
-- a request touches specs, registries, tests, issue holding, runtime allocation, or shared governance and the owner is unclear
+- a request touches specs, registries, tests, issue holding, architecture steering, runtime allocation, or shared governance and the owner is unclear
 - the task is routing work to the right downstream skill before any file is edited
 - the repo needs a stable front door for governance work across multiple agents
 
@@ -182,7 +185,7 @@ For teams using multiple coding agents, the hardest problem is often not generat
 
 The family combines spec-driven delivery, stable registry reconciliation, test catalog governance, unresolved issue holding, runtime allocation boundaries, and shared worktree guardrails. The result is a workflow that favors working software and honest evidence over polished but unverified summaries.
 
-Spec Master is available as a packageable global skill family rooted at `skills/spec-master/`. `spec-master` is the single package root and front door; the downstream skills — including `spec-driven-development`, which ships its own brief as the family's delivery sub-skill rather than a separate product — are individual sibling skills expected to be installed alongside it under the same `skills/` home. There is no separate dependency manifest; each sibling is its own installable skill folder.
+Spec Master is available as a packageable global skill family rooted at `skills/spec-master/`. `spec-master` is the single package root and front door; the downstream skills — including `spec-driven-development` for branch-spec delivery and `system-architect` for project-level architecture steering — are individual sibling skills expected to be installed alongside it under the same `skills/` home. There is no separate dependency manifest; each sibling is its own installable skill folder.
 
 ## FAQ
 
@@ -206,6 +209,10 @@ Because unresolved work is a different economic problem from approved spec work.
 
 Because runtime allocation is an operational resource problem, not a documentation problem. Keeping it separate prevents ports, stacks, and demo environments from masquerading as spec truth.
 
+### Why is `system-architect` separate?
+
+Because project-level architecture steering cuts across multiple specs. Inspired by Kiro's foundational steering split, it reconciles accepted `design.md`, `review.md`, code evidence, and code-review context into `.agents/steering/product.md`, `tech.md`, and `structure.md` plus same-name HTML without turning those steering files into branch-spec authority or readiness verdicts.
+
 ### Does this replace human review?
 
 No. It improves traceability and handoff discipline. Final readiness and acceptance still belong to review artifacts such as `review.md` and to the team’s governance process.
@@ -216,7 +223,7 @@ It caps claims by evidence source, keeps `review.md` as readiness authority, pre
 
 ### How should this be packaged?
 
-Package `skills/spec-master/` as the front-door artifact and include the companion family skills listed above. This README and `GENERATION_GUIDE.md` are the customer-facing explanation and maintenance contract.
+Package `skills/spec-master/` as the front-door artifact and include the core family skills listed above, including `system-architect`. This README and `GENERATION_GUIDE.md` are the customer-facing explanation and maintenance contract.
 
 ## Evidence And Claim Boundary
 

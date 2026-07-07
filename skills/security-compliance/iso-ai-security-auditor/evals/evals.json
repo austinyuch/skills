@@ -1,0 +1,47 @@
+{
+  "skill_name": "iso-ai-security-auditor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use iso-ai-security-auditor to review a repository that has README, GitHub Actions dependency scanning, Auth0 login, no supplied organization policies, and a small RAG feature. Produce an internal audit inventory, separating repo evidence from missing organization evidence.",
+      "expected_output": "A structured audit inventory that marks management-system evidence as missing-evidence, records Auth0 as an external-control dependency only if owner/evidence are named, and includes AI/RAG data provenance and evaluation gaps.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Use iso-ai-security-auditor to prepare questions before auditing an AI SaaS repo. The user has not provided risk registers, AI policy, supplier contracts, or model evaluation reports.",
+      "expected_output": "A concise intake request for organization documents and repo path, with no premature compliance verdict.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Use iso-ai-security-auditor against a codebase where all authentication, logging, vulnerability scanning, and model hosting are outsourced to named providers. Explain how to classify those controls.",
+      "expected_output": "External controls are classified as external-implemented only when owner, system, interface, and evidence are present; otherwise they are missing-evidence or partial.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Use iso-ai-security-auditor for an AI SaaS that serves EU users, Taiwan users, and Colorado consumers, but has no compliance documents. Build a conservative initial audit baseline.",
+      "expected_output": "The output includes EU AI Act, GDPR, Taiwan PDPA/cybersecurity, and Colorado AI Act lenses as assumed-baseline or official-source-needed rows, and does not claim legal compliance.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Use iso-ai-security-auditor for a US-facing SaaS that stores names, emails, precise geolocation, health notes, student records, and payment-related identifiers. No privacy documents are supplied.",
+      "expected_output": "The output creates a PII/personal-data inventory, applies assumed-baseline rows for state privacy and sector overlays such as CCPA/CPRA, Colorado Privacy Act, HIPAA, FERPA, GLBA/COPPA/FCRA if triggered, and keeps implementation evidence as missing-evidence.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Use iso-ai-security-auditor for a generative AI RAG agent that has prompt-injection tests in the repo but no organization AI risk framework, no model evaluation report, and no AI incident thresholds. Include NIST AI requirements.",
+      "expected_output": "The output treats NIST AI RMF and NIST AI 600-1 as framework/profile baselines, not legal mandates by themselves, and includes Govern/Map/Measure/Manage plus GenAI profile rows with repo evidence separated from missing organization evidence.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Use iso-ai-security-auditor for a Taiwan-registered organization that is both a manufacturer marketing globally and an information-service provider. It is not listed in the United States. No organization compliance documents are supplied. Include AI, cybersec, PII, and log-related law triggers.",
+      "expected_output": "The output applies Taiwan PDPA and Taiwan cybersecurity trigger checks by default, adds conditional global marketing and information-service lenses such as GDPR/ePrivacy, EU AI Act, CRA, NIS2, DSA, Data Act, CCPA/CPRA, Colorado Privacy/AI, FTC privacy/security, and China triggers where facts support them, treats SEC/SOX as not-applicable or watch-list because the organization is not US-listed, and includes a log governance inventory for PII/secrets, retention, access, integrity, incident evidence, and AI operation logs.",
+      "files": []
+    }
+  ]
+}

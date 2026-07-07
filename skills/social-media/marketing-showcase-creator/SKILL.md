@@ -1,6 +1,6 @@
 ---
 name: marketing-showcase-creator
-description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷導向的 showcase / demo 站台內容（公開首頁、landing、產品 demo 站、範例租戶），含明確的 value proposition、Amazon Working-Backwards PR/FAQ、與 gstack CEO/founder viewpoint 觀點陳述。當使用者說「強化 showcase」「showcase 要更行銷」「demo 站要 value-driven」「給潛在客戶看的內容」「公開首頁太工程味/太技術」「marketing copy」「landing page 文案」「把 demo 站寫得更有賣點」「value proposition」「價值主張」「working backwards / 未來新聞稿 / PR FAQ」「用 CEO 觀點陳述定位」「我們的範例站要能轉換」，或任何把面向潛在使用者的公開展示頁從內部/工程口吻改寫成 benefit-led、可轉換的行銷內容時，都應啟動此 skill——即使使用者沒有說出「行銷」二字。注意 audience 區分：本 skill 服務「潛在使用者」(showcase)；若要產出給「高階管理者/operator/評估者」看的 review/簡報，改用 project-review-skill。
+description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷導向的 showcase / demo 站台內容（公開首頁、landing、產品 demo 站、範例租戶），含明確的 value proposition、Amazon Working-Backwards PR/FAQ、與 gstack CEO/founder viewpoint 觀點陳述，並輸出可交付的 showcase 檔案（markdown 草稿 + GENERATION_GUIDE.md 生成備忘 + 中英雙語同頁 HTML + 可列印 PDF 傳單 + 可寄 email 的 zip 打包）。當使用者說「強化 showcase」「showcase 要更行銷」「demo 站要 value-driven」「給潛在客戶看的內容」「公開首頁太工程味/太技術」「marketing copy」「landing page 文案」「把 demo 站寫得更有賣點」「value proposition」「價值主張」「working backwards / 未來新聞稿 / PR FAQ」「用 CEO 觀點陳述定位」「我們的範例站要能轉換」「showcase 要雙語 / 中英雙語 / bilingual」「列印成 PDF 傳單 / print friendly」「showcase 列印會失蹤 / 印出來跑版 / 背景不見」「加上 manual / review 連結按鈕」「打包 showcase / manual / review 成 zip 寄 email」，或任何把面向潛在使用者的公開展示頁從內部/工程口吻改寫成 benefit-led、可轉換的行銷內容時，都應啟動此 skill——即使使用者沒有說出「行銷」二字。注意 audience 區分：本 skill 服務「潛在使用者」(showcase)；若要產出給「高階管理者/operator/評估者」看的 review/簡報，改用 project-review-skill。
 ---
 
 # Marketing Showcase Creator — 面向潛在使用者的 value-driven showcase 生成器
@@ -21,9 +21,11 @@ description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷
 
 > 與 `project-review-skill` 的關係：兩者都會用到 value proposition、Amazon Working-Backwards PR/FAQ、與 gstack CEO/founder lens——但**目的不同**。project-review 把它們寫成給 operator/管理者的**評估文件**（含 claim-cap、bet map、decision memo）；本 skill 把它們當成**萃取公開行銷文案的策略骨架**，最後輸出 benefit-led 的潛在使用者頁面（外加可選的 positioning brief）。
 
-## Workflow（Inversion → Sharpen → Generator → Reviewer）
+## Workflow（Inversion → Sharpen → Generator → Reviewer → Build & Package）
 
-四階段：先問清楚定位（沒問清楚就會白寫），再用 value-prop / PR-FAQ / CEO viewpoint 把價值想尖，再產出 value-driven 文案，最後做 jargon sweep 並**對著上線後的實際畫面驗證**。
+五階段：先問清楚定位（沒問清楚就會白寫），再用 value-prop / PR-FAQ / CEO viewpoint 把價值想尖，再產出 value-driven 文案（**先落成 markdown 草稿**再進 HTML），接著做 jargon sweep 並**對著上線後的實際畫面驗證**，最後把它 build 成可交付的產物——**中英雙語同頁、可列印成 PDF 傳單、（若專案有 manual / review）附快速參照連結、並可打包成 zip 寄 email**。Phase 1–4 決定「寫什麼」，Phase 5 決定「交付成什麼」。
+
+先判斷這次是 **full regeneration** 還是 **print-only patch**。使用者說「重新產生 / regenerate / 用 showcase 產生 / 以 template 為主 / 正常美觀的 HTML」時，預設是 full regeneration：重新產出 screen-first、template-first 的正常 showcase（hero、visual proof、benefit flow、CTA、manual/review links、雙語文案、草稿與 guide），print-friendly 只作為替代輸出能力。只有使用者明確說「只修 print / 補 print-friendly / 列印跑版」時，才把工作限制為既有 template 的 additive print patch。這個分流很重要：不要把「重生成 showcase」誤做成只補一個 Print 按鈕或把整頁降級成紙本版。
 
 ### Phase 1 — Positioning gate（先問，再寫）
 
@@ -55,6 +57,8 @@ description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷
 
 載入 `references/value-copy-guide.md` 取得**語氣、版面上下順序（conversion 敘事流）、與各區塊配方**，並把 Phase 2 的骨架落地。
 
+**先落成 markdown 草稿，再進 HTML。** 生成順序是「文案 SSOT → HTML」：先把每個 section 的雙語文案寫成 `SHOWCASE_DRAFT.md`（讓使用者能先審一份好讀的草稿、也讓後續重生成有 source of truth），確認後再依草稿組出 HTML。草稿與 HTML 的形狀、雙語配對、以及交付產物細節見 Phase 5 與 `references/build-and-package.md`。
+
 **先定上下順序，再填內容。** 公開頁是一條由上而下的說服路徑——預設用敘事弧排列 sections：Hero → 痛點/現況 → 核心價值(3 benefits) → 社會證明/outcome stats → how-it-works → 次級功能/垂直範例 → 信任 → Final CTA（與 hero 同一個主要轉換）。這是原則不是死模板，可依專案合併增刪；重排既有頁只是重排 sections 陣列 = data-only，不需重建。細節與各位置理由見 value-copy-guide「版面上下順序」。
 
 核心原則：
@@ -78,6 +82,22 @@ description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷
 
 通過條件：所有受眾頁面的 live HTML 對禁用詞清單**零命中**，且每個 CTA 的 href 正確解析、無寫死網域。
 
+### Phase 5 — Build & Package（把文案交付成可用的產物）
+
+載入 `references/build-and-package.md` 取得完整的檔案佈局、雙語模板、連結偵測、print CSS 與打包步驟。這一階段把 Phase 3 的草稿變成潛在客戶手上真的能用、能列印、能寄出的東西。五件交付物：
+
+1. **markdown 草稿 + 生成備忘。** 一律產出兩份可讀的伴生文件：`SHOWCASE_DRAFT.md`（雙語文案 SSOT，Phase 3 已起草）與 `GENERATION_GUIDE.md`（**生成備忘**——記下這份 showcase 的內容來源、品牌規則、雙語 / 連結 / 列印慣例、section 順序、與逐步重生成步驟）。目的：讓下一次更新是「照 guide 重生成」而非「憑印象重寫」，並讓非作者也能維護。
+
+2. **中英雙語同頁 HTML（English + 繁體中文）。** 兩種語言寫在**同一份 HTML**，用成對 `.lang-en` / `.lang-zh` 節點 + 一個 toggle 切換（記住偏好），不要拆成兩個檔或兩個站。預設語言依專案主要語言。務必**雙語成對、數量一致**（漏配對就會有一語缺字）。模板見 reference。
+
+3. **manual / review 快速參照連結（條件式）。** 若專案存在 `docs/manual/**/*.html` 或 `docs/review/**/*.html`，在 showcase 內加**連結按鈕**（nav 或 footer 的 resources 區）指向它們，方便潛在客戶 / 評估者一鍵跳去看操作手冊或 review；用相對路徑、雙語標籤。**只有檔案真的存在才加**——偵測不到就不放死連結。
+
+4. **Print-friendly（可快速印成 PDF 傳單）。** 這是**附加能力，不是替換版型**：既有 showcase 的 screen UI、section 結構、class、品牌樣式與 `ui-skill` 產出的渲染成果必須保留；只在既有 nav/header/action 區補上一個可見的 **Print** 按鈕（`type="button"`、`onclick="printShowcase()"` 或等價 listener、可鍵盤操作、雙語標籤），並只把 `assets/showcase-print.css` 的 `@media print` 區塊 append / inline 到頁面樣式。**print-friendly 的重點是列印對比不失敗、文字不消失，不是 remove all styles。** 不要把 reference 裡的 nav 範例拿去覆蓋原本 HTML template，也不要把列印對比修正套到 screen CSS。最常見的 print bug：深色 section（hero / stats / dark / CTA）用白字配深色背景，瀏覽器列印時預設不印背景色 → 白字落在白紙上「整段失蹤」。修法要同時做到兩件事：保留 `print-color-adjust:exact` 作為防消失保險，並在 `@media print` 內**針對暗底/高風險區塊做 scoped contrast repair**（近似 WCAG AA/AAA 對比），不要清掉所有卡片、grid、hero、brand styling；另外把 sticky nav 改 static、隱藏 toggle/print button 等互動 chrome、卡片 `break-inside:avoid`、只印目前語言。改完必須跑 **agent skill-based visual regression loop**：先截 screen baseline，再跑 `check_showcase_contract.py`，再跑 `check_showcase_print_visual.py` 產生 screen/print screenshots + contrast report，由 agent 讀圖檢查；若 contrast/report/screenshot 任一失敗，修改 CSS/HTML 後重跑，直到通過。最後再實際列印 / 匯出 PDF 目視驗證沒有失蹤段落、沒有低對比文字、沒有互動按鈕殘留，且螢幕版除新增 Print control 外沒有被重排/降級。
+
+   這裡有一個容易漏掉的雙語 print bug：screen toggle 依賴 `.lang-zh` / `.lang-en` 的 `hidden` 屬性，print CSS 若寫了很廣的 `span { color: ... }` 或重排規則，某些瀏覽器匯出 PDF 時可能讓另一語言露出。生成或修正任何 showcase 時，CSS 需包含全域或 print-scoped 的 `[hidden]{display:none!important}`（可加 `.lang-zh[hidden], .lang-en[hidden]`），並在 PDF 第一頁目視確認不會同時出現中英文。
+
+5. **可寄 email 的 zip 打包。** 用 `scripts/check_showcase_contract.py docs/showcase/index.html` 先做結構檢查（Print button、`window.print()` handler、雙語配對、print CSS 防消失與高對比規則），再用 `scripts/package_showcase.py` 把 showcase（含 manual / review，若存在）打包成單一 zip，方便當附件快速提供給潛在客戶。script 會挑選 html/css/js/圖片/md、印出 manifest。
+
 ## 反模式（不要做）
 
 - 不要把 showcase 寫成 feature list / spec dump（那是 review 的事）。
@@ -88,6 +108,13 @@ description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷
 - 不要隨機堆疊 section；依敘事弧排上下順序，proof/stats 不要落在頁尾沒人看到，Final CTA 要與 hero 一致。
 - 不要捏造假數據 / 假見證；行銷可 aspirational，但 proof 要誠實。
 - 不要把 PR/FAQ 的內部 FAQ、CEO viewpoint 的 kill-assumption 放進公開頁。
+- 不要把雙語拆成兩個 HTML / 兩個站；用同頁 `.lang-en` / `.lang-zh` 成對節點 + toggle。也不要只翻一半——成對節點數量要一致，否則切語言會缺字。
+- 不要交出沒有 Print 按鈕與 `@media print` 的 showcase：深色背景 + 白字在列印時會整段失蹤（背景被丟棄），而且使用者不一定知道怎麼匯出 PDF。加上 print CSS 後要跑 agent visual regression 修改循環與實際印 / 匯出 PDF 目視驗證，不能只看螢幕就宣稱可列印；紙面版應優先修正 contrast/readability，避免靠顏色或背景圖傳達資訊，但不要移除所有 screen styles。
+- 不要為了 print-friendly 重寫或覆蓋原本 HTML template / screen UI。Print-friendly 是「加按鈕 + 加 print-only CSS + 加 handler」；不是把 showcase 改成列印版、不是用 reference 範例 nav 取代既有 nav、也不是把 `ui-skill` 產出的 hero/card/grid/visual styling 清掉。
+- 不要把「重新產生 showcase」縮小成 print-friendly 修補。重生成代表正常螢幕版要重新成立：template-first 的 hero、visual sections、benefit story、CTA、真實 screenshots/assets、雙語草稿與 guide 都要更新；print-friendly 只是同一份 HTML 的 alternative function。
+- 不要讓 print CSS 的廣泛文字規則把另一語言印出來；`[hidden]` 必須在 screen 與 print 下都硬隱藏，PDF 目視要檢查只印目前語言。
+- 不要對不存在的 `docs/manual` / `docs/review` 放死連結；先偵測檔案存在再加按鈕。
+- 不要跳過 `SHOWCASE_DRAFT.md` / `GENERATION_GUIDE.md` 直接生 HTML——少了草稿 SSOT 與生成備忘，下一次更新只能憑印象重寫。
 - 不要把「信念 / 為何」升級成第四個具名框架。它是刻意隱性內建在 hero 變體與 Problem 段的受眾分支（讓使命型受眾的「為何」鋪到 outcome 之前）；本 skill 已引用夠多 value-driven 框架，再加具名框架只會變大雜燴。維護時用 skill 既有詞彙（信念 / 立場、為何、value message），不要寫出新框架名或新增 attribution。
 
 ## Bundled references
@@ -95,6 +122,14 @@ description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷
 - `references/value-prop-prfaq-ceo.md` — Sharpen：value proposition canvas + Amazon Working-Backwards PR/FAQ 模板 + gstack CEO/founder viewpoint lens（含 attribution）。
 - `references/value-copy-guide.md` — Generator：語氣、結構、各 section（hero / feature grid / stats / CTA / 內頁）的 value-driven 配方與 before→after 範例。
 - `references/jargon-sweep-checklist.md` — Reviewer：禁用內部詞彙清單、逐層掃描順序、live-render 驗證步驟、jargon→value 翻譯對照表。
+- `references/build-and-package.md` — Build & Package：交付檔案佈局、`SHOWCASE_DRAFT.md` / `GENERATION_GUIDE.md` 形狀、雙語同頁模板、manual/review 連結偵測、Print 按鈕、print-proof 根因與高對比修法、zip 打包。
+
+## Bundled assets / scripts
+
+- `assets/showcase-print.css` — 可直接納入的 `@media print` 區塊；修掉「深色 section 白字在列印時失蹤」的 bug（`print-color-adjust:exact` + scoped contrast repair）、un-stick nav、隱藏互動 chrome（含 Print 按鈕）、卡片分頁控制、只印目前語言。
+- `scripts/check_showcase_contract.py` — 對生成後的 showcase HTML/CSS/JS 做結構檢查：Print button、`window.print()` handler、雙語配對、`@media print`、`print-color-adjust:exact`、紙面高對比規則。內建 `--self-test`。
+- `scripts/check_showcase_print_visual.py` — 用 Playwright 對 showcase 跑 screen + print media 截圖，輸出 `screen-*.png` / `print-*.png` / `report.json`，並在 print media 下量測 WCAG contrast；失敗時修 CSS/HTML 後重跑。
+- `scripts/package_showcase.py` — 把 `docs/showcase`（含 `docs/manual` / `docs/review`，若存在）打包成可寄 email 的 zip，並印出 manifest。跨平台（純 Python，無第三方依賴）。
 
 ## Attribution
 

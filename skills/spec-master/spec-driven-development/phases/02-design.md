@@ -31,6 +31,10 @@
    - **Deep module / seam 介面品質**：用 deletion test、interface-as-test-surface、seam 放置（用最高 seam、越少越好）、one-vs-two-adapter 判斷介面形狀；與 contract-first SSOT 互補，不取代 `contract/`。
    - **輕量 domain modeling（術語治理）**：對模糊/重疊術語挑一個 canonical 詞（opinionated，被拒詞列 `_Avoid_`）；只有「難回退 + 會讓人意外 + 有真實取捨」三條件全中時，才寫一段 ADR。詞彙表與既有 warning-code taxonomy 同屬統一治理、各司其職，單一入口見 [`references/terminology-governance.md`](../references/terminology-governance.md)。
    - **架構認知模式**：以 boring-by-default（創新額度）、reversibility、SPOF、essential-vs-accidental complexity、6-month future、what's-intentionally-not-here 等視角挑戰自己的設計。
+4.3 **(新增) System Architecture Document Lifecycle**：若 Phase 1 標示 architecture doc state 不是 `not_yet_required`，或本次設計變更 shared contract、module/service boundary、runtime/deployment topology、agent/tool boundary、auth/data trust boundary、或跨 spec communication pattern，必須讀取 [`references/system-architecture-lifecycle.md`](../references/system-architecture-lifecycle.md)。
+   - 在 `design.md` 加入 **System Architecture Documentation Impact** 小節，列出 markdown source、HTML presentation、architecture doc state、需要同步的 accepted design evidence。
+   - 只採用 SAA 的 good parts：Common User Access、Common Programming Interface、Common Communications Support、cross-platform consistency；不得引入重型 enterprise blueprint 或 big-upfront completeness。
+   - 若 repo 尚無 architecture docs 且本 slice 已有穩定 evidence，設計應建議建立 `docs/architecture.md` + `docs/architecture/index.html`；若 evidence 不足，明確標為 `not_yet_required`。
 5. 讀取最新的 `{workspace}/.agents/specs/NEXT_STEPS.md`（若存在），確認 current phase、候選 impacted specs、open CRs、以及上次 session 留下的 resume hint；若內容已過時，必須以 `SPECS.md` 與 active spec 文件校正。
 5.1 若本次設計涉及治理 artifacts、需求追溯、issue-log promotion / fold-back、RTM refresh、或 registry/test rollup，必須讀取 `../reference/SPEC_GOVERNANCE_ARTIFACTS_GUIDE.md`，並在 `design.md` 中明確說明本 spec 的 artifact authority model。
 6. 創建 `.agents/specs/{spec-directory}/design.md` 文件。文件開頭必須說明相關章節的引用參照。
@@ -55,6 +59,7 @@
    - **評估標準 (EDD)** - 依據需求定義此功能的成功標準。
    - **追溯參照 (Traceability References)** - 讓 workspace `RTM.md` 可以穩定聚合的 design identifiers / section refs。
    - **Governance Artifact Lifecycle** - 若本工作由 `ISSUE_LOG.md` promoted / folded 而來，或會影響 `NEXT_STEPS.md` / `TESTS.md` / `RTM.md` / `SPECS.md`，設計中必須寫清楚：哪個 artifact 是 upstream truth、哪些只是 derived rollup、何時刷新、何時不得寫入。
+   - **System Architecture Documentation Impact** - 若需要整體架構文件，聲明 markdown + HTML 目標、SAA good parts scope、agile/YAGNI 邊界、以及與 `design.md` / `review.md` 的 authority 分工。
 
 8. **相依與防漂移檢查 (Drift Prevention)**：
    - 在設計過程中，若發現需改動現有邏輯，必須在 `design.md` 中註明 `[Impacts: 舊spec名稱]`。
@@ -69,8 +74,9 @@
 12. 突出設計決策及其理由
 13. 在設計過程中可能就特定技術決策徵求您的意見
 14. 將研究發現直接整合到設計過程中
-14.1 若需要使用 `code-review` graph，請先執行 `index --status` 評估 freshness；若 graph stale，可背景更新，但不得阻塞設計
-14.2 graph 查詢 (`architecture`, `search-code`, `developer-routing`) 的結果只能作為 **design aid**，不得自動成為 truth
+14.1 **Graph Dogfooding Default（見樹又見林）**：對 non-trivial 設計（架構探索 / 影響分析 / 廣域 retrieval / spec handoff），`code-review` 的 code graph 是 **default context bootstrap**，不是可選加值。序列：先 preflight（tracked `.code-review/` snapshot 的 doctor 或 `index --status`）→ 若 stale 可背景更新（不得阻塞設計）→ 跑聚焦查詢。完整規範見 [`../reference/GRAPH_ASSISTED_PLANNING.md`](../reference/GRAPH_ASSISTED_PLANNING.md)。
+14.2 graph 查詢 (`architecture`, `impact`, `bounded-context`, `dependency-path`, `search-code --graph-only`, `developer-routing`) 的結果只能作為 **design aid**，不得自動成為 truth，也不得覆蓋 checked-out code / active spec / runtime proof。
+14.3 **Record-in-artifact**：若跑了 graph，`design.md` 至少要留下跑了哪些 query + 關鍵洞察 + `relation_coverage_status`（partial 要保守解讀）；若刻意**不**跑而改直接讀檔（見樹即可），也要一句話說明理由，不得無聲跳過。此紀錄是 derived note，不得反向覆寫 `SPECS.md` / `RTM.md` / `TESTS.md`。
 15. **(新增) 風險前移規劃 (FMEA-lite)**：若本 spec 容易出現「planned 被寫成 executed」「summary 比 source 更樂觀」「warning code 在聚合過程中遺失」「artifact 誤導 stakeholder」等 failure mode，必須在 `design.md` 中加入輕量 FMEA 表，而不是等到 review 階段才補救。
 15.1 若設計包含 `ISSUE_LOG.md`、`TESTS.md`、`SPECS.md`、`NEXT_STEPS.md`、`RTM.md` 等治理 artifact，必須明確定義 **Non-Cyclic Authority Model**，避免 derived artifact 互相回寫。
 15.2 `RTM.md` 的設計角色是 requirement traceability rollup。design 應提供穩定 section refs / contract refs，讓 RTM 能追 requirement → AC → design → tasks → tests → review，但不得要求 RTM 反向生成 design。

@@ -32,6 +32,10 @@
 9.1 若 design 定義了 `TESTS.md` / `SPECS.md` / `NEXT_STEPS.md` / `RTM.md` 的 authority boundary，任務中必須保留對應的 prevention / detection tasks，避免循環更新。
 9.2 若本次 spec 會新增、採用、重命名、淘汰、或重新驗證 tests，任務中必須包含 `TESTS.md` closeout / handoff 項；folder-level `TESTS.md` 的 row-level 更新可由 implementation 任務完成，但 workspace `.agents/specs/TESTS.md` 的 reconciliation / rollup refresh 應明確標註交由 `test-registry-manager` 執行，而不是在 task 中直接把 workspace rollup 當 row-level truth 修改。
 9.3 若 impacted baseline 由 `Open Change Requests` 承接，任務中必須包含 freshness / closure 任務，並檢查 critical test evidence 是否因該 CR 變更而失效或需要重新標記為 stale。
+9.4 若 `design.md` 的 **System Architecture Documentation Impact** 標示為 `needs_update`、`missing_but_required`、或 `stale_or_overclaiming`，任務中必須加入 architecture doc lifecycle 任務：
+    - 先更新 upstream truth（`requirements.md` / `design.md` / code evidence / `review.md`），再更新 markdown source（例如 `docs/architecture.md` 或既有等價路徑），最後更新 HTML presentation（例如 `docs/architecture/index.html`）。
+    - 任務需明確列出 `SAA good parts` scope 與 Agile/YAGNI boundary，避免把架構文件寫成 big-upfront blueprint。
+    - 若本 slice 只需要記錄 gap，任務應建立 follow-up / issue，而不是把 planned architecture 寫成 executed。
 10. 將功能設計轉換為一系列離散、可管理的編碼步驟，確保早期驗證核心功能。
 11. 只專注於涉及編寫、修改或測試程式碼的任務。
 12. **(新增) TDD 任務結構顯式化**：若本次任務採用 TDD/EDD，任務規劃不得只寫「寫測試」與「實作功能」；必須明確決定 REFRACTOR 如何被追蹤。
@@ -69,6 +73,7 @@
 - `RTM.md` 不得承擔 task-counter、execution ordering、resume ownership、或 per-task progress authority；這些資訊的真相來源仍是 `{spec-directory}/tasks.md`、reports、與 `review.md`。
 - `tasks.md` 只負責鏡射 `requirements.md` / `design.md` 已宣告的 repo-local vs external 邊界，不得在任務層自行發明 handoff lane、把 external execution 改寫成 local action、或反向取代 branch-spec 治理判定。
 - 若 design 宣告了 `TESTS.md` / `SPECS.md` / `RTM.md` 的治理模型，任務若更新這些 artifact，必須遵守 one-way non-cyclic rollup：先更新 upstream authority，再由單次 snapshot 更新 derived outputs。
+- 若 design 宣告 architecture markdown + HTML 文件，任務必須維持 source-first：markdown source 是 human-editable source；HTML 是 presentation snapshot。不得用 HTML 反向改寫 `design.md`、`review.md`、`RTM.md` 或 requirements。
 - 若任務會跨 `TESTS.md` / `SPECS.md` / `RTM.md` 進行摘要寫回，必須依 `../../shared-governance/references/cross-artifact-regeneration-order.md` 明確指定 regenerate 順序，不得在任務中留下含糊的「之後再同步」描述。
 - 禁止 derived-to-derived sync（例如從 `SPECS.md` 回填 `RTM.md`，或從 `RTM.md` 回填 `TESTS.md`）。
 - 若需要使用 graph 輔助規劃，必須明確標示其為 enhancement，不得將 graph 結果描述成 authority truth。

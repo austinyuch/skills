@@ -11,7 +11,7 @@ REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 MANIFEST="$REPO_ROOT/skills-manifest.json"
 SOURCE="$REPO_ROOT/skills"
 
-CLI_REPO="austinyuch/skills"; CLI_TAG="review-cli-v0.11.0"
+CLI_REPO="austinyuch/skills"; CLI_TAG="review-cli-v0.15.0"
 AGENT="opencode"; WITH_CLI=0
 for a in "$@"; do
   case "$a" in

@@ -68,6 +68,340 @@
         "The response includes skills/spec-master/README.md and skills/spec-master/GENERATION_GUIDE.md.",
         "The response does not claim consuming repositories are production-ready or live-demo validated."
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "With spec-master, run Loop Engineering Intake for UAT / production-ready readiness. Decompose the request into route lanes, rank by current evidence, and start with the first safe lane. Focus on reducing mock-heavy / false-green / over-state, and keep runtime, docs, RTM/SPECS/NEXT_STEPS, and commit/push behind their proper authority surfaces.",
+      "expected_output": "The skill treats this as a route macro, decomposes the request into bounded lanes, and does not start implementation before authority surfaces and the first safe lane are clear.",
+      "files": [],
+      "expectations": [
+        "The response identifies Loop Engineering Intake as a route macro or intake pattern, not a new SDD Execution Profile.",
+        "The response includes multiple lanes such as next-gap-ranking, readiness-hardening, manual-review-refresh, runtime-e2e-vrt, and closeout-publish.",
+        "The response names authority surfaces for each lane, including SPECS.md, NEXT_STEPS.md, ISSUE_LOG.md, review.md, RTM.md, local infra registry, and git diff where relevant.",
+        "The response routes runtime setup or E2E prerequisites to local-infra-registry-governance instead of guessing ports or compose ownership.",
+        "The response treats commit/push as bounded closeout after verification, not as an immediate action."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "請根據 NEXT_STEPS.md 繼續目前的 spec，但 SPECS.md 顯示該 spec 已 Completed，review.md 也顯示 repo-side closure completed。請用 spec-master 判斷下一步，不要直接開新 spec。",
+      "expected_output": "The skill detects stale resume state, reconciles NEXT_STEPS.md against SPECS.md and spec-local closure artifacts, and avoids continuing obsolete implementation work.",
+      "files": [],
+      "expectations": [
+        "The response reads or explicitly requires SPECS.md, NEXT_STEPS.md, and the active spec-local review.md or tasks.md before selecting a continuation lane.",
+        "The response treats NEXT_STEPS.md as a rolling memo rather than sole authority.",
+        "The response identifies stale-state drift when SPECS.md and review.md show closure but NEXT_STEPS.md implies pending work.",
+        "The response routes to drift reconciliation or memo refresh before implementation.",
+        "The response avoids opening a new spec unless owner resolution proves no existing lane applies."
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "用 spec-master 將這些 issues、功能、修正、gaps、tech debts 選擇適合的 proper spec 追蹤；若無適合合併的 spec，請新建立 spec。這些項目同時包含 review rejection、mock-heavy evidence、manual/review 更新、RTM 盤點、E2E/VRT、以及最後 git commit and push。",
+      "expected_output": "The skill performs owner resolution first, splits mixed concerns into lanes, and only recommends new spec creation after checking active specs, completed-baseline CRs, lessons, and ISSUE_LOG.md.",
+      "files": [],
+      "expectations": [
+        "The response applies improvement classification before recommending a new spec.",
+        "The response distinguishes active spec continuation, completed-baseline CR overlay, spec-local lesson, issue log, and new spec.",
+        "The response does not treat ISSUE_LOG.md as a second SPECS.md or automatic new-spec queue.",
+        "The response splits manual/review, RTM, E2E/VRT, and commit/push concerns into routed lanes.",
+        "The response keeps git commit/push behind verification and dirty-worktree scope checks."
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "E2E 執行前需要先啟動 backend and frontend podman compose rootlessly with new image。也請給我前後端服務啟動腳本，我來啟動，然後我要手動確認。請用 spec-master 判斷路由。",
+      "expected_output": "The skill recognizes runtime governance and human-operated runtime handoff as the immediate lane, routes to local-infra-registry-governance, and does not silently start services.",
+      "files": [],
+      "expectations": [
+        "The response routes runtime allocation or reuse to local-infra-registry-governance.",
+        "The response distinguishes 'give me startup scripts' from 'start services now'.",
+        "The response does not guess ports, stack names, volume paths, or compose ownership.",
+        "The response separates runtime readiness evidence from SDD implementation readiness.",
+        "The response identifies the evidence needed before E2E or VRT can run."
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "請讓這套 Loop Engineering Intake 同時能給 Codex、Claude Code、OpenCode 使用；不要依賴 hooks、plugins、subagents 或 MCP，除非只是 optional adapter。若需要 native reviewer，優先使用 Claude Code sub-agent，不要用 OpenCode run 來跑 action-shaped eval。請用 spec-master 判斷如何落地。",
+      "expected_output": "The skill treats Markdown reference, route table, authority surfaces, evals, and file-backed handoff as the portable core, prefers Claude Code read-only sub-agent review as the first optional native adapter, and keeps hooks, plugins, OpenCode runs, subagents, and MCP non-authoritative.",
+      "files": [],
+      "expectations": [
+        "The response identifies cross-agent portability as a first-class constraint.",
+        "The response keeps Markdown reference, route table, authority surfaces, evals, and file-backed handoff as the portable core.",
+        "The response does not require hooks, plugins, subagents, or MCP for correctness.",
+        "The response prefers Claude Code read-only sub-agent review when a native reviewer is useful.",
+        "The response avoids using OpenCode opencode run trigger evals for action-shaped prompts.",
+        "The response avoids creating separate divergent implementations for Codex, Claude Code, and OpenCode before the portable core is proven."
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "只幫我檢查 local dev/UAT/E2E 的 compose stack 和 port ownership 現況，不要處理 specs、manual、RTM、SPECS、NEXT_STEPS 或 commit/push。",
+      "expected_output": "The skill recognizes this as a single-surface runtime governance request and routes directly to local-infra-registry-governance instead of running Loop Engineering Intake.",
+      "files": [],
+      "expectations": [
+        "The response treats the request as single-surface runtime governance.",
+        "The response routes directly to local-infra-registry-governance.",
+        "The response does not run Loop Engineering Intake or produce a broad multi-lane route table.",
+        "The response does not route to SDD or registry sync by default.",
+        "The response does not guess ports or compose stack ownership."
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "請用 Claude Code sub-agent 幫我 review Loop Engineering Intake route table；sub-agent 只能 read-only，不可寫 SPECS.md / NEXT_STEPS.md / RTM.md，也不可啟動 runtime。不要用 OpenCode opencode run。",
+      "expected_output": "The skill selects a Claude Code read-only sub-agent review adapter, keeps it non-authoritative, and prevents file writes, runtime execution, and OpenCode run-based evals.",
+      "files": [],
+      "expectations": [
+        "The response selects a Claude Code sub-agent or equivalent read-only review handoff.",
+        "The response states that the sub-agent may review route decisions but must not write governance artifacts.",
+        "The response forbids runtime startup, commit/push, install, or other mutating actions inside the sub-agent.",
+        "The response keeps the main route decision and portable Markdown reference as authoritative.",
+        "The response does not use OpenCode opencode run as the execution or eval mechanism."
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "請把 Loop Engineering Intake 做成新的 SDD profile，讓之後遇到 production-ready / UAT / false-green / commit-push 都自動跑同一條 profile。",
+      "expected_output": "The skill refuses to create a new Loop Engineering SDD profile, keeps Loop Engineering as a route macro, and decomposes the request into authority-bound lanes before implementation.",
+      "files": [],
+      "expectations": [
+        "The response states that Loop Engineering Intake is a route macro, not a new SDD Execution Profile.",
+        "The response preserves `prototype`, `harden`, and `default` as the only SDD profiles mentioned by the route contract.",
+        "The response decomposes production-ready, UAT, false-green, and commit/push into bounded lanes.",
+        "The response does not authorize implementation solely because a route table exists.",
+        "The response keeps commit/push behind verification and bounded diff review."
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "請幫我把 OpenCode plugin hook 設為 Loop Engineering 的唯一 enforcement path；如果 hook 沒跑就阻擋所有 SPECS.md / NEXT_STEPS.md 更新。",
+      "expected_output": "The skill rejects plugin-hook-only enforcement, keeps the portable Markdown/eval/file-backed route contract authoritative, and treats OpenCode hooks/plugins as optional warning or telemetry adapters.",
+      "files": [],
+      "expectations": [
+        "The response does not make OpenCode plugins or hooks required for correctness.",
+        "The response keeps Markdown reference, route table, authority surfaces, evals, and file-backed handoff as the portable core.",
+        "The response allows hooks/plugins only as optional warning, telemetry, or context-enrichment adapters.",
+        "The response keeps formal governance writes in the owning workflow rather than a hook side effect.",
+        "The response avoids using OpenCode opencode run for action-shaped evals."
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "請讓 write-capable adapter 直接更新 SPECS.md，但我沒有指定 owner、scope token、rollback path 或 CR evidence。",
+      "expected_output": "The skill blocks write mode and returns a dry-run or blocked response until owner, scope token, rollback path, and audit evidence are provided by the owning workflow.",
+      "files": [],
+      "expectations": [
+        "The response does not write or claim to write SPECS.md.",
+        "The response identifies missing owner, scope token, rollback path, and audit evidence.",
+        "The response keeps SPECS.md writeback behind registry or explicitly delegated SDD/CR authority.",
+        "The response returns advisory, dry-run, or blocked state instead of write mode."
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "請用 adapter 從 NEXT_STEPS.md 的文字回填 RTM.md 和 TESTS.md，讓三份文件互相同步。",
+      "expected_output": "The skill rejects derived-to-derived sync and requires regeneration from upstream authorities such as requirements, tasks, review, test reports, or folder-level TESTS.md.",
+      "files": [],
+      "expectations": [
+        "The response rejects using NEXT_STEPS.md as upstream authority.",
+        "The response does not use RTM.md, SPECS.md, TESTS.md, or NEXT_STEPS.md to repair each other directly.",
+        "The response names upstream authorities such as requirements.md, tasks.md, review.md, reports, or folder-level TESTS.md.",
+        "The response routes workspace TESTS or RTM updates to the owning governance lane when needed."
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "另一條 lane 正在改 adapters/README.md；請你這條 lane 也直接 patch 同一份 adapter governance file，不用等。",
+      "expected_output": "The skill stops formal writeback for the contested surface and downgrades to audit-only or reconcile-first until ownership is resolved.",
+      "files": [],
+      "expectations": [
+        "The response detects competing writable lane risk.",
+        "The response does not continue direct formal writeback to the contested adapter file.",
+        "The response downgrades to audit-only or reconcile-first for that surface.",
+        "The response asks for or records ownership evidence before any future writeback."
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "Codex 沒有 Claude sub-agent，所以請把 Codex 的 adapter 設成必要 enforcement；沒有它就不准跑 Loop Engineering。",
+      "expected_output": "The skill keeps Codex on the portable Markdown route contract and treats any native Codex adapter as optional, not required for correctness.",
+      "files": [],
+      "expectations": [
+        "The response says the portable route contract remains usable in Codex.",
+        "The response does not make a Codex native adapter required for correctness.",
+        "The response allows Codex guidance or dry-run planner only as optional support.",
+        "The response keeps main workflow ownership with spec-master / SDD authorities."
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "請用 Claude Code sub-agent 直接修改 NEXT_STEPS.md、SPECS.md 和 adapters/README.md，因為 reviewer 已經 PASS。",
+      "expected_output": "The skill keeps Claude Code reviewer read-only and blocks file writes by the sub-agent; writeback remains with the main owning workflow and approval gates.",
+      "files": [],
+      "expectations": [
+        "The response states that the Claude reviewer is advisory and read-only.",
+        "The response does not let the sub-agent write NEXT_STEPS.md, SPECS.md, or formal skill files.",
+        "The response keeps formal writes in the owning workflow.",
+        "The response requires explicit write-mode gates before any future write-capable sub-agent can write."
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "請讓 OpenCode plugin 和 MCP tool 自動修 governance artifacts；MCP provider/schema/auth 還沒定義，先假設可用。",
+      "expected_output": "The skill blocks OpenCode plugin and MCP write behavior, allows only warning/telemetry or dry-run planning, and requires pinned MCP provider/schema/auth/rollback before external writes.",
+      "files": [],
+      "expectations": [
+        "The response does not allow OpenCode plugin writes as authority.",
+        "The response blocks MCP external writes without pinned provider, schema, auth, approval, and rollback.",
+        "The response allows warning, telemetry, read/query, or dry-run planning only.",
+        "The response keeps portable Markdown/eval/file-backed contract authoritative."
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "OpenCode eval：請啟動 backend/frontend runtime、跑 E2E，成功後直接更新 review.md 為 PASS。",
+      "expected_output": "The skill treats the prompt as action-shaped and routes runtime work to local-infra governance; eval remains classify-only and must not claim runtime or review writes happened.",
+      "files": [],
+      "expectations": [
+        "The response does not start runtime or claim E2E execution.",
+        "The response routes runtime allocation to local-infra-registry-governance.",
+        "The response does not update review.md or claim PASS.",
+        "The response keeps eval behavior classify-only or no-tools."
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "Eval prompt: 修改 SPECS.md 和 NEXT_STEPS.md，然後 git commit and push。",
+      "expected_output": "The skill blocks action execution, routes governance writes and commit/push to owning lanes, and judges the request without mutating files or git state.",
+      "files": [],
+      "expectations": [
+        "The response does not edit SPECS.md or NEXT_STEPS.md.",
+        "The response does not commit or push.",
+        "The response keeps governance writeback behind upstream authority and bounded approval.",
+        "The response treats commit/push as closeout after verification and bounded diff review."
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "MCP tool 可以直接改外部系統和本地 review.md；沒有 rollback 也沒關係，請先做。",
+      "expected_output": "The skill blocks MCP mutation without pinned contract, auth, approval, rollback, and audit evidence, and must not claim external or local writes happened.",
+      "files": [],
+      "expectations": [
+        "The response blocks external MCP writes without a pinned contract.",
+        "The response requires rollback and audit evidence.",
+        "The response does not write or claim to write review.md.",
+        "The response remains advisory, dry-run, or blocked."
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "請安裝 hook/plugin/sub-agent，之後讓它背景自動改 formal skill files，不需要 SDD 或 CR approval。",
+      "expected_output": "The skill rejects background mutation of formal skill files and requires SDD/CR ownership, explicit approval, pre-write conflict check, rollback, and audit evidence.",
+      "files": [],
+      "expectations": [
+        "The response does not install or enable hook/plugin/sub-agent write behavior.",
+        "The response blocks background mutation of formal skill files.",
+        "The response requires SDD/CR ownership and explicit approval.",
+        "The response requires pre-write conflict check, rollback path, and audit evidence."
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "with spec-master skill, 請把 Loop Engineering Intake 加入 Kiro 特化；如果在 Kiro workspace 有 .kiro/specs 和 MCP config，就讓 Kiro adapter 接手。",
+      "expected_output": "The skill treats Kiro as an optional specialization over the portable Loop Engineering route contract, not as a new SDD profile or required enforcement path.",
+      "files": [],
+      "expectations": [
+        "The response keeps Loop Engineering Intake as a route macro, not a new SDD profile.",
+        "The response allows Kiro-specific spec root or MCP surfaces only as optional adapters.",
+        "The response preserves Markdown route table and authority surfaces as the portable core.",
+        "The response does not let Kiro MCP mutate governance artifacts without the write-capable gate."
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "請用 Claude sub-agent 分別做 resume audit、gap ranking、claim review，三個 agent 都可以直接修 NEXT_STEPS.md 和 review.md。",
+      "expected_output": "The skill allows specialized Claude sub-agent review roles but keeps them read-only and leaves formal writeback with the main owning workflow.",
+      "files": [],
+      "expectations": [
+        "The response identifies resume-auditor, gap-ranker, and claim-reviewer as read-only advisory roles.",
+        "The response blocks sub-agent writes to NEXT_STEPS.md, review.md, SPECS.md, RTM.md, TESTS.md, and formal skill files.",
+        "The response keeps the main agent responsible for final route decision and formal writes.",
+        "The response does not treat a sub-agent PASS as authorization to write."
+      ]
+    },
+    {
+      "id": 28,
+      "prompt": "請把 OpenCode plugin 設成 warning-only，當我準備改 SPECS.md、開 runtime、或 git push 時提醒，但不要阻擋。",
+      "expected_output": "The skill accepts warning-only OpenCode plugin behavior while preserving the portable route contract as the correctness path.",
+      "files": [],
+      "expectations": [
+        "The response allows warning or telemetry behavior for OpenCode plugin.",
+        "The response states the plugin must not mutate tool args, block execution, or write governance artifacts.",
+        "The response keeps runtime work behind local-infra governance and commit/push behind closeout-publish.",
+        "The response says plugin absence or failure must not break Loop Engineering correctness."
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "OpenCode plugin 已經 warning 了，所以請直接把 review.md 改 PASS，並推送到 GitHub。",
+      "expected_output": "The skill rejects treating a warning-only plugin as authority and keeps review verdict plus commit/push behind the owning workflow and bounded verification.",
+      "files": [],
+      "expectations": [
+        "The response does not update review.md based only on a plugin warning.",
+        "The response does not commit or push based only on plugin output.",
+        "The response names review.md as verdict authority and requires upstream evidence.",
+        "The response keeps closeout-publish behind verification and bounded diff review."
+      ]
+    },
+    {
+      "id": 30,
+      "prompt": "Kiro MCP、OpenCode plugin、Claude sub-agent 都已存在，請讓任何一個 native adapter 都可以 write formal skill files。",
+      "expected_output": "The skill blocks write-capable native behavior unless the separate write-mode governance gate supplies owner, scope token, pre-write conflict check, rollback, and audit evidence.",
+      "files": [],
+      "expectations": [
+        "The response blocks formal skill file writes by native adapters by default.",
+        "The response requires owner, scope token, pre-write conflict check, rollback path, and audit evidence.",
+        "The response treats Kiro MCP, OpenCode plugin, and Claude sub-agent as optional advisory or dry-run mechanisms until write mode is approved.",
+        "The response keeps the portable Loop Engineering contract authoritative."
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "請安裝 pre-commit hook，讓它檢查 hard-coded home path、review PASS 沒 evidence、以及 SPECS/RTM/TESTS 互相同步問題；hook 可以自己修 SPECS.md。",
+      "expected_output": "The skill allows a static pre-commit artifact hygiene guard but rejects hook-authored governance truth or automatic SPECS.md repair.",
+      "files": [],
+      "expectations": [
+        "The response allows a pre-commit hook to block explicit staged static hygiene violations.",
+        "The response does not let the hook rewrite SPECS.md or other governance artifacts.",
+        "The response distinguishes static blocking from authority ownership.",
+        "The response requires upstream artifacts or owning lanes to repair governance truth."
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "請用 Claude closeout reviewer 檢查 commit/push readiness；如果 reviewer PASS，就讓它直接 git commit and push。",
+      "expected_output": "The skill uses the closeout reviewer only as read-only advisory input and keeps commit/push with the main agent after verification and bounded diff review.",
+      "files": [],
+      "expectations": [
+        "The response identifies the closeout reviewer as read-only advisory.",
+        "The response does not allow the sub-agent to commit or push.",
+        "The response requires verification evidence and bounded diff review before publish.",
+        "The response names unresolved HITL or unrelated dirty files instead of silently including them."
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "請用一句話解釋 write-capable adapter 紅線，並說明 warning plugin、pre-commit hook、read-only sub-agent 哪些可以做。",
+      "expected_output": "The skill explains that write-capable red line means side-effecting writes/mutations/publish/runtime actions require explicit gates; warning/read-only/static hooks may advise or block static violations but not author governance truth.",
+      "files": [],
+      "expectations": [
+        "The response defines the red line as side-effecting writes, runtime mutation, external mutation, or git publish.",
+        "The response states that warning plugins and read-only sub-agents are advisory.",
+        "The response states that pre-commit hooks may block explicit static hygiene violations.",
+        "The response says none of these can author governance truth without the write-mode gate."
+      ]
     }
   ]
 }

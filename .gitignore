@@ -1,7 +1,12 @@
 # Large binary files excluded from git
 *.onnx
 *.ttf
-review-cli-*
+review-cli-linux-*
+review-cli-darwin-*
+review-cli-windows-*
+xreview-linux-*
+xreview-darwin-*
+xreview-windows-*
 uatdemo-*
 
 # Local/generated data stores excluded from source releases

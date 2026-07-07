@@ -1,6 +1,6 @@
 ---
 name: system-architect
-description: 建立、維護與審查跨 spec 的專案整體系統架構與 steering 文件。當使用者要求 project/system architecture、系統設計書、architecture.md、架構 HTML、`.agents/steering/product|tech|structure`、跨 spec 架構盤點、架構質疑、architecture review、project start 系統設計、或 project-review 前需要整理整體架構觀點時使用。此 skill 從 spec-master / spec-driven-development / project-review / code-review evidence 綜整 `.agents/steering/{product,tech,structure}.md` 與同名 HTML，提供 SAA good-parts vocabulary、Agile/YAGNI 邊界、stale/overclaim 檢查、以及給 code-review 的高階 architecture context packet；不取代 spec-local `design.md` 或 `review.md` authority。
+description: 建立、維護與審查跨 spec 的專案整體系統架構與 steering 文件。當使用者要求 project/system architecture、系統設計書、architecture.md、架構 HTML、`.agents/steering/product|tech|structure`、跨 spec 架構盤點、架構質疑、architecture review、project start 系統設計、project-review 前整理整體架構觀點，或需要把 AI/security/privacy/PII/log compliance 轉成架構層資料流、信任邊界、外部控制與 evidence boundary 時使用。此 skill 從 spec-master / spec-driven-development / project-review / code-review evidence 綜整 `.agents/steering/{product,tech,structure}.md` 與同名 HTML，提供 SAA good-parts vocabulary、Agile/YAGNI 邊界、stale/overclaim 檢查、給 code-review 的高階 architecture context packet，並可與 iso-ai-security-auditor 組合；不取代 spec-local `design.md`、`review.md`、安全審查或法律/認證判定 authority。
 ---
 
 # System Architect
@@ -31,6 +31,7 @@ Read these, if present:
 - `.agents/specs/**/requirements.md`
 - `.agents/specs/**/design.md`
 - `.agents/specs/**/review.md`
+- `skills/iso-ai-security-auditor/SKILL.md` and relevant references when the architecture scope includes AI systems, security/cybersec, PII/personal-data, privacy, logging, external controls, or regulatory compliance
 - `docs/PROJECT_REVIEW_GUIDE.md`
 - existing `.agents/steering/product.md`, `.agents/steering/tech.md`, `.agents/steering/structure.md`
 - existing `.agents/steering/product.html`, `.agents/steering/tech.html`, `.agents/steering/structure.html`
@@ -64,6 +65,8 @@ Use the gstack-inspired engineering-manager posture before writing:
 - Does the design serve tired humans at 3am: observability, runbooks, failure handoff, rollback?
 - Does org/team ownership match the proposed architecture boundaries?
 - Does this create accidental complexity that the project invented for itself?
+- Are AI, PII, security, log, and external-control boundaries visible in the architecture, or hidden inside prose/checklists?
+- Which compliance-relevant controls are implemented in this repo, externally operated, or only missing evidence?
 
 For high-stakes uncertainty, ask one focused question or record an explicit `Open Question`; do not invent certainty.
 
@@ -77,6 +80,8 @@ Use SAA only as vocabulary for consistency:
 - **Cross-platform consistency**: deployment contexts, runtime assumptions, portability constraints, agent/tool boundaries.
 
 Never turn SAA into a heavyweight enterprise blueprint. Keep first-slice docs short and evidence-backed.
+
+When composing with `iso-ai-security-auditor`, keep the architecture lens factual: document data flows, trust boundaries, AI component boundaries, log/telemetry flows, supplier or platform control ownership, and evidence freshness. Do not turn steering docs into a certification statement or legal opinion.
 
 ### 5. Use Code-Review as Architecture Evidence
 
@@ -98,6 +103,8 @@ Produce an **Architecture Context Packet** for downstream review. Prefer storing
 - Critical data flows:
 - Public contracts:
 - Trust boundaries:
+- AI/security/privacy/log compliance boundaries:
+- External-control dependencies:
 - High-blast-radius files or components:
 - Expected graph/code-review queries:
 - Open architecture questions:

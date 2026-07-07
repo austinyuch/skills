@@ -11,6 +11,8 @@ Enables agents to perform comprehensive code reviews using the Code Review Syste
 
 The published `scripts/` surface is native-binary-only. Agents should invoke the matching `review-cli-<os>-<arch>` binary directly and should not assume Python runtime entrypoints such as `review.py` remain part of the shipped contract.
 
+**Download-on-install:** the `review-cli-<os>-<arch>` binaries are NOT shipped inside the bundle (they are not git-LFS-committed). On first use run `sh scripts/install.sh` once — it downloads and SHA-256-verifies **only this host's** single binary from the GitHub release (checksums in `scripts/review-cli-bundle-manifest.json`), so the bundle carries one platform binary instead of all six (~300 MB). The same `install.sh` also fetches the ONNX embedding model as ONE SHA-256-verified `.zip` from the same release and unzips it into `assets/models/` (checksums in `scripts/onnx-model-bundle-manifest.json`); the ~127 MB `model.onnx` + tokenizer/configs are likewise not committed. Set `REVIEW_CLI_SKIP_ONNX=1` to skip the model fetch if you only need `review-cli` without semantic search. Override the release source with `REVIEW_CLI_RELEASE` (`gh://OWNER/REPO@TAG`, an `https://` base URL, or a local dir). Both fetches are idempotent and are no-ops if the artifacts are already present (e.g. a local build). Maintainers (re)build the model zip + trust-anchor manifest with `scripts/pack-model-bundle.sh`.
+
 It also exposes graph retrieval surfaces through `search-code`: hybrid graphRAG for embedding-backed semantic recall, and graph-only retrieval for exact structural questions when embeddings/provider APIs are disallowed.
 
 MCP support is a runtime surface of the same binary, not a separate review engine. For local IDE/agent clients, use the matching binary as a stdio MCP subprocess. For shared or remote MCP clients, run the binary as an HTTP/SSE runtime instance with API-key auth. Container/Docker deployment is an optional packaging/runtime form for HTTP/SSE; the source of truth remains `review-cli mcp serve`. Spec #101 adds MCP `remote_review` for bounded remote Git `repo_url/ref` materialization with explicit `sandbox_level=filesystem|process|service`; repo-side routing is implemented, and `sandbox_level=process` has current-host bwrap proof when explicitly enabled with `CODE_REVIEW_REMOTE_REVIEW_PROCESS_SANDBOX=bwrap`. Filesystem-level remote materialization can also reuse `scan_specs`, `analyze_code`, `generate_report`, and `search_code` through `remote_review.tool`. Private GitHub/GitLab provider proof and live L3 sandbox-station runtime proof remain external.
@@ -22,6 +24,54 @@ This skill is **static analysis + bounded context tooling**, not a runtime readi
 - Use this skill to answer: “What does the code structure look like?”, “What are the likely dependency / impact relationships?”, “What bounded context should I hand off downstream?”
 - Do **not** use this skill alone to answer: “Is the feature live-demo ready?”
 - Authoritative `PASS / CONDITIONAL / FAIL` for runtime or live-demo readiness still comes from runtime-backed review artifacts.
+
+## Agent Graph Dogfooding Default
+
+For architecture discovery, project design, impact analysis, broad code retrieval, spec handoff, or non-trivial implementation planning, the agent must treat the local code graph as part of the default context bootstrap. This is an init/preflight requirement, not an optional nice-to-have. Start with the target repository's own instructions and any durable shared graph workflow it provides. If the repo has a tracked `.code-review/graph.sqlite` / `vector.sqlite` / `manifest.json` snapshot, inspect its manifest and run the repo's documented status or doctor command before rebuilding it.
+
+Use direct file reads only when the task is clearly narrow, the relevant files are already known, or graph state is missing and rebuilding would cost more than the task warrants. In that case, say so briefly in the design/review notes instead of silently skipping the graph. Do not use graph evidence to overrule checked-out code, active specs, or runtime proof.
+
+Mandatory sequence for non-trivial work:
+
+1. Init/preflight the graph lifecycle: run the repo-local status/doctor command when one exists; otherwise run `review-cli-<os>-<arch> init <project-path> --graph` (or `graph init <project-path>`). If query commands support `--graph-init`, use `auto` by default and `always` when the graph is known stale; use `skip` only when a read-only lifecycle is intentional and existing graph state is already queryable.
+2. Run one or more focused `search-code`, `architecture`, `developer-routing`, `bounded-context`, `impact`, `dependency-path`, `capability-inventory`, or `summary` queries that match the decision you are making before settling a design or implementation path.
+3. Select a trigger strategy for ongoing work: repo-owned refresh command, `review-cli watch . --once --json` for a one-shot working-tree refresh, long-running `review-cli watch .` for active edit sessions, or `review-cli graph hook status` / explicit `graph hook install` for post-commit refresh where repo/user policy allows local hook installation. If no trigger is used, record why.
+4. Rebuild or refresh only when the status/manifest is stale, missing, not queryable, or too partial for the question.
+5. Record the graph query and trigger/preflight result, or the reason for skipping them, in the spec/design/review artifact when the task produces one.
+
+If a target repo repeatedly needs repo-specific graph bootstrap rules, durable snapshot ownership, or trigger policy, recommend a target-repo constitution update such as `AGENTS.md`, Kiro steering, or `CLAUDE.md`. Treat that as a candidate governance patch or handoff unless the user explicitly asks you to edit the target repo's constitution in the current task; do not silently rewrite another repo's agent rules from this skill alone.
+
+## AX Native Xref Recall Artifacts
+
+For AX2009/X++ recall work, start from raw native xref exports with `xref-normalize`, then score with `xref-recall`:
+
+```bash
+review-cli-<os>-<arch> xref-normalize \
+  --xref-dir /home/user/projects/giant-ax/lab/download_xref_tables/xref_csv_output \
+  --source-object AxSalesLine \
+  --target /home/user/projects/giant-ax \
+  --out /home/user/projects/giant-ax/.code-review/artifacts/xref/axsalesline.refs.csv \
+  --run-log /home/user/projects/giant-ax/.code-review/artifacts/xref/xref-normalize.jsonl
+```
+
+Keep reusable refs CSVs, graph-edge dumps, and JSONL run logs under the target repo's ignored `.code-review/artifacts/xref/` instead of `/tmp` when another agent should reuse them. For giant-ax, the sample reusable graph is `/home/user/projects/giant-ax/.code-review/graph.sqlite`; that is the text-based local SQLite graph, distinct from any embedding/vector DB. If that 1GB+ graph is shared later, use an exact GitLab/Git LFS path or artifact-store rule for `.code-review/graph.sqlite` only. For inherited X++ `this.*` calls, include the optional `dispatch_object_qualified_name` column in graph-edge dumps so `xref-recall` can compare at AX native-xref dispatch granularity while the graph edge still targets the real base-class definition. Do not treat `xref-import` + `xref-recall` against the same xref as AST recall evidence; that path validates merge/import behavior, while AST recall requires an independently indexed graph dump.
+
+When X++ producer code changes but the target XPO files did not, do not default to a full giant-ax
+rebuild. First refresh only the affected XPO files against the existing text graph:
+
+```bash
+PERSISTENCE_MODE=local-sqlite SQLITE_ENABLED=true \
+review-cli-<os>-<arch> xpp-refresh \
+  --target /home/user/projects/giant-ax/gts \
+  --file Classes/CLASSES_AxSalesLine.xpo \
+  --json
+```
+
+Use `--file-list .code-review/artifacts/xpp-refresh/changed-xpo-files.txt` for a durable ignored
+file set. Keep `xpp-refresh` JSONL run logs under `.code-review/artifacts/xpp-refresh/`. This command
+loads the existing graph's Artifact catalog, refreshes only selected parser-derived nodes/edges, and
+does not use embeddings or model providers. A full recursive rebuild is reserved for measuring true
+full-corpus AST recall or creating a new reusable `graph.sqlite` snapshot.
 
 ## Start Here
 
@@ -126,6 +176,25 @@ forced and unconfigured). High-confidence deterministic findings (e.g. `NO_ASSER
 `blast_radius` to `security-risk-reviewer` so widely-depended-on files rank higher. These are
 review aids, not release gates — `security-risk-reviewer` is triage, not a SAST replacement.
 
+### DevSecOps audit + deep security scan (`review-cli security`)
+
+Where `security-risk-reviewer` is offline OWASP *pattern* triage, the `review-cli security`
+command family is the **active DevSecOps layer** — part of the binary itself, so it is
+cross-platform and needs no shell scripts. Two capabilities, both take `--target <dir>`
+(default: cwd) and `--json`:
+
+| Command | Use it to | Notes |
+|---|---|---|
+| `review-cli security audit` | **inventory a target project's DevSecOps posture and report gaps** — SAST, secret-scan, dependency-vuln, SBOM, dependabot, signing, pre-commit, license, OWASP-LLM agent-safety | pure-Go filesystem inspection; deterministic; scores maturity % + lists high-severity gaps + a fix per gap. Use it to answer "what DevSecOps controls is this project missing?" |
+| `review-cli security scan` | **invoke deep multi-language scans** (JS/C#/Py/Go SAST + secret + dependency-vuln + SBOM/misconfig) against the target | detects tools via `LookPath`, runs `govulncheck`/`gitleaks`/`trivy`/`semgrep`, honest `tool-unavailable` (never silent-skip). **Local-tool fallback today; preferred path is delegation to `~/aclab-middlewares/security-stack` (`sectool`/`secsdlc-mcp` → DefectDojo/Dependency-Track)** once its integration contract lands (see that spec's CR). |
+| `review-cli security grounding --hook-mode --warn-only` | **advisory Stop-hook content-safety grounding** for agent output | emitted Claude/Codex/Kiro Stop hooks keep stdout clean for hook protocol and write reports/diagnostics to stderr; omit `--warn-only` only for an intentional blocking security gate. |
+| `review-cli security hook-audit` | **inspect installed Stop hooks for xreview/security-grounding drift** | read-only audit that classifies xreview as advisory/non-blocking, detects `security grounding` hooks that drifted from expected `--warn-only`, and labels unknown Stop-hook commands for operator routing. |
+
+These emit **deterministic evidence** that feeds the companion `security-review` skill's lanes
+(`infrastructure-supply-chain.md`, `ai-agent-mcp.md` for OWASP-LLM, and the
+`languages/{go,javascript-typescript,python,dotnet-csharp}.md` lanes) — they do not adjudicate;
+`review.md` + the `security-review` gate keep verdict authority. Spec: `local-devsecops-hardening`.
+
 ### Ponytail / YAGNI minimality boundary
 
 Within the code-review family, the Ponytail Ladder is a **pre-review design and implementation
@@ -169,12 +238,13 @@ Beyond the heuristic Python skills above, `review-cli` has a built-in **AST-base
 `review-cli-<os>-<arch> review <path> [--language go|python|typescript|csharp|xpp] [--vet] [--race] [--format json|jsonl]` — covering concurrency
 (real goroutine loop-var capture, lock-without-`defer`), resource leaks, error handling,
 numeric (typed money-as-float/number across languages), and maintainability (long parameter
-lists). It now spans **Go, Python, TypeScript/JavaScript, C#, and line-level XPO/XPP**:
+lists). It now spans **Go, Python, TypeScript/JavaScript, C#, and XPO/XPP** (the last driven by a
+native AX 2009 X++ method-body AST):
 - **Go** — `go/ast` pass + authoritative `go vet` / `go test -race` adapter.
 - **Python** — `REVIEW_PY_MUTABLE_DEFAULT` (B006), `REVIEW_PY_BARE_EXCEPT` (E722), `REVIEW_PY_MONEY_FLOAT`.
 - **TypeScript/JavaScript** (`.ts`/`.tsx`/`.js`/`.jsx`) — `REVIEW_TS_MONEY_NUMBER`, `REVIEW_TS_EMPTY_CATCH`, `REVIEW_TS_EXPLICIT_ANY` where syntax support is available; JS/TS also has line-level maintainability coverage in no-tree-sitter builds.
 - **C#** — `REVIEW_CS_MONEY_FLOAT` (float/double vs decimal), `REVIEW_CS_EMPTY_CATCH`, `REVIEW_CS_ASYNC_VOID`.
-- **XPO/XPP** — `.xpo` exports receive line-level maintainability checks such as `REVIEW_GOD_FILE` / duplicated-block with `source=xpp-line`; this is not a full X++ AST rule pack.
+- **XPO/XPP** — a native AX 2009 `.xpo` method-body AST (`source=xpp-ast`, build-tag-free → runs on all six binaries incl. darwin) drives money-as-`real`, `REVIEW_XPP_TTS_UNBALANCED`, `REVIEW_QUERY_IN_LOOP` (select in a loop), `REVIEW_XPP_DML_OUTSIDE_TTS`, `REVIEW_XPP_EMPTY_CATCH`, `REVIEW_XPP_ASSIGNMENT_IN_CONDITION`, `REVIEW_XPP_INFINITE_LOOP_CANDIDATE`, and `REVIEW_XPP_UNUSED_RETURN`; the language-agnostic file-level smells (`REVIEW_GOD_FILE` / duplicated-block, `source=xpp-line`) still apply. `review --xpp-metrics` emits an aggregate AST metrics summary (nesting, tts-balance, select-in-loop, money-as-real rates). Fulfils Spec #103.
 - **All four** — maintainability smells: `REVIEW_LONG_PARAM_LIST`, `REVIEW_LONG_METHOD`, `REVIEW_DEEP_NESTING` (Fowler; `else if` chains do not inflate nesting depth).
 
 **Orchestration:** run `review-cli review` as the **primary deterministic pass** for any Go/Python/TS/C#

@@ -249,6 +249,7 @@ CODE_REVIEW_SQLITE_SESSION_FILE=session.sqlite
 - `status.json` 在本 skill 語境下預設視為 runtime/preflight/local registry 狀態，容易過期，應該 `.gitignore`；只有在 repo 明確規範它是 curated evidence，且最好放在非 runtime cache 路徑時才版控。
 - `CODE_REVIEW_SQLITE_VECTOR_FILE` 指到的 vector DB 預設視為可重建的 provider/model-specific 產物，先 `.gitignore`；只有在 repo 明確需要固定 retrieval evidence，且已檢查大小、freshness、資料敏感性時，才考慮 Git LFS。
 - `CODE_REVIEW_SQLITE_SESSION_FILE`、local registry、logs、tmp、cache、viewer runtime reports 預設 `.gitignore`。
+- AX native-xref recall 產物建議放在 `.code-review/artifacts/xref/`：normalized refs CSV、graph-edge dump CSV、JSONL run logs 都應 durable 但預設 ignored。`xpp-refresh` 的 file-list 與 JSONL run logs 則放在 `.code-review/artifacts/xpp-refresh/`，同樣 durable 但預設 ignored。giant-ax 的 `.code-review/graph.sqlite` 是 text-based local SQLite graph，和 embedding/vector DB 分開看；首次 schema/index 建立、後續 CRUD、strict xref resolve、multi-hop traversal 都屬於 text-graph performance。若 dump X++ call edges，建議包含 optional `dispatch_object_qualified_name` 欄位；`xref-recall` 會只在 call family 使用它，讓 inherited `this.*` call 以 AX native xref 的 current-class dispatch target 量測，同時 graph edge 仍指向真實 base-class definition。若 target repo 要共享 giant-ax 類型的大型 `graph.sqlite`，只針對 `.code-review/graph.sqlite` 加精準 GitLab/Git LFS 規則；不要把 `.code-review/artifacts/xref/*.jsonl`、`.code-review/artifacts/xpp-refresh/*.jsonl` 或臨時 edge dumps 一起 promoted。
 - 不要把 `.env`、credential、API key、或機器特定絕對路徑 commit 進 repo。
 
 具體判斷準則與 `.gitattributes` / `.gitignore` 範例見 `references/local-state-version-control.md`。

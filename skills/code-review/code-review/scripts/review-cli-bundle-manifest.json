@@ -1,0 +1,12 @@
+{
+  "tool": "review-cli",
+  "version": "v0.15.0",
+  "platforms": {
+    "review-cli-linux-amd64": { "sha256": "c233c613a6b725d50afd42d2ec2a2dd77675e079bdc6a54a2031a07e2b0cf5e8", "bytes": 60843432 },
+    "review-cli-linux-arm64": { "sha256": "abb7d3094a82816dca160a91075b3bf8f06d6f4a59a25b438ff2a521c2d8f2cb", "bytes": 57543192 },
+    "review-cli-darwin-amd64": { "sha256": "4e08ebc4eeb6bc894c273ec9892e7b9b157a330debf4aad4a294f50bad60fca5", "bytes": 44670128 },
+    "review-cli-darwin-arm64": { "sha256": "5cdb0ad4e1ff7b74877e63bd979e2d5bf4319c362d92cb082b889aa8a6f03097", "bytes": 41588274 },
+    "review-cli-windows-amd64.exe": { "sha256": "5c95179c8099c7f87b155e201f5d4997fa054ee317fc5796e683fb6870cb7c84", "bytes": 54096896 },
+    "review-cli-windows-arm64.exe": { "sha256": "6605bbf1b2e7e6f487565acd4f9816c2ecf041a52c4d3132501f94d736fe572e", "bytes": 50139648 }
+  }
+}

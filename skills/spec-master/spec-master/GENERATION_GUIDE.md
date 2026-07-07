@@ -55,6 +55,7 @@ Read these first:
 - `skills/test-registry-manager/SKILL.md`
 - `skills/issue-log-manager/SKILL.md`
 - `skills/local-infra-registry-governance/SKILL.md`
+- `skills/system-architect/SKILL.md`
 - `skills/shared-governance/SKILL.md`
 
 Read these when the README mentions stakeholder-facing evidence or generated docs:
@@ -203,6 +204,7 @@ When shipping the Spec Master family, include:
 - `skills/test-registry-manager/`
 - `skills/issue-log-manager/`
 - `skills/local-infra-registry-governance/`
+- `skills/system-architect/`
 - `skills/shared-governance/`
 
 Optional companion skills may be included when the target environment uses them:

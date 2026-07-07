@@ -1,5 +1,24 @@
 # CLI Commands Reference
 
+<!-- min-review-cli-version: 0.15.0 -->
+
+## Compatibility
+
+This reference documents the CLI surface as of **`review-cli` v0.15.0** (the
+`min-review-cli-version` marker above is the machine-readable floor). Flags and
+commands such as `--no-embeddings`, `--no-model`, `--capabilities`, `--summaries`,
+`apply-handoff`, `capability-inventory`, and `summary --granularity` require a
+binary at or above this version. If a documented flag errors with `unknown flag`
+or a command returns an empty/legacy result, verify the vendored binary:
+
+```bash
+review-cli-<os>-<arch> version   # must be >= the marker above
+```
+
+A stale vendored binary — not documentation drift — is the most common cause of a
+mismatch; re-sync per `VENDORED_SYNC.md`. The repo-side `check_docs_freshness.py`
+gate keeps this marker in major.minor lock-step with the shipped binary.
+
 ## Command Syntax
 
 Targets are passed positionally; behavior is tuned with flags (documented per command below).
@@ -162,7 +181,7 @@ note. Any still-unsupported target reports an honest note rather than failing.
 
 **Usage:**
 ```bash
-review-cli-<os>-<arch> review <file|directory> [--language go|python|typescript|csharp|xpp] [--vet] [--race] [--format text|json|jsonl] [--exclude DIR] [--no-respect-gitignore]
+review-cli-<os>-<arch> review <file|directory> [--language go|python|typescript|csharp|xpp] [--vet] [--race] [--format text|json|jsonl] [--exclude DIR] [--no-respect-gitignore] [--xpp-metrics]
 ```
 
 **Flags:**
@@ -176,6 +195,7 @@ review-cli-<os>-<arch> review <file|directory> [--language go|python|typescript|
 | `--graph` | Fold graph **blast-radius** (distinct callers of the file's functions) + **owning capability** into the finding ranking (Phase 4a). Requires an indexed project graph (`index`); best-effort — an un-indexed target falls back to the deterministic ranking. Findings carry `blast_radius` + `capability`, and within a severity tier higher-blast-radius findings rank first. |
 | `--exclude <dir-or-pattern>` | Exclude a directory or ignore-style pattern from directory review. Repeatable. Review uses the same built-in corpus exclusions as `index` (`.next`, `.nuxt`, `.output`, `.turbo`, `node_modules`, `.code-review`, etc.). |
 | `--no-respect-gitignore` | Do not parse `.gitignore` or legacy `.reviewignore`; built-in, `.code-review/config.yaml`, and `--exclude` rules still apply. |
+| `--xpp-metrics` | Emit an aggregate **X++ AST metrics** summary as JSON (files, methods, avg/max nesting depth, tts-balance rate, select-in-loop rate, money-as-`real` rate) over the `.xpo` corpus, **instead of** per-finding output. Honors `--language`/`--exclude`. |
 
 Findings carry `rule`, `category` (concurrency / resource-leak / error-handling / numeric / time),
 `severity`, `file:line`, `message`, `remediation`, and `source` (`go-ast` / `go-vet` / `go-race`),
@@ -273,7 +293,7 @@ Use hybrid graphRAG for broad semantic recall and ranking. Use `--graph-only` fo
 
 ### graph (program-graph management)
 
-`graph` is a command **group** for managing the program graph. Subcommands: `boundary`, `fragment`, `gc`, `hook`. (For index/graph readiness use `index --status` — there is no `graph status` subcommand.)
+`graph` is a command **group** for managing the program graph. Subcommands: `boundary`, `export`, `fragment`, `gc`, `hook`, `zoom-precompute`. (For index/graph readiness use `index --status` — there is no `graph status` subcommand.)
 
 #### graph fragment
 Validate and import subscription-agent graph fragments. Subcommands: `validate`, `apply`, `example`.
@@ -314,6 +334,38 @@ review-cli-<os>-<arch> graph gc [--dry-run] [--include-hitl]
 - `--dry-run` — list orphans without deleting.
 - `--include-hitl` — also consider HITL-created `IntegrationBoundary` nodes (excluded by default).
 
+#### graph export
+Carve a **bounded subgraph** out of the program graph via depth-bounded BFS from a focus node, and write it as a small SQLite (or JSON) file. Use this when the full `graph.sqlite` is too large to open whole in the browser-side Graph Explorer — the exported subgraph stays under `--max-nodes` (default 5000, aligned with the viewer node limit) so it loads directly.
+
+**Usage:**
+```bash
+review-cli-<os>-<arch> graph export --center <node> --depth 2 --output subgraph.sqlite
+review-cli-<os>-<arch> graph export --center path/to/File --depth 1 --format json --output subgraph.json
+review-cli-<os>-<arch> graph export --center some:node:id --depth 3 --graph-db .code-review/graph.sqlite --output subgraph.sqlite
+```
+
+**Flags:**
+- `--center <string>` (required) — focus node, matched by exact id, id substring, or a substring of its name/file_path/path.
+- `--depth <int>` — BFS expansion hops from the focus node (default `1`).
+- `--format sqlite|json` — output format (default `sqlite`). SQLite output opens directly in the Graph Explorer.
+- `--output <path>` (required) — output file path.
+- `--max-nodes <int>` — cap before truncation (default `5000`); reaching it stops expansion and marks the result truncated.
+- `--graph-db <path>` — explicit graph DB path (overrides `--target` resolution).
+- `--target <dir>` — project root used for local-sqlite graph DB resolution (default `.`).
+
+#### graph zoom-precompute
+Materialize semantic-zoom aggregation metadata (per-node rel path, name, edge degree) into a derived table so the viewer's server-side `/__graph_view` overview/drill-down reads indexed rows instead of scanning the whole graph per request. Optional speedup for very large graphs; the viewer falls back to on-the-fly aggregation when the precompute is missing or stale (tracked by a node/edge-count marker). Safe to re-run.
+
+**Usage:**
+```bash
+review-cli-<os>-<arch> graph zoom-precompute                        # resolve local-sqlite graph from --target (default .)
+review-cli-<os>-<arch> graph zoom-precompute --graph-db .code-review/graph.sqlite
+```
+
+**Flags:**
+- `--graph-db <path>` — explicit graph DB path (overrides `--target` resolution).
+- `--target <dir>` — project root used for local-sqlite graph DB resolution (default `.`).
+
 #### graph hook
 Manage a Git post-commit hook that triggers precise incremental graph/vector re-indexing. Subcommands: `install`, `status`, `uninstall`.
 
@@ -330,6 +382,100 @@ review-cli-<os>-<arch> graph hook uninstall   # remove the managed hook block
 - `--fail-on-error` (install only) — let hook failures propagate instead of logging and continuing.
 
 The project SQLite graph DB is single-writer — enforced by a single writer connection plus a `busy_timeout` — so concurrent graph mutations against the same DB serialize (a second writer waits) rather than failing with `SQLITE_BUSY` while a hook-triggered index is active.
+
+---
+
+### xref-normalize
+Normalize raw AX2009 native xref table exports into the CSV contract consumed by `xref-recall` and `xref-import`.
+
+**Usage:**
+```bash
+review-cli-<os>-<arch> xref-normalize \
+  --xref-dir /home/user/projects/giant-ax/lab/download_xref_tables/xref_csv_output \
+  --source-object AxSalesLine \
+  --target /home/user/projects/giant-ax \
+  --out /home/user/projects/giant-ax/.code-review/artifacts/xref/axsalesline.refs.csv \
+  --run-log /home/user/projects/giant-ax/.code-review/artifacts/xref/xref-normalize.jsonl
+```
+
+**Flags:**
+- `--xref-dir <dir>` — directory containing raw `XREFPATHS.csv`, `XREFNAMES.csv`, and `XREFREFERENCES.csv`.
+- `--out <path>` — write normalized references CSV to this path. When omitted, CSV is written to stdout.
+- `--source-object <name>` — scope to one AX source object and emit that object name as `source` (for example `AxSalesLine`).
+- `--source-path-prefix <path>` — raw AOT path prefix for `--source-object`; default is `\Classes\<source-object>`.
+- `--target <dir>` — target project root used only for graph/artifact path hints.
+- `--run-log <path>` — append a JSONL run record to a durable ignored path.
+
+**Output contract:**
+`source,target,target_kind,reference,line`, where field and method targets are owner-qualified (`Table.Field`, `Class.method`) and enum literals roll up to their owning enum. `xref-recall` filters the denominator to graph-modeled first-layer families.
+
+**Artifact convention:**
+For reusable AX recall evidence, prefer target-local ignored paths such as `.code-review/artifacts/xref/*.csv` and `.code-review/artifacts/xref/*.jsonl` over `/tmp`. For the giant-ax sample project, the reusable full graph is `/home/user/projects/giant-ax/.code-review/graph.sqlite` (about 1.2 GB on this host). If a target repo deliberately shares that graph later, track only the exact `.code-review/graph.sqlite` path via GitLab/Git LFS or an equivalent artifact store; keep derived refs, graph-edge dumps, and JSONL run logs ignored unless the target repo explicitly promotes a curated evidence file.
+
+### xpp-refresh
+Refresh selected X++ parser-derived graph nodes/edges against an existing project graph without rebuilding the full corpus.
+
+Use this when `review-cli` producer logic changed but the XPO source content did not, so a normal
+incremental `index` would skip by content hash. The command loads the target graph's existing XPP
+Artifact catalog and re-runs graph-only indexing only for the explicit file set.
+
+**Usage:**
+```bash
+review-cli-<os>-<arch> xpp-refresh \
+  --target /home/user/projects/giant-ax/gts \
+  --file Classes/CLASSES_AxSalesLine.xpo \
+  --json
+
+review-cli-<os>-<arch> xpp-refresh \
+  --target /home/user/projects/giant-ax/gts \
+  --file-list /home/user/projects/giant-ax/gts/.code-review/artifacts/xpp-refresh/changed-xpo-files.txt \
+  --json
+```
+
+**Flags:**
+- `--target <dir>` — project root whose existing `.code-review/graph.sqlite` is refreshed.
+- `--file <path>` — XPO file to refresh; repeatable. Relative paths resolve under `--target`.
+- `--file-list <path>` — newline-delimited XPO file list; blank lines and `#` comments are ignored.
+- `--dry-run` — resolve inputs and print the planned file set without graph writes.
+- `--json` — emit `schema_version=xpp-refresh-run/v1` summary JSON.
+
+Keep file lists and JSONL run logs under `.code-review/artifacts/xpp-refresh/` so they are durable
+for agents but ignored by default. `xpp-refresh` updates the text-based graph only; it does not touch
+embedding/vector DBs, does not import xref ground truth, and does not by itself prove AST recall.
+For recall evidence, dump graph edges after refresh and run `xref-recall`. For a full-corpus recall
+lift or a new reusable giant-ax graph snapshot, run the explicit full Path A rebuild separately.
+
+### xref-recall
+Score normalized AX native xref references against a normalized code-review graph edge dump.
+
+**Usage:**
+```bash
+review-cli-<os>-<arch> xref-recall --xref axsalesline.refs.csv --graph axsalesline.graph.csv --floor 0.8
+review-cli-<os>-<arch> xref-recall --xref axsalesline.refs.csv --graph axsalesline.graph.csv --json
+```
+
+**Flags:**
+- `--xref <path>` — normalized AX xref references CSV from `xref-normalize` or an equivalent producer.
+- `--graph <path>` — normalized graph edge dump CSV with `source,rel,target[,fields]`. `fields` may be semicolon/comma-separated or a JSON array from SQLite `json_extract`.
+- `--floor <0..1>` — minimum overall recall required to pass.
+- `--json` — emit the report as JSON.
+
+### xref-import
+Materialize first-layer graph edges directly from normalized AX native xref references.
+
+**Usage:**
+```bash
+review-cli-<os>-<arch> xref-import --xref axsalesline.refs.csv --target /path/to/project
+review-cli-<os>-<arch> xref-import --xref axsalesline.refs.csv --target /path/to/project --json
+```
+
+**Flags:**
+- `--xref <path>` — normalized AX xref references CSV.
+- `--target <dir>` — project whose graph store receives the edges (default `.`).
+- `--json` — emit the import summary as JSON.
+- `--fabricate-missing` — upsert a bare-name node for an endpoint absent from the graph. Default is strict merge: skip unresolved endpoints and report them, never create orphan nodes.
+
+Keep the evidence boundary clear: `xref-normalize` + `xref-recall` measures parser graph recall when the graph dump came from AST indexing. `xref-import` validates xref-to-graph merge/import behavior; scoring imported xref edges against the same xref is circular and must not be claimed as AST recall.
 
 ---
 
@@ -971,6 +1117,66 @@ review-cli-<os>-<arch> viewer --mode graph --workspace ./src --graph-db ./.code-
 - Test, CI, and non-interactive smoke flows should omit `--open` or set `CODE_REVIEW_DISABLE_BROWSER_OPEN=true`; use the JSON `url` output as evidence instead of proving that a browser/terminal can launch.
 - Browser-side `?db=` / file-picker loading remains a manual Graph Explorer convenience path, not the authoritative Agent-facing contract.
 - A `--graph-db` path proves which DB Graph Explorer is loading; it does not by itself mean the DB should be committed. Commit it only when the repo intentionally shares that DB as reusable GraphRAG state. In that case, use Git LFS for `graph.sqlite` / graph `.db`, keep a durable `manifest.json` as normal text when needed, and keep sibling runtime `status.json` / cache files ignored.
+
+---
+
+## security
+
+DevSecOps capability (spec `local-devsecops-hardening`): audit a target project's DevSecOps posture, run deep multi-language scans, and gate agent output. All subcommands accept `--target <dir>` (default: cwd), `--json`, and `--timeout <seconds>` (bound the whole run so a hung external tool can't block a Stop-hook; 0 = no timeout).
+
+### security audit
+
+Inventory a target project's DevSecOps controls (SAST, secret-scan, dependency-vuln, SBOM, signing, OWASP-LLM agent-safety) and report gaps with a maturity %.
+
+- `--strict` — exit non-zero if any high-severity control is absent (else report-only).
+
+### security scan
+
+Invoke multi-language SAST + secret + dependency-vuln + SBOM against the target (JS/C#/Py/Go). Detects `govulncheck`/`gitleaks`/`trivy`/`semgrep`; honest `tool-unavailable` degradation.
+
+- `--severity <levels>` — trivy severity gate (default `HIGH,CRITICAL`).
+- `--delegate` — delegate the scan round-trip to the aclab-middlewares security-stack (per its DELEGATION_CONTRACT.md): resolve the Dependency-Track / DefectDojo hubs from the local-infra registry, run `sectool` scans → import findings to DefectDojo, and generate an SBOM → ingest to Dependency-Track. Honest `local-fallback` when `sectool` is absent or the hubs are not `active`; hub steps skip with a note when no credentials.
+- `--sectool <cmd>` — the sectool binary/command used for `--delegate` (default `sectool`).
+- `--dt-base-url <url>` — Dependency-Track base for `--delegate` (default: resolved from the local-infra registry).
+- `--dd-base-url <url>` — DefectDojo base for `--delegate` (default: resolved from the local-infra registry).
+- `--delegate-project <name>` — shared identity for the DT project + DefectDojo product (default: target dir name).
+- `--delegate-engagement <name>` — DefectDojo engagement name (default: `delegated-scan`).
+- `--trust-target-policy` — apply a target-local `.gitleaks.toml`/`.trivyignore` even when the target is not the invoking workspace (default: trust only the current workspace, so a foreign/hostile target can't suppress its own findings).
+
+Credentials for `--delegate` are read from the environment (operator-provided, never committed): `CODE_REVIEW_DT_API_KEY` (Dependency-Track), `CODE_REVIEW_DD_API_TOKEN` (DefectDojo). Endpoint overrides also via `CODE_REVIEW_DT_BASE_URL` / `CODE_REVIEW_DD_BASE_URL`; registry path via `CODE_REVIEW_LOCAL_INFRA_REGISTRY`.
+
+### security grounding
+
+OWASP-LLM content-safety + hallucination gate for agent/subAgent output: fabricated file refs (LLM09), secret leakage (LLM06), prompt-injection phrasing (LLM01). Reads a Claude/Codex/Kiro Stop payload (`transcript_path`) from stdin; exits non-zero on a HIGH finding so a Stop-hook can gate unless `--warn-only` is set.
+
+- `--transcript <file>` — transcript/output file to scan (default: stdin).
+- `--warn-only` — always exit 0 (report only, do not gate).
+- `--hook-mode` — Stop-hook mode: write reports/diagnostics to stderr and keep stdout reserved for hook protocol output. Emitted Claude/Codex/Kiro hooks include this by default.
+- `--stderr` — write the report to stderr and keep stdout empty. Required when run as a Stop-hook unless `--hook-mode` is used.
+- `--gate-injection` — treat prompt-injection (LLM01) as a HIGH gating finding instead of a warning (for autonomous loops where injected instructions are higher-risk).
+- `--emit-hook <agent>` — print a ready-to-install Stop-hook config for `claude|codex|kiro|opencode` and exit (Claude/Codex JSON Stop, Kiro `hooks.stop`, opencode `session.idle` JS plugin). Stop-hook configs default to `--hook-mode --warn-only`.
+
+When a blocking grounding hook exits nonzero, hook mode writes a bounded diagnostic to stderr with a classification such as `hook-gated-high-finding` or `hook-missing-transcript`, the advisory/gating mode, high finding count when known, source path, and remediation. `--warn-only` still reports findings but never exits nonzero for findings.
+
+### security hook-audit
+
+Inspect installed agent Stop hooks without executing them. Use this when the host only reports an opaque failure such as `hook exited with code 1`.
+
+**Usage:**
+```bash
+review-cli-<os>-<arch> security hook-audit
+review-cli-<os>-<arch> security hook-audit --agent codex --config ~/.codex/hooks.json
+review-cli-<os>-<arch> security hook-audit --json
+```
+
+The audit classifies recognized commands:
+
+- `xreview run --host-agent ...` — expected advisory/non-blocking.
+- `review-cli security grounding --hook-mode --warn-only` — expected advisory Stop hook.
+- `review-cli security grounding` without `--warn-only` — `hook-installed-command-drift` / "expected warn-only, found gating"; valid only when the operator intentionally wants HIGH findings to block Stop.
+- unknown Stop hook command — includes command/config/owner hints so the operator can route the failure.
+
+OpenCode is reported separately as a `session.idle` plugin surface; it is advisory by default and is not the same wire contract as Claude/Codex/Kiro Stop-hook JSON.
 
 ---
 

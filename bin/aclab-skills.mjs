@@ -18,7 +18,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // code-review's native CLI lives in GitHub Releases (the repo is private, so the
 // download is authenticated via `gh`). Bump CLI_TAG when a new binary is released.
 const CLI_REPO = 'austinyuch/skills';
-const CLI_TAG = 'review-cli-v0.11.0';
+const CLI_TAG = 'review-cli-v0.15.0';
 
 function reviewCliAsset() {
   const o = { darwin: 'darwin', linux: 'linux', win32: 'windows' }[process.platform];

@@ -64,8 +64,9 @@
 12. 突出設計決策及其理由
 13. 在設計過程中可能就特定技術決策徵求您的意見
 14. 將研究發現直接整合到設計過程中
-14.1 若需要使用 `code-review` graph，請先執行 `index --status` 評估 freshness；若 graph stale，可背景更新，但不得阻塞設計
-14.2 graph 查詢 (`architecture`, `search-code`, `developer-routing`) 的結果只能作為 **design aid**，不得自動成為 truth
+14.1 **Graph Dogfooding Default（見樹又見林）**：對 non-trivial 設計（架構探索 / 影響分析 / 廣域 retrieval / spec handoff），`code-review` 的 code graph 是 **default context bootstrap**，不是可選加值。序列：先 preflight（tracked `.code-review/` snapshot 的 doctor 或 `index --status`）→ 若 stale 可背景更新（不得阻塞設計）→ 跑聚焦查詢。完整規範見 [`../reference/GRAPH_ASSISTED_PLANNING.md`](../reference/GRAPH_ASSISTED_PLANNING.md)。
+14.2 graph 查詢 (`architecture`, `impact`, `bounded-context`, `dependency-path`, `search-code --graph-only`, `developer-routing`) 的結果只能作為 **design aid**，不得自動成為 truth，也不得覆蓋 checked-out code / active spec / runtime proof。
+14.3 **Record-in-artifact**：若跑了 graph，`design.md` 至少要留下跑了哪些 query + 關鍵洞察 + `relation_coverage_status`（partial 要保守解讀）；若刻意**不**跑而改直接讀檔（見樹即可），也要一句話說明理由，不得無聲跳過。此紀錄是 derived note，不得反向覆寫 `SPECS.md` / `RTM.md` / `TESTS.md`。
 15. **(新增) 風險前移規劃 (FMEA-lite)**：若本 spec 容易出現「planned 被寫成 executed」「summary 比 source 更樂觀」「warning code 在聚合過程中遺失」「artifact 誤導 stakeholder」等 failure mode，必須在 `design.md` 中加入輕量 FMEA 表，而不是等到 review 階段才補救。
 15.1 若設計包含 `ISSUE_LOG.md`、`TESTS.md`、`SPECS.md`、`NEXT_STEPS.md`、`RTM.md` 等治理 artifact，必須明確定義 **Non-Cyclic Authority Model**，避免 derived artifact 互相回寫。
 15.2 `RTM.md` 的設計角色是 requirement traceability rollup。design 應提供穩定 section refs / contract refs，讓 RTM 能追 requirement → AC → design → tasks → tests → review，但不得要求 RTM 反向生成 design。

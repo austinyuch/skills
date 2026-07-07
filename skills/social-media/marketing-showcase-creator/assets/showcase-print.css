@@ -1,0 +1,129 @@
+/* ============================================================================
+ * showcase-print.css — drop-in @media print block for value-driven showcases
+ * ----------------------------------------------------------------------------
+ * Append this to the showcase's style.css, or inline it inside the page's
+ * <style>. It makes the page print cleanly as a one-language PDF flyer.
+ *
+ * THE BUG THIS FIXES ("部份 rendered 在 print 時會失蹤"):
+ *   Dark sections (hero / stats bar / .bg-dark / CTA) use white text on a
+ *   dark/gradient BACKGROUND. Browsers DEFAULT TO NOT PRINTING background
+ *   colors/images (ink saving) -> the background drops, the white text lands
+ *   on white paper -> the whole section looks blank/disappears.
+ *   Fix = print-color-adjust:exact as the fallback, plus scoped contrast
+ *   repair for dark/high-risk sections so printed output stays readable even
+ *   when a browser or printer strips decorative backgrounds. This is NOT a
+ *   screen-style reset and should not erase the original showcase design.
+ *
+ * Selectors below use the reference class names from this skill's example
+ * showcase. Rename them to match your project's actual markup — the STRATEGY
+ * (force backgrounds, un-stick nav, hide interactive chrome, control breaks)
+ * is what matters, not the exact class names.
+ *
+ * CANONICAL SOURCE: the class-agnostic version of this fix shared across the
+ * stakeholder-artifact skill family (showcase / project review / user manual)
+ * lives at `shared-governance/assets/print-friendly.css`. This file is the
+ * showcase-specific instance (extra showcase selectors + denser flyer padding);
+ * the core `print-color-adjust:exact` fix must stay consistent with the canonical.
+ * ========================================================================== */
+
+@media print {
+
+  /* 1) Force backgrounds/colors to print — this is what un-hides the white
+   *    text on dark sections. Broadly applied so no dark band is missed.    */
+  html, body,
+  nav, header, footer, section, div,
+  .hero, .stats, .bg-dark, .cta-section {
+    -webkit-print-color-adjust: exact !important; /* Chrome/Safari legacy */
+    print-color-adjust: exact !important;         /* standard */
+  }
+
+  /* Sensible flyer page setup */
+  @page { margin: 12mm; }
+  html, body {
+    background: #fff !important;
+    color: #111827 !important;
+  }
+
+  /* Contrast repair, not a style reset: screen showcases often use gradients,
+   * translucent cards, tinted microcopy, and white text on color. In print,
+   * only force the document's base text and known dark/high-risk sections into
+   * a safe contrast pair. Do not wipe every card/grid/background style.
+   */
+  body, p, li, dd, dt, figcaption,
+  h1, h2, h3, h4, h5, h6 {
+    color: #111827 !important;
+    text-shadow: none !important;
+  }
+
+  .hero, .stats, .bg-dark, .cta-section,
+  .on-dark, .dark, .dark-section,
+  [data-print-contrast],
+  [data-print-contrast="dark"] {
+    background: #fff !important;
+    color: #111827 !important;
+    text-shadow: none !important;
+  }
+
+  .hero *, .stats *, .bg-dark *, .cta-section *,
+  .on-dark *, .dark *, .dark-section *,
+  [data-print-contrast] *,
+  [data-print-contrast="dark"] * {
+    color: #111827 !important;
+    text-shadow: none !important;
+  }
+
+  /* Preserve card visuals by default; only neutralize effects that commonly
+   * reduce print legibility. If a project's cards already print with sufficient
+   * contrast, their original backgrounds/borders should remain.
+   */
+  .section, .hero, .stats, .bg-dark, .cta-section,
+  .cap-card, .pain-card, .vp-card, .int-card, .proof-card,
+  .persona-card, .feature-block, .arch-node,
+  .card, .stat {
+    text-shadow: none !important;
+  }
+
+  a, a:visited {
+    color: #0645ad !important;
+    text-decoration: underline !important;
+  }
+
+  /* 2) Sticky nav overlaps/repeats when printed — neutralize positioning.
+   *    Hide only explicit no-print chrome, not the whole nav by default.    */
+  nav { position: static !important; }
+
+  /* 3) Hide interactive-only chrome that means nothing on paper.            */
+  #lang-toggle,
+  #print-button,
+  [data-noprint],
+  .lang-toggle,
+  .print-button,
+  .no-print { display: none !important; }
+
+  /* 4) Only the CURRENTLY SELECTED language prints. The other language is
+   *    [hidden] (or display:none) via the toggle, so it already won't print.
+   *    This just guarantees hidden stays hidden even if a UA is lenient.    */
+  [hidden],
+  .lang-zh[hidden],
+  .lang-en[hidden] { display: none !important; }
+
+  /* 5) Page-break control: don't slice a card/feature block across pages;
+   *    let large sections flow across pages normally.                        */
+  .cap-card, .pain-card, .vp-card, .int-card, .proof-card,
+  .persona-card, .feature-block, .arch-node,
+  .card, .stat {
+    break-inside: avoid;
+    page-break-inside: avoid; /* legacy */
+  }
+  h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+
+  /* 6) Images must not overflow the paper width.                            */
+  img { max-width: 100% !important; height: auto !important; }
+
+  /* 7) Resource links (manual/review buttons) — keep them as a printed
+   *    reference. If you'd rather drop them on the flyer, hide instead.     */
+  .resource-links a { text-decoration: underline; }
+
+  /* 8) Trim large screen-only vertical padding so the flyer is dense.       */
+  .section, .hero, .cta-section { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+}

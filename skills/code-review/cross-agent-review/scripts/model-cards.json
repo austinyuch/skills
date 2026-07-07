@@ -1,0 +1,219 @@
+{
+  "version": 1,
+  "registry_updated": "2026-07-04T00:00:00Z",
+  "cards": [
+    {
+      "backend": "claude",
+      "model": "claude-opus-4-8",
+      "family": "anthropic",
+      "provider": "anthropic",
+      "sota_tier": 9,
+      "cost_tier": 2,
+      "effort_options": [
+        "default"
+      ],
+      "modalities": [
+        "text",
+        "vision"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-01T00:00:00Z"
+    },
+    {
+      "backend": "codex",
+      "model": "gpt-5.5",
+      "family": "openai",
+      "provider": "openai",
+      "sota_tier": 9,
+      "effort_options": [
+        "low",
+        "medium",
+        "high",
+        "xhigh"
+      ],
+      "modalities": [
+        "text",
+        "vision"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-01T00:00:00Z"
+    },
+    {
+      "backend": "antigravity",
+      "model": "gemini-3-pro",
+      "family": "google",
+      "provider": "google",
+      "sota_tier": 8,
+      "cost_tier": 1,
+      "effort_options": [
+        "default"
+      ],
+      "modalities": [
+        "text",
+        "vision"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-01T00:00:00Z"
+    },
+    {
+      "backend": "kiro",
+      "model": "claude-opus-4.5",
+      "family": "anthropic",
+      "provider": "kiro-acp",
+      "sota_tier": 8,
+      "effort_options": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "modalities": [
+        "text",
+        "vision"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-03T00:00:00Z"
+    },
+    {
+      "backend": "opencode",
+      "model": "glm-5.2",
+      "family": "zhipu",
+      "provider": "opencode",
+      "sota_tier": 8,
+      "modalities": [
+        "text"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-03T00:00:00Z"
+    },
+    {
+      "backend": "opencode",
+      "model": "kimi-k2.7-code",
+      "family": "moonshot",
+      "provider": "opencode",
+      "sota_tier": 8,
+      "modalities": [
+        "text"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-03T00:00:00Z"
+    },
+    {
+      "backend": "opencode",
+      "model": "kimi-k2.6",
+      "family": "moonshot",
+      "provider": "opencode",
+      "sota_tier": 7,
+      "modalities": [
+        "text",
+        "vision"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-03T00:00:00Z"
+    },
+    {
+      "backend": "claude",
+      "model": "claude-fable-5",
+      "family": "anthropic",
+      "provider": "anthropic",
+      "sota_tier": 10,
+      "cost_tier": 2,
+      "effort_options": [
+        "default"
+      ],
+      "modalities": [
+        "text",
+        "vision"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-03T00:00:00Z"
+    },
+    {
+      "backend": "claude",
+      "model": "claude-sonnet-5",
+      "family": "anthropic",
+      "provider": "anthropic",
+      "sota_tier": 7,
+      "cost_tier": 1,
+      "effort_options": [
+        "default"
+      ],
+      "modalities": [
+        "text",
+        "vision"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-03T00:00:00Z"
+    },
+    {
+      "backend": "claude",
+      "model": "claude-haiku-4-5-20251001",
+      "family": "anthropic",
+      "provider": "anthropic",
+      "sota_tier": 6,
+      "cost_tier": 1,
+      "effort_options": [
+        "default"
+      ],
+      "modalities": [
+        "text",
+        "vision"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-03T00:00:00Z"
+    },
+    {
+      "backend": "codex",
+      "model": "gpt-5.4",
+      "family": "openai",
+      "provider": "openai",
+      "sota_tier": 8,
+      "effort_options": [
+        "low",
+        "medium",
+        "high",
+        "xhigh"
+      ],
+      "modalities": [
+        "text",
+        "vision"
+      ],
+      "availability": {
+        "state": "unprobed",
+        "probe": "PATH"
+      },
+      "last_updated": "2026-07-03T00:00:00Z"
+    }
+  ]
+}

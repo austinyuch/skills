@@ -33,6 +33,10 @@
 5. **(新增) 唯一需求 ID (REQ-ID)**：為每個需求編列唯一的識別碼（如 `REQ-AUTH-001`）。
 5.1 **(新增) Source of Truth 邊界**：`requirements.md` 是 requirement source of truth；即使 workspace 存在 `RTM.md`，也不得在此階段把 RTM 當成需求的 authoring 來源。
  5.2 **(新增) Branch-spec 執行邊界宣告**：若本次工作涉及另一台機器、CI runner、registry、雲端帳號、硬體特定環境、或任何 external execution，必須在 `requirements.md` 先明確寫出：哪些屬於 repo-local closure、哪些屬於 external execution、以及哪些只是 external blocker。這個區分必須先在 branch-spec artifact 建立，不能等 `tasks.md` 才補。
+5.3 **(新增) System Architecture Intake**：若本次是 project start、new subsystem、cross-module integration、platform/runtime topology、shared contract、agent/tool boundary、或 stakeholder-facing project review 前置工作，必須讀取 `../references/system-architecture-lifecycle.md`，並在 `requirements.md` 判斷是否需要建立或更新 `docs/architecture.md` / `docs/architecture/index.html`（或 repo 既有等價路徑）。
+   - 採用 IBM SAA 的 good parts：共同使用者存取概念、共同程式介面、共同通訊支援、跨平台一致性。
+   - 保持 Agile / YAGNI：只要求 current slice 需要的 architecture snapshot，不做 big-upfront 完整藍圖；若證據不足，標為 `not_yet_required`。
+   - architecture docs 不得成為 requirement / readiness authority；它們只從已接受的 spec-local artifacts 與 review evidence 綜整。
 6. **(新增) 規格漂移宣告**：若此需求修改了舊有 Specs 的邏輯，必須在文件中明確宣告 `[Impacts: {舊spec名稱}]`。
 7. **(新增) CR Intake Gate**：若需求影響 `[Completed]` spec、shared contract 或 external contract 假設，必須先在當前 active spec 中建立 / 更新 `Open Change Requests` 摘要，再進入 requirements approval。完整欄位請參考 [輕量 CR template](../../spec-registry-manager/references/change-request-template.md)。
    - **Impact Triage**：先將每個變更分類為：`Depends On only`、`Impacts completed/shared baseline`、`External contract assumption impact`。
@@ -66,6 +70,14 @@
 - **Repo-side Closure**: [在此列出 branch-spec 內可於目前 repo / 工作站完成的內容]
 - **External Execution**: [在此列出必須於外部環境執行的內容]
 - **External Blockers / Constraints**: [在此列出外部限制；若無可省略]
+
+## System Architecture Documentation Impact
+
+- **Architecture Doc State**: `current` / `needs_update` / `missing_but_required` / `not_yet_required` / `stale_or_overclaiming`
+- **Markdown Source**: `docs/architecture.md` 或 repo 既有等價路徑
+- **HTML Presentation**: `docs/architecture/index.html` 或 repo 既有等價路徑
+- **SAA Good Parts Used**: Common User Access / Common Programming Interface / Common Communications Support / Cross-platform consistency（只列本 slice 需要者）
+- **Agile Boundary**: 說明哪些架構內容刻意不做，避免 big-upfront design
 
 ## 需求
 

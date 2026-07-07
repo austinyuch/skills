@@ -64,7 +64,7 @@ fast and **LFS-free** (no git-lfs dependency, no pointer-stub breakage). They ar
 
 > 🔐 **This repository is private.** `npx`/`uvx`/`git clone` **and** the `--with-cli` binary download
 > all require GitHub authentication. `--with-cli` uses the **`gh` CLI** (`gh auth login`) to pull the
-> asset from the [`review-cli-v0.11.0`](https://github.com/austinyuch/skills/releases/tag/review-cli-v0.11.0)
+> asset from the [`review-cli-v0.15.0`](https://github.com/austinyuch/skills/releases/tag/review-cli-v0.15.0)
 > release; without `gh` it prints the exact `gh release download …` command to run. Anonymous/public
 > install is not available unless the repo (or release) is made public.
 

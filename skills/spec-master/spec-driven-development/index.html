@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spec-Driven Development | Business Value Brief</title>
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #5b6872;
+      --line: #d8dee4;
+      --paper: #fbfcfd;
+      --panel: #ffffff;
+      --accent: #116b5f;
+      --accent-2: #9a4d14;
+      --accent-3: #284d8f;
+      --soft: #edf7f5;
+      --warn: #fff6e8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 16px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: var(--accent-3); }
+    header {
+      min-height: 92vh;
+      display: grid;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(17,107,95,.88), rgba(23,32,38,.72)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='800' viewBox='0 0 1200 800'%3E%3Crect width='1200' height='800' fill='%23d7ebe7'/%3E%3Cg fill='none' stroke='%23172026' stroke-opacity='.16' stroke-width='3'%3E%3Cpath d='M70 120h260v120H70zM440 110h330v120H440zM880 110h250v120H880zM120 360h330v130H120zM560 350h520v130H560zM210 610h310v110H210zM650 600h330v110H650z'/%3E%3Cpath d='M330 180h110M770 170h110M285 240v120M450 425h110M820 480v120M520 665h130'/%3E%3C/g%3E%3C/svg%3E") center/cover;
+      color: white;
+    }
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background: rgba(251,252,253,.92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+    nav .wrap { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+    .brand { font-weight: 750; color: var(--ink); }
+    .lang { display: flex; gap: 8px; }
+    button {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+    button.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .hero { padding-top: 80px; max-width: 900px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: .82rem; font-weight: 750; opacity: .88; }
+    h1 { font-size: clamp(2.5rem, 7vw, 6rem); line-height: .98; letter-spacing: 0; margin: 14px 0 22px; }
+    .lead { font-size: clamp(1.12rem, 2vw, 1.45rem); max-width: 820px; }
+    .hero-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 34px; max-width: 860px; }
+    .hero-stat { border: 1px solid rgba(255,255,255,.35); padding: 16px; background: rgba(255,255,255,.12); }
+    .hero-stat strong { display: block; font-size: 1.5rem; }
+    main { padding: 56px 0 80px; }
+    section { margin: 0 auto 54px; }
+    h2 { font-size: clamp(1.7rem, 3vw, 2.6rem); line-height: 1.15; margin: 0 0 14px; }
+    h3 { margin: 0 0 8px; font-size: 1.08rem; }
+    p { margin: 0 0 14px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .two { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 8px 22px rgba(23,32,38,.04);
+    }
+    .soft { background: var(--soft); }
+    .warn { background: var(--warn); }
+    table { width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--line); }
+    th, td { text-align: left; vertical-align: top; padding: 13px; border-bottom: 1px solid var(--line); }
+    th { background: #eef3f7; font-size: .9rem; }
+    .flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+    .step { border-top: 4px solid var(--accent); background: white; padding: 13px; min-height: 128px; }
+    .refs { display: flex; flex-wrap: wrap; gap: 10px; }
+    .refs a { border: 1px solid var(--line); background: white; border-radius: 999px; padding: 7px 12px; text-decoration: none; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted); }
+    [data-lang="en"] [data-zh], [data-lang="zh"] [data-en] { display: none; }
+    @media (max-width: 860px) {
+      .grid, .two, .hero-grid, .flow { grid-template-columns: 1fr; }
+      header { min-height: 86vh; }
+      nav .wrap { width: min(100% - 24px, 1120px); }
+    }
+    /* Print — canonical block (shared-governance/assets/print-friendly.css). Keep in sync. */
+    @media print {
+      *, *::before, *::after { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      @page { margin: 12mm; } body { background: #fff; }
+      nav, aside.sidebar, .sidebar, [role="navigation"] { position: static !important; }
+      nav, aside.sidebar, .sidebar, #lang-toggle, .lang-toggle, [data-noprint], .no-print, .hero-cta, .hero-btns, .cta-btns { display: none !important; }
+      [hidden] { display: none !important; }
+      .card, [class*="-card"], .stat, .feature-block, .arch-node, tr, blockquote, figure { break-inside: avoid; page-break-inside: avoid; }
+      h1, h2, h3, h4 { break-after: avoid; page-break-after: avoid; }
+      img { max-width: 100% !important; height: auto !important; }
+    }
+  </style>
+</head>
+<body data-lang="zh">
+  <nav>
+    <div class="wrap">
+      <div class="brand">Spec-Driven Development</div>
+      <div class="lang" aria-label="Language switcher">
+        <button type="button" data-set-lang="en">EN</button>
+        <button type="button" data-set-lang="zh" class="active">繁中</button>
+      </div>
+    </div>
+  </nav>
+
+  <header>
+    <div class="wrap hero">
+      <div class="eyebrow" data-en>Spec Master Family Core Skill</div>
+      <div class="eyebrow" data-zh>Spec Master 家族核心子 skill</div>
+      <h1 data-en>Spec-Driven Development</h1>
+      <h1 data-zh>規格驅動開發</h1>
+      <p class="lead" data-en>SDD is the delivery backbone that turns vague intent into governed, testable, reviewable software change. It gives teams their own inspectable workflow for the coding-agent era.</p>
+      <p class="lead" data-zh>規格驅動開發(Spec-Driven Development, SDD) 是把模糊需求轉成可治理、可測試、可複核軟體變更的交付主幹。它讓團隊在程式代理人時代擁有自己的可檢討工作流。</p>
+      <div class="hero-grid">
+        <div class="hero-stat"><strong>6</strong><span data-en>delivery phases</span><span data-zh>個交付階段</span></div>
+        <div class="hero-stat"><strong>9</strong><span data-en>governance artifacts</span><span data-zh>個治理 artifact</span></div>
+        <div class="hero-stat"><strong>0</strong><span data-en>unearned readiness claims</span><span data-zh>個未經證據支撐的 readiness 宣稱</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section>
+      <h2 data-en>Why SDD Needs Its Name</h2>
+      <h2 data-zh>為什麼要替 SDD 正名</h2>
+      <div class="two">
+        <div class="card soft">
+          <h3 data-en>It is not paperwork</h3>
+          <h3 data-zh>它不是文件負擔</h3>
+          <p data-en>SDD preserves the chain from business need to acceptance evidence. The point is not more documents; the point is fewer untraceable changes, fewer late surprises, and fewer beautiful artifacts that overstate readiness.</p>
+          <p data-zh>SDD 保留從商業需求到驗收證據的鏈條。重點不是多寫文件，而是減少不可追溯的變更、後期才爆出的整合問題，以及看起來漂亮卻過度宣稱 readiness 的 artifact。</p>
+        </div>
+        <div class="card">
+          <h3 data-en>It is team-owned workflow</h3>
+          <h3 data-zh>它是團隊自有工作流</h3>
+          <p data-en>Coding agents are fast, vendor-specific, and partially opaque. SDD gives the team a stable operating model that can survive tool changes and support retrospectives, audits, and continuous improvement.</p>
+          <p data-zh>程式代理人(coding agent) 速度快、各家做法不同，而且部分黑盒。SDD 讓團隊擁有不依賴單一 vendor 的穩定工作模式，可支撐檢討、稽核與持續改善。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-en>Three Role Value Proposition</h2>
+      <h2 data-zh>三個角色的價值主張</h2>
+      <div class="grid">
+        <div class="card">
+          <h3 data-en>CEO</h3>
+          <h3 data-zh>執行長(CEO)</h3>
+          <p data-en><strong>Job:</strong> connect product investment to market promise. <strong>Pain:</strong> fast agent output may create expensive rework. <strong>Gain:</strong> value, acceptance criteria, and evidence stay connected.</p>
+          <p data-zh><strong>任務：</strong>讓產品投入連回市場承諾。<strong>痛點：</strong>代理人產出很快，但錯誤方向會放大返工成本。<strong>獲益：</strong>價值、驗收標準與證據保持連線。</p>
+        </div>
+        <div class="card">
+          <h3 data-en>CIO</h3>
+          <h3 data-zh>資訊長(CIO)</h3>
+          <p data-en><strong>Job:</strong> standardize delivery governance across teams and tools. <strong>Pain:</strong> every agent behaves differently. <strong>Gain:</strong> SDD creates a repeatable operating model.</p>
+          <p data-zh><strong>任務：</strong>跨團隊與工具建立交付治理。<strong>痛點：</strong>不同代理人的行為與邊界不同。<strong>獲益：</strong>SDD 建立可重複的 delivery operating model。</p>
+        </div>
+        <div class="card">
+          <h3 data-en>DevSecOps</h3>
+          <h3 data-zh>開發安全營運(DevSecOps)</h3>
+          <p data-en><strong>Job:</strong> keep CI/CD fast without losing truth. <strong>Pain:</strong> mock-heavy tests can look green. <strong>Gain:</strong> test evidence, review verdict, and demo readiness are separated.</p>
+          <p data-zh><strong>任務：</strong>維持 CI/CD 速度，同時不犧牲真實性。<strong>痛點：</strong>mock-heavy 測試容易看起來綠燈。<strong>獲益：</strong>測試證據、review verdict 與 demo readiness 分層治理。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-en>Engineering Value Stack</h2>
+      <h2 data-zh>工程價值堆疊</h2>
+      <table>
+        <thead>
+          <tr><th data-en>Practice</th><th data-zh>實踐</th><th data-en>Business Claim</th><th data-zh>商業主張</th><th data-en>How SDD Implements It</th><th data-zh>SDD 如何實作</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-en>SDD</td><td data-zh>規格驅動開發(SDD)</td>
+            <td data-en>Reduce demand drift and rework.</td><td data-zh>降低需求漂移與返工。</td>
+            <td data-en>Requirements, design, tasks, review, registry, and handoff artifacts stay linked.</td><td data-zh>串接需求、設計、任務、review、registry 與 handoff artifact。</td>
+          </tr>
+          <tr>
+            <td data-en>TDD</td><td data-zh>測試驅動開發(TDD)</td>
+            <td data-en>Validate behavior while change cost is low.</td><td data-zh>在變更成本最低時驗證行為。</td>
+            <td data-en>Phase 4 uses red, green, refactor discipline with evidence reports.</td><td data-zh>Phase 4 以紅燈、綠燈、重構紀律與 evidence reports 推進。</td>
+          </tr>
+          <tr>
+            <td data-en>DDD</td><td data-zh>領域驅動設計(DDD)</td>
+            <td data-en>Align system boundaries with business language.</td><td data-zh>讓系統邊界與業務語言一致。</td>
+            <td data-en>Design captures bounded contexts, contracts, data models, and impacts.</td><td data-zh>設計階段記錄 bounded context、contract、資料模型與影響範圍。</td>
+          </tr>
+          <tr>
+            <td data-en>Test Management</td><td data-zh>測試管理</td>
+            <td data-en>Turn test results into traceable risk evidence.</td><td data-zh>將測試結果變成可追溯風險證據。</td>
+            <td data-en>TESTS.md owns test IDs, commands, ownership, and evidence refs.</td><td data-zh>`TESTS.md` 持有 test IDs、commands、owner 與 evidence refs。</td>
+          </tr>
+          <tr>
+            <td data-en>Refactoring</td><td data-zh>重構(Refactoring)</td>
+            <td data-en>Lower technical debt without changing external behavior.</td><td data-zh>在不改變外部行為下減少技術債。</td>
+            <td data-en>Review and optimization convert findings into bounded improvements with tests.</td><td data-zh>review 與 optimization 將 findings 轉成有測試保護的 bounded improvement。</td>
+          </tr>
+          <tr>
+            <td data-en>Minimal Implementation Discipline (Ponytail YAGNI Ladder)</td><td data-zh>最小實作紀律 (Ponytail YAGNI Ladder)</td>
+            <td data-en>Prevent over-engineering by checking necessity, stdlib, platform, and dependencies before adding new code.</td><td data-zh>在新增程式碼前依序檢查必要性、標準函式庫、平台與現有依賴，防止過度設計。</td>
+            <td data-en>Phase 1 Rung 1 filters speculative needs; Phase 2 Rung 2‑4 guides tech selection; Phase 4 Rung 5‑6 sets implementation scope; Phase 5 checks for over-engineering risk.</td><td data-zh>Phase 1 Rung 1 過濾 speculative 需求；Phase 2 Rung 2‑4 指導技術選型；Phase 4 Rung 5‑6 控制實作體積；Phase 5 檢查 over-engineering risk。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2 data-en>Responsible AI: Requirements to Solutions</h2>
+      <h2 data-zh>Responsible AI：需求到解法</h2>
+      <p data-en>For SDD, responsible AI means every agent-produced requirement, design, task, test, and review claim remains traceable, explainable, supervised, and correctable.</p>
+      <p data-zh>對 SDD 而言，Responsible AI 代表每個由代理人產生的需求、設計、任務、測試與 review 宣稱，都必須可追溯、可解釋、可監督、可修正。</p>
+      <table>
+        <thead>
+          <tr><th data-en>Requirement</th><th data-zh>需求</th><th data-en>SDD solution</th><th data-zh>SDD 解法</th><th data-en>Artifact / phase</th><th data-zh>Artifact / Phase</th></tr>
+        </thead>
+        <tbody>
+          <tr><td data-en>Human oversight</td><td data-zh>人類監督</td><td data-en>Use phase gates and explicit approvals before moving from intent to code or verdict.</td><td data-zh>透過 phase gate 與明確確認，避免從想法直接跳到程式碼或 verdict。</td><td>Phase 1-5, <code>NEXT_STEPS.md</code></td><td>Phase 1-5, <code>NEXT_STEPS.md</code></td></tr>
+          <tr><td data-en>Transparency and explainability</td><td data-zh>透明與可解釋</td><td data-en>Maintain requirement to design to task to test to review traceability.</td><td data-zh>維持 requirement → design → task → test → review 的追溯鏈。</td><td><code>requirements.md</code>, <code>design.md</code>, <code>tasks.md</code>, <code>RTM.md</code></td><td><code>requirements.md</code>, <code>design.md</code>, <code>tasks.md</code>, <code>RTM.md</code></td></tr>
+          <tr><td data-en>Accountability</td><td data-zh>問責</td><td data-en>Keep verdict, test evidence, registry summary, and traceability rollup in separate authority surfaces.</td><td data-zh>將 verdict、test evidence、registry summary 與 traceability rollup 放在不同權威面。</td><td><code>review.md</code>, <code>TESTS.md</code>, <code>SPECS.md</code>, <code>RTM.md</code></td><td><code>review.md</code>, <code>TESTS.md</code>, <code>SPECS.md</code>, <code>RTM.md</code></td></tr>
+          <tr><td data-en>Robustness, privacy, fairness, auditability</td><td data-zh>穩健、隱私、公平、可稽核</td><td data-en>Plan FMEA, avoid secrets in summaries, require owner resolution for issues, and regenerate derived artifacts from upstream truth only.</td><td data-zh>規劃 FMEA、避免 secrets 進入摘要、要求 issue owner resolution，並只從 upstream truth 重新生成 derived artifacts。</td><td>Phase 2-6, <code>ISSUE_LOG.md</code>, lifecycle guide</td><td>Phase 2-6, <code>ISSUE_LOG.md</code>, lifecycle guide</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2 data-en>Ponytail YAGNI Ladder</h2>
+      <h2 data-zh>Ponytail YAGNI Ladder：最小實作紀律</h2>
+      <p data-en>SDD integrates <a href="https://github.com/DietrichGebert/ponytail">Ponytail</a>'s 6-Rung Ladder (MIT License) as a minimal implementation discipline. Core rule: <strong>“Lazy, not negligent”</strong> — security, validation, and accessibility are never compromised. Only unnecessary features and over-engineering are trimmed.</p>
+      <p data-zh>SDD 整合 <a href="https://github.com/DietrichGebert/ponytail">Ponytail</a> 的六級階梯（MIT License）作為最小實作紀律。核心規則：<strong>「精簡但不輕忽」</strong>——安全、驗證與可及性永遠不在精簡範圍內。精簡的只有不必要的功能與過度設計。</p>
+      <div class="card soft" style="margin-bottom:16px">
+        <pre style="margin:0;font-size:.92rem;line-height:1.6">1. Does this need to exist?   → no: skip it (YAGNI)
+2. Stdlib does it?            → use it
+3. Native platform feature?   → use it
+4. Installed dependency?      → use it
+5. One line?                  → one line
+6. Only then: the minimum that works</pre>
+      </div>
+      <h3 data-en>Phase Mapping</h3>
+      <h3 data-zh>階段對應</h3>
+      <table>
+        <thead>
+          <tr><th>Phase</th><th data-en>Ladder Rungs</th><th data-zh>階梯級數</th><th data-en>Decision Focus</th><th data-zh>決策焦點</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td><td>Rung 1</td>
+            <td data-en>Does this requirement have confirmed support? Speculative features marked <code>deferred</code> / <code>out-of-scope</code>.</td>
+            <td data-zh>此需求是否真的有已確認的支撐？speculative 功能標記為 <code>deferred</code> / <code>out-of-scope</code>。</td>
+          </tr>
+          <tr>
+            <td>2</td><td>Rung 2‑4</td>
+            <td data-en>Stdlib → native platform → existing dependency. New dependencies must justify why rung 2‑4 cannot satisfy.</td>
+            <td data-zh>標準函式庫 → 原生平台 → 現有依賴。引入新 dependency 須說明為何 rung 2‑4 無法滿足。</td>
+          </tr>
+          <tr>
+            <td>4</td><td>Rung 5‑6</td>
+            <td data-en>Can fewer lines accomplish this? Is the implementation the <em>minimum that works</em>, not an over-prepared version?</td>
+            <td data-zh>能否用更少程式碼完成？實作是否為<em>「最小可用」</em>而非「預留擴展」？</td>
+          </tr>
+          <tr>
+            <td>5</td><td>—</td>
+            <td data-en>Review checks: new dependencies have ladder records? Unreasoned abstractions flagged as <code>over-engineering risk</code>.</td>
+            <td data-zh>複核檢查：新 dependency 是否有 ladder 紀錄？未經 ladder 思考的抽象標記為 <code>over-engineering risk</code>。</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 data-en>Collaboration with Code-Review Skill Family</h3>
+      <h3 data-zh>與 Code-Review Skill 家族的協作</h3>
+      <div class="two">
+        <div class="card">
+          <p data-en><strong>Ladder</strong> is the upfront self-check during design and implementation — prevents “unnecessary existence.”</p>
+          <p data-zh><strong>Ladder</strong> 是設計與實作階段的前置自我檢視——防止「不必要的存在」。</p>
+        </div>
+        <div class="card">
+          <p data-en><strong>Code-review family</strong> (<code>code-refactoring-advisor</code>, <code>test-quality-reviewer</code>, <code>security-risk-reviewer</code>) is the left-shift detection during review — prevents “bad structure.”</p>
+          <p data-zh><strong>Code-review 家族</strong>（<code>code-refactoring-advisor</code>、<code>test-quality-reviewer</code>、<code>security-risk-reviewer</code>）是複核階段的 left-shift 偵測——防止「不良結構」。</p>
+        </div>
+      </div>
+      <p data-en>When they conflict (ladder says “one line,” refactoring advisor says “extract function”), <strong>readability and testability</strong> is the final judge — not minimizing line count alone.</p>
+      <p data-zh>兩者衝突時（ladder 說「一行就夠」，refactoring advisor 說「抽出 function」），以<strong>可讀性與可測試性</strong>為最終判準——不是單純行數最少。</p>
+      <p data-en>Full specification: <code>references/ponytail-yagni-ladder.md</code></p>
+      <p data-zh>完整規範請參閱：<code>references/ponytail-yagni-ladder.md</code></p>
+    </section>
+
+    <section>
+      <h2 data-en>Six-Phase Delivery Model</h2>
+      <h2 data-zh>六階段交付模型</h2>
+      <div class="flow">
+        <div class="step"><strong>1</strong><p data-en>Requirements</p><p data-zh>需求明確</p><small>↳ Ponytail Rung 1</small></div>
+        <div class="step"><strong>2</strong><p data-en>Design and contracts</p><p data-zh>架構設計與契約</p><small>↳ Ponytail Rung 2‑4</small></div>
+        <div class="step"><strong>3</strong><p data-en>Tasks and traceability</p><p data-zh>任務與追溯</p></div>
+        <div class="step"><strong>4</strong><p data-en>Implementation and evidence</p><p data-zh>實作與證據</p><small>↳ Ponytail Rung 5‑6</small></div>
+        <div class="step"><strong>5</strong><p data-en>Review verdict</p><p data-zh>複核裁決</p><small>↳ Over-Engineering Check</small></div>
+        <div class="step"><strong>6</strong><p data-en>Optimization</p><p data-zh>優化</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-en>Spec Governance Artifacts</h2>
+      <h2 data-zh>Spec Governance Artifacts 的商業意義</h2>
+      <p data-en>These artifacts are not documentation overhead. They are the operating controls that keep agentic delivery traceable, resumable, auditable, and honest about readiness.</p>
+      <p data-zh>這些 artifact 不是文件負擔，而是讓 agentic delivery 可追溯、可恢復、可稽核，並誠實呈現 readiness 的營運控制面。</p>
+      <p data-en>The execution-level lifecycle rules live in <code>reference/SPEC_GOVERNANCE_ARTIFACTS_GUIDE.md</code>. This business brief summarizes why those rules matter; SDD phase execution should use the reference and phase files as the operational authority.</p>
+      <p data-zh>執行等級的生命週期規則由 <code>reference/SPEC_GOVERNANCE_ARTIFACTS_GUIDE.md</code> 維護。本商業說帖摘要這些規則的價值；實際執行 SDD phase 時，應以該 reference 與 phase 文件作為操作權威。</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Artifact</th>
+            <th data-en>Why</th><th data-zh>Why：商業意義</th>
+            <th data-en>What</th><th data-zh>What：承載內容</th>
+            <th data-en>When / How</th><th data-zh>When / How：時機與流程</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>ISSUE_LOG.md</code></td>
+            <td data-en>Holding surface for unresolved improvements before ownership is safe.</td><td data-zh>owner 尚未安全歸屬前，暫存 unresolved improvements。</td>
+            <td data-en>Issue, trigger, cluster key, root-cause hypothesis, evidence refs, candidate owner, promotion threshold, disposition.</td><td data-zh>issue、trigger、cluster key、root-cause hypothesis、evidence refs、candidate owner、promotion threshold、disposition。</td>
+            <td data-en>Use for repeated gaps or weak evidence; fold into an active spec / CR or promote only after owner resolution.</td><td data-zh>用於 repeated gaps 或 weak evidence；經 owner resolution 後 fold 到 active spec / CR，或在證據足夠時 promoted。</td>
+          </tr>
+          <tr>
+            <td><code>SPECS.md</code></td>
+            <td data-en>Stable investment and dependency map across specs.</td><td data-zh>跨 spec 的穩定投資與相依地圖。</td>
+            <td data-en>Status, dependencies, impacts, open change requests, stable summaries.</td><td data-zh>狀態、相依、影響、Open Change Requests、穩定摘要。</td>
+            <td data-en>Read before requirements and design; refresh as a derived registry summary after upstream truth is current.</td><td data-zh>requirements / design 前必讀；上游 truth 新鮮後，作為 derived registry summary 刷新。</td>
+          </tr>
+          <tr>
+            <td><code>NEXT_STEPS.md</code></td>
+            <td data-en>Reduces resume, handoff, and session-switching cost.</td><td data-zh>降低恢復、交棒與換 session 成本。</td>
+            <td data-en>Current phase, active spec, next action, blockers, resume hint, handoff state.</td><td data-zh>current phase、active spec、next action、blockers、resume hint、handoff state。</td>
+            <td data-en>Read after SPECS.md in resumed sessions; update at pause, blocker, phase exit, or handoff.</td><td data-zh>恢復 session 時在 `SPECS.md` 後讀取；暫停、blocker、phase exit、handoff 時更新。</td>
+          </tr>
+          <tr>
+            <td><code>TESTS.md</code></td>
+            <td data-en>Turns green CI into auditable risk evidence.</td><td data-zh>將 CI 綠燈轉成可稽核的風險證據。</td>
+            <td data-en>Test IDs, scenarios, requirement traces, owners, commands, status, evidence refs.</td><td data-zh>Test IDs、scenarios、requirement traces、owners、commands、status、evidence refs。</td>
+            <td data-en>Update folder-level rows when tests change; roll up through test-registry-manager before readiness summaries.</td><td data-zh>測試變更時先更新 folder-level rows；readiness 摘要前交由 `test-registry-manager` rollup。</td>
+          </tr>
+          <tr>
+            <td><code>RTM.md</code></td>
+            <td data-en>Requirement-management control for scope, coverage, release decisions, and audit.</td><td data-zh>需求管理控制面，用於 scope、coverage、release decision 與 audit。</td>
+            <td data-en>Requirement IDs, acceptance criteria, design sections, task IDs, test IDs, review verdicts, gaps, and residual risks.</td><td data-zh>Requirement IDs、acceptance criteria、design sections、task IDs、test IDs、review verdicts、gaps、residual risks。</td>
+            <td data-en>Generate from upstream artifacts only; use it for traceability review, not as authoring source or verdict authority.</td><td data-zh>只能由 upstream artifacts 產生；用於 traceability review，不作為 authoring source 或 verdict authority。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="card warn" style="margin-top:16px">
+        <p data-en><strong>Flow:</strong> <code>ISSUE_LOG.md</code> owner resolution → SDD upstream spec artifacts and reports → folder-level <code>TESTS.md</code> → workspace test rollup → <code>RTM.md</code> synthesized rollup → <code>SPECS.md</code> stable summary. <code>NEXT_STEPS.md</code> only records the current resume / handoff point. Never sync derived summaries back into upstream authority.</p>
+        <p data-zh><strong>流程：</strong><code>ISSUE_LOG.md</code> owner resolution → SDD upstream spec artifacts 與 reports → folder-level <code>TESTS.md</code> → workspace test rollup → <code>RTM.md</code> synthesized rollup → <code>SPECS.md</code> stable summary。<code>NEXT_STEPS.md</code> 只記錄目前 resume / handoff point。禁止將 derived summary 反向同步回 upstream authority。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-en>Lifecycle Maintenance by Phase</h2>
+      <h2 data-zh>各階段的生命週期維護行為</h2>
+      <table>
+        <thead>
+          <tr><th>Phase</th><th data-en>Maintenance Behavior</th><th data-zh>維護行為</th><th data-en>Business Control</th><th data-zh>商業控制</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td data-en>Read <code>SPECS.md</code>, then <code>NEXT_STEPS.md</code>. Resolve whether unresolved improvements stay in <code>ISSUE_LOG.md</code>, fold into an active spec / CR, or become a promoted SDD lane. Apply Ponytail Rung 1: confirm each requirement truly needs to exist before proceeding.</td>
+            <td data-zh>先讀 <code>SPECS.md</code>，再讀 <code>NEXT_STEPS.md</code>。判斷 unresolved improvement 應留在 <code>ISSUE_LOG.md</code>、fold 到 active spec / CR，或 promoted 成 SDD lane。套用 Ponytail Rung 1：確認每個需求是否真的需要存在，再進入下一步。</td>
+            <td data-en>Prevents premature specs and requirement pollution.</td>
+            <td data-zh>避免 premature spec 與需求矩陣污染。</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td data-en>Define the artifact authority model in <code>design.md</code> when the work affects tests, RTM, registry, issue log, or stakeholder summaries. Apply Ponytail Rung 2‑4: justify technology choices through stdlib → native platform → existing dependency before introducing new ones.</td>
+            <td data-zh>若工作影響測試、RTM、registry、issue log 或 stakeholder summary，必須在 <code>design.md</code> 定義 artifact authority model。套用 Ponytail Rung 2‑4：透過標準函式庫 → 原生平台 → 現有依賴檢視技術選型，再引入新 dependency。</td>
+            <td data-en>Prevents summary drift before implementation starts.</td>
+            <td data-zh>在實作開始前防止 summary drift。</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td data-en>Mirror the authority boundary in <code>tasks.md</code> and plan explicit closeout work for <code>TESTS.md</code>, RTM, SPECS, CR closure, and issue disposition.</td>
+            <td data-zh>在 <code>tasks.md</code> 鏡射 authority boundary，並規劃 <code>TESTS.md</code>、RTM、SPECS、CR closure 與 issue disposition 的 closeout 任務。</td>
+            <td data-en>Makes governance work executable, not aspirational.</td>
+            <td data-zh>讓治理工作可執行，而不是停留在口號。</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td data-en>Update upstream evidence first: code, tests, reports, and task status. Folder-level <code>TESTS.md</code> precedes workspace rollups. Apply Ponytail Rung 5‑6: implement the minimum that works; avoid over-engineering abstractions.</td>
+            <td data-zh>先更新 upstream evidence：程式碼、測試、reports 與 task status。folder-level <code>TESTS.md</code> 必須早於 workspace rollup。套用 Ponytail Rung 5‑6：實作最小可用版本，避免過度設計的抽象層。</td>
+            <td data-en>Keeps CI evidence traceable and avoids false-green summaries.</td>
+            <td data-zh>讓 CI 證據可追溯，避免 false-green summary。</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td data-en><code>review.md</code> records the final verdict and checks that issue rows, RTM, and SPECS were updated only from upstream truth. Verify over-engineering checks: new dependencies must have ladder records; unreasoned abstractions flagged.</td>
+            <td data-zh><code>review.md</code> 記錄 final verdict，並檢查 issue row、RTM、SPECS 是否只由 upstream truth 更新。檢查 over-engineering：新 dependency 必須有 ladder 紀錄，未經 ladder 思考的抽象層應被標記。</td>
+            <td data-en>Keeps readiness claims tied to evidence.</td>
+            <td data-zh>讓 readiness 宣稱綁定證據。</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td data-en>Convert repeated findings into a local lesson, issue-log item, CR fold-back, or promoted skill / process change candidate.</td>
+            <td data-zh>將 repeated finding 轉成 local lesson、issue-log item、CR fold-back，或 promoted skill / process change candidate。</td>
+            <td data-en>Turns review pain into process improvement.</td>
+            <td data-zh>把 review 痛點轉成流程改善。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2 data-en>Requirement Traceability</h2>
+      <h2 data-zh>需求追溯性與 RTM</h2>
+      <div class="two">
+        <div class="card">
+          <h3 data-en>Why it matters</h3>
+          <h3 data-zh>為什麼重要</h3>
+          <p data-en>Requirement traceability prevents a common delivery failure: a feature looks complete, but one requirement has no design, no task, no test, or no review evidence. RTM makes the gap visible before release.</p>
+          <p data-zh>需求追溯性(requirement traceability) 避免常見交付失敗：功能看似完成，但某個 requirement 沒有 design、task、test 或 review evidence。RTM 讓缺口在 release 前被看見。</p>
+        </div>
+        <div class="card">
+          <h3 data-en>How RTM is used</h3>
+          <h3 data-zh>RTM 如何使用</h3>
+          <p data-en>Use RTM to review requirement → acceptance criteria → design → tasks → tests → review verdict / residual risk. It supports scope control, impact analysis, QA coverage review, release go/no-go, and audit.</p>
+          <p data-zh>用 RTM 檢視 requirement → acceptance criteria → design → tasks → tests → review verdict / residual risk。它支撐 scope control、impact analysis、QA coverage review、release go/no-go 與 audit。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-en>Issue Log to SDD Lifecycle</h2>
+      <h2 data-zh>ISSUE_LOG 到 SDD 的生命週期</h2>
+      <div class="grid">
+        <div class="card">
+          <h3 data-en>1. Hold uncertainty</h3>
+          <h3 data-zh>1. 暫存不確定性</h3>
+          <p data-en>Repeated findings, retro items, known issues, or weak evidence can stay in <code>ISSUE_LOG.md</code> while ownership is unresolved.</p>
+          <p data-zh>repeated finding、retro item、known issue 或 weak evidence 可先留在 <code>ISSUE_LOG.md</code>，直到 owner 清楚。</p>
+        </div>
+        <div class="card">
+          <h3 data-en>2. Resolve owner</h3>
+          <h3 data-zh>2. 解析 owner</h3>
+          <p data-en>Fold into an active spec, create a CR for completed baseline, keep as a local lesson, or promote only when repeated root cause and evidence are strong.</p>
+          <p data-zh>可 fold 到 active spec、為 completed baseline 建 CR、留成 local lesson，或在 repeated root cause 與 evidence 足夠時 promoted。</p>
+        </div>
+        <div class="card">
+          <h3 data-en>3. Reflect only after SDD</h3>
+          <h3 data-zh>3. SDD 正式化後才反映</h3>
+          <p data-en>RTM and SPECS should reflect formal requirements, tasks, tests, review, or CR state. They should not ingest raw issue-log rows as requirements.</p>
+          <p data-zh>RTM 與 SPECS 只反映正式 requirement、task、test、review 或 CR 狀態；不可直接吞 raw issue-log rows 當需求。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-en>Scrum Team and Agile Mapping</h2>
+      <h2 data-zh>Scrum Team 與敏捷宣言對應</h2>
+      <div class="two">
+        <div class="card">
+          <h3>Scrum Team</h3>
+          <p data-en><strong>Product Owner:</strong> value and acceptance criteria. <strong>Scrum Master:</strong> flow, blockers, retrospective promotion. <strong>Developers:</strong> shared artifacts, tests, implementation, review evidence.</p>
+          <p data-zh><strong>產品負責人(Product Owner)：</strong>價值與驗收標準。<strong>Scrum Master：</strong>流程、阻塞、retrospective promotion。<strong>開發者(Developers)：</strong>共同 artifact、測試、實作、review evidence。</p>
+        </div>
+        <div class="card">
+          <h3 data-en>Agile Manifesto</h3>
+          <h3 data-zh>敏捷宣言(Agile Manifesto)</h3>
+          <p data-en>SDD supports working software with evidence, customer collaboration through acceptance criteria, and responding to change through CR overlays, impact triage, and optimization.</p>
+          <p data-zh>SDD 以證據支撐 working software，以驗收標準支撐 customer collaboration，並透過 Change Request、impact triage 與 optimization 支撐 responding to change。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-en>Authority Boundary</h2>
+      <h2 data-zh>權威邊界</h2>
+      <div class="card warn">
+        <p data-en>SDD does not claim runtime readiness by itself. <code>review.md</code> owns acceptance and readiness verdicts. <code>TESTS.md</code> owns test catalog and evidence pointers. <code>SPECS.md</code> and <code>RTM.md</code> are derived summaries and must not overwrite upstream truth. The Ponytail YAGNI Ladder enforces minimal implementation discipline across Phases 1‑5, preventing over-engineering while preserving safety and correctness.</p>
+        <p data-zh>SDD 不會單獨宣稱 runtime readiness。`review.md` 擁有 acceptance / readiness verdict；`TESTS.md` 擁有測試 catalog 與 evidence pointer；`SPECS.md` 與 `RTM.md` 是 derived summary，不可反向覆寫 upstream truth。Ponytail YAGNI Ladder 貫穿 Phase 1‑5 執行最小實作紀律，在保持安全性與正確性的前提下防止過度設計。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-en>References</h2>
+      <h2 data-zh>名詞參考</h2>
+      <div class="refs">
+        <a href="https://kiro.dev/">AWS Kiro (inspiration)</a>
+        <a href="https://github.com/DietrichGebert/ponytail">Ponytail (MIT)</a>
+        <a href="https://scrumguides.org/">Scrum Guide</a>
+        <a href="https://agilemanifesto.org/">Agile Manifesto</a>
+        <a href="https://en.wikipedia.org/wiki/Test-driven_development">TDD</a>
+        <a href="https://en.wikipedia.org/wiki/Domain-driven_design">DDD</a>
+        <a href="https://en.wikipedia.org/wiki/Code_refactoring">Refactoring</a>
+        <a href="https://en.wikipedia.org/wiki/Continuous_integration">Continuous Integration</a>
+        <a href="https://en.wikipedia.org/wiki/Continuous_delivery">Continuous Delivery</a>
+        <a href="https://martinfowler.com/articles/practical-test-pyramid.html">Test Pyramid</a>
+        <a href="https://alistairmavin.com/ears/">EARS</a>
+        <a href="https://www.nist.gov/itl/ai-risk-management-framework">NIST AI RMF</a>
+        <a href="https://oecd.ai/en/ai-principles">OECD AI Principles</a>
+        <a href="https://www.iso.org/standard/42001">ISO/IEC 42001</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap" data-en>Maintained by the SpecMaster team. Package this file with the spec-driven-development skill.</div>
+    <div class="wrap" data-zh>由 SpecMaster 團隊維護。請將本檔與 spec-driven-development skill 一併打包交付。</div>
+  </footer>
+
+  <script>
+    const root = document.body;
+    const buttons = document.querySelectorAll("[data-set-lang]");
+    function setLang(lang) {
+      root.dataset.lang = lang;
+      document.documentElement.lang = lang === "zh" ? "zh-Hant" : "en";
+      buttons.forEach((button) => button.classList.toggle("active", button.dataset.setLang === lang));
+    }
+    buttons.forEach((button) => button.addEventListener("click", () => setLang(button.dataset.setLang)));
+  </script>
+</body>
+</html>

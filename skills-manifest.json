@@ -19,7 +19,8 @@
         "code-refactoring-advisor",
         "test-design-generator",
         "security-risk-reviewer",
-        "sonarqube-bridge"
+        "sonarqube-bridge",
+        "cross-agent-review"
       ]
     },
     "scrum": {
@@ -114,13 +115,15 @@
       "description": "Frontend, design, and creative tools",
       "skills": [
         "ui-skill",
-        "shadcn"
+        "shadcn",
+        "frontend-designer"
       ]
     },
     "security-compliance": {
       "description": "Security review and compliance",
       "skills": [
-        "security-review"
+        "security-review",
+        "iso-ai-security-auditor"
       ]
     },
     "social-media": {

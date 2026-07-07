@@ -1,0 +1,6 @@
+xreview-linux-*
+xreview-darwin-*
+xreview-windows-*
+bundle-manifest.json
+*-bundle-manifest.json
+.release-stage/

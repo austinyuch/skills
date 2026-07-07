@@ -1,6 +1,6 @@
 ---
 name: spec-master
-description: 把這個 skill 當成 spec 工作的前門與路由入口，同時包含完整的 spec-driven-development 工作流。當使用者要建立新 spec、續做做到一半的 spec、根據 `NEXT_STEPS.md` 詢問下一步、盤點或更新 `SPECS.md`、建立或整理 `RTM.md`，或遇到 review rejection、retro finding、tech debt、known issue、test gap、CR follow-up 等 continuous-improvement 請求而不確定應該併回既有 owner、走 CR overlay、先進 issue log，還是真的需要開新 spec 時使用。路由決定後，spec authoring / resume / improvement classification 的完整工作流請參考本目錄的 `WORKFLOW.md`。把 `ISSUE_LOG.md` 治理導向 `issue-log-manager`，把 `TESTS.md` 治理導向 `test-registry-manager`，把 `SPECS.md` registry sync 導向 `spec-registry-manager`，並在真正需要 local dev / UAT / E2E runtime allocation 時轉交 `local-infra-registry-governance`。不要用在單純 folder-level `TESTS.md` 維護、單純 `SPECS.md` 更新、或單純 local env 操作這些已明確屬於下游 skill 的情況。
+description: 把這個 skill 當成 spec 工作的前門與路由入口，並在需要 branch-spec authoring / resume / improvement classification 時指向本目錄的 `WORKFLOW.md`。當使用者要建立新 spec、續做做到一半的 spec、根據 `NEXT_STEPS.md` 詢問下一步、盤點或更新 `SPECS.md`、建立或整理 `RTM.md`，或遇到 review rejection、retro finding、tech debt、known issue、test gap、CR follow-up 等 continuous-improvement 請求而不確定應該併回既有 owner、走 CR overlay、先進 issue log，還是真的需要開新 spec 時使用。把 project-level system architecture / `.agents/steering/{product,tech,structure}` / architecture review / 架構 HTML 導向 `system-architect`，把 `ISSUE_LOG.md` 治理導向 `issue-log-manager`，把 `TESTS.md` 治理導向 `test-registry-manager`，把 `SPECS.md` registry sync 導向 `spec-registry-manager`，並在真正需要 local dev / UAT / E2E runtime allocation 時轉交 `local-infra-registry-governance`。不要用在單純 folder-level `TESTS.md` 維護、單純 `SPECS.md` 更新、或單純 local env 操作這些已明確屬於下游 skill 的情況。
 ---
 
 # Spec Master
@@ -33,10 +33,13 @@ description: 把這個 skill 當成 spec 工作的前門與路由入口，同時
 - 把功能 / gap / tech debt / known issue 納入適合的 spec、CR overlay、或 issue log 追蹤
 - 做 branch-spec authoring、FMEA 納入 spec、tasks 規劃、review / optimization
 - 建立、整理或刷新 `RTM.md`（workspace traceability rollup）與維護 `NEXT_STEPS.md`（rolling memo）：這兩份 artifact 的 authoring owner 是本 skill 的工作流部分，不是 `spec-registry-manager` / `test-registry-manager` / `issue-log-manager`
+- 判斷 project-level system architecture steering docs 是否需要建立 / 更新 / 審查；若要實際維護 `.agents/steering/{product,tech,structure}.md`、同名 HTML、architecture review checklist、或 code-review Architecture Context Packet，交給 `system-architect`
 - 修改 repo-owned global skills（`skills/`）的正式行為、路由、trigger timing、authority boundary、或 shared governance assets，且該請求不是單純 read-only analysis
 - 為 unresolved improvement item 交由 `issue-log-manager` 維護 issue log 記錄，或把 issue 升級成正式 spec / CR lane
 
-> **Depth-review 工具的歸屬**：當 review-rejection / retro / depth-review 類請求發生時，只要 `code-review` skill 家族（`code-review`、`test-quality-reviewer`、`code-refactoring-advisor`、`test-design-generator`、`security-risk-reviewer`、`sonarqube-bridge`）**對 agent 可用**——不限當前 workspace 是否自帶；該家族經 `code-review-publish` 發布到 global skill homes 後，在該機器每個 workspace 都可用——這些工具就是 **SDD 各階段內的 capability-gated 輔助輸入**（見 `WORKFLOW.md` Global Constraint #14 的 availability 判定），不是獨立的 routing 目標。`spec-master` 只負責把工作導向本 skill 的工作流部分，並提醒「Phase 4 left-shift / Phase 5 review inputs 適用」；不要把「跑 code-review」當成繞過 spec workflow 的捷徑。
+> **Depth-review 工具的歸屬**：當 review-rejection / retro / depth-review 類請求發生時，只要 `code-review` skill 家族（`code-review`、`test-quality-reviewer`、`code-refactoring-advisor`、`test-design-generator`、`security-risk-reviewer`、`sonarqube-bridge`，以及跨 model 獨立複核 `cross-agent-review` / `xreview`）**對 agent 可用**——不限當前 workspace 是否自帶；該家族經各自的 publish 流程發布到 global skill homes 後，在該機器每個 workspace 都可用——這些工具就是 **SDD 各階段內的 capability-gated 輔助輸入**（見 `WORKFLOW.md` Global Constraint #14 的 availability 判定）。`spec-master` 只負責把工作導向本 skill 的工作流部分，並提醒「Phase 4 left-shift / Phase 5 review inputs 適用」；不要把「跑 code-review」當成繞過 spec workflow 的捷徑。
+>
+> **`cross-agent-review` 的雙重身分**：在 SDD 流程內，它是 Phase 5 的 capability-gated 獨立複核 input，由 workflow **導引到** `cross-agent-review` skill 去執行（SDD 不 re-implement、不 hard-code 作者/reviewer 配對）。但若使用者的請求**本身就是**「換另一個 model 複核」「設定/切換哪個 agent 來 review」「安裝作者完成即自動複核的 hook」「更新 SOTA model-card registry」這類 cross-agent review 的**設定 / 一次性操作**，那就是 `cross-agent-review` skill 的**直接 routing 目標**，應直接導過去，不必先進 spec workflow。
 
 ### 2. `spec-registry-manager`
 當使用者要：
@@ -63,6 +66,24 @@ description: 把這個 skill 當成 spec 工作的前門與路由入口，同時
 - 啟動 / 重用 / 釋放 / 回收 local dev / UAT / E2E 環境
 - 解決 local runtime allocation / bundle readiness / instance ownership 問題
 - 在 manual / review / E2E 之前確認 governed runtime 是否存在
+
+### 4. `system-architect`
+當使用者要：
+- 建立或維護 project-level `.agents/steering/{product,tech,structure}.md` 與同名 HTML
+- 在 project start / Phase 2 design / Phase 5 review 判斷 architecture docs 是否缺失、過期、或 overclaim
+- 從多個 branch specs 綜整一份可與人溝通的系統架構觀點
+- 為 `code-review` 提供 Architecture Context Packet、bounded-context / impact / graph query hints
+- 用 Agile/YAGNI 邊界採用 IBM SAA good parts，而不是建立 heavyweight blueprint
+
+`system-architect` 是 architecture communication snapshot 的 authoring / review owner；它不取代 spec-local `design.md`、`review.md`、或 `code-review` 的 graph/static-analysis evidence。
+
+### 5. Intake-only downstream artifact targets
+當 Loop Engineering Intake route table 顯示主要工作面是 stakeholder/operator artifact refresh，而不是 branch-spec authoring 本身時，可在保留 `review.md` / `RTM.md` / `SPECS.md` authority boundary 的前提下，交給：
+- `user-manual-skill`：操作手冊 / user-facing how-to
+- `project-review-skill`：stakeholder-facing project review / readiness narrative
+- `system-architect`：project-level steering architecture markdown/HTML 與 code-review 高階架構上下文
+
+這些是 route macro 的 downstream artifact targets，不是 `SPECS.md`、`RTM.md`、`TESTS.md` 或 `review.md` 的 authority owner。
 
 ## 路由判斷程序（增強版）
 
@@ -112,6 +133,7 @@ description: 把這個 skill 當成 spec 工作的前門與路由入口，同時
    - 先分出主要工作面
    - 先處理 authority 最明確、最能解除阻塞的那一條
    - 不要把 registry sync 假裝成 branch-spec authoring，也不要把 runtime 問題偽裝成 spec registry 問題
+   - 若混合 loop engineering / UAT / production-ready / mock-heavy / false-green / manual-review / `RTM.md` / `SPECS.md` / `NEXT_STEPS.md` / runtime-E2E-VRT / commit-push closeout，先讀取 [references/loop-engineering-intake.md](./references/loop-engineering-intake.md)，產生 route table，再選擇第一個安全 lane；這是 route macro，不是新的 SDD Execution Profile
 
 6. **若使用者明確指定某 skill**
    - 尊重使用者指定
@@ -173,6 +195,7 @@ Rule of thumb:
   - 大型 `TESTS.md` / `SPECS.md` / `RTM.md` rollup refresh
 - `spec-master` 只負責指出「需要隔離 lane」，不直接替下游操作 Git。
 - 不要把 machine-local worktree path、暫存目錄、或 branch 的短期執行細節寫進 `SPECS.md` / `NEXT_STEPS.md`；這些屬於 execution hygiene，不是 registry truth。
+- **多條 concurrent lane 同時編輯共用治理檔（`ISSUE_LOG.md` / `SPECS.md` / `NEXT_STEPS.md` / `RTM.md`）時**：開新 issue row 前先跑 `scripts/next-issue-id.sh` 取「跨所有 branch」的下一個 free id；append-only 檔（ISSUE_LOG / RTM）靠 `.gitattributes merge=union` 於 merge 自動合併；`NEXT_STEPS` / `SPECS` 為 in-place / rolling，需 merge-time 手動重整；merge 前可用 `scripts/reconcile-registry.sh` 盤點跨 branch 分歧。完整協定見 [references/concurrent-governance.md](references/concurrent-governance.md)。
 - 需要具體規則時，優先回讀 `shared-governance` skill 內建的 `references/git-worktree-guide.md`、`references/git-worktree-templates.md`、`references/concurrent-writable-lanes.md`、`references/ownership-evidence-template.md` 與 `references/cross-artifact-regeneration-order.md`，再交由對應下游 skill 落地。
 
 ## Guardrails

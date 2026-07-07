@@ -4,12 +4,12 @@
 
 canonical shared location 已移至：
 
-- `../../shared-governance/references/git-worktree-templates.md`
+- `shared-governance` skill 的 `references/git-worktree-templates.md`
 
 衝突與 pre-write 檢查請再讀：
 
-- `../../shared-governance/references/concurrent-writable-lanes.md`
-- `../../shared-governance/references/pre-write-conflict-checklist.md`
+- `shared-governance` skill 的 `references/concurrent-writable-lanes.md`
+- `shared-governance` skill 的 `references/pre-write-conflict-checklist.md`
 
 最小不變式仍是：**branch/worktree template 應由 global skill 內建 shared references 提供，不依賴 repo-local `AGENTS.md` 才存在。**
 

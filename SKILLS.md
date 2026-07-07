@@ -6,7 +6,7 @@ future syncs from the working skill set.
 - **Source of truth (upstream):** `~/.config/opencode/skills/<skill-name>`
 - **Target (this repo):** `skills/<category>/<skill-name>`
 - **Machine-readable companion:** [`skills-manifest.json`](./skills-manifest.json)
-- **Last updated:** 2026-07-02
+- **Last updated:** 2026-07-03
 
 ## Sync conventions
 
@@ -25,7 +25,7 @@ future syncs from the working skill set.
 5. **When adding a skill:** copy → secret-scan → place under the right category →
    register in `skills-manifest.json` → add a row here.
 
-Legend: ★ = added 2026-07-02 · License A2 = Apache-2.0, MIT = repo-root MIT.
+Legend: ★ = recently added (2026-07-02 / 2026-07-03) · License A2 = Apache-2.0, MIT = repo-root MIT.
 
 ---
 
@@ -54,6 +54,7 @@ Legend: ★ = added 2026-07-02 · License A2 = Apache-2.0, MIT = repo-root MIT.
 |-------|---------|-------|
 | code-review | A2 | core CLI; `NOTICE` names "aclab Code Review family" |
 | code-refactoring-advisor | A2 | |
+| cross-agent-review ★ | A2 | independent cross-agent / cross-model review orchestration; native `xreview-*` binaries are release artifacts, not committed |
 | security-risk-reviewer | A2 | |
 | sonarqube-bridge | A2 | |
 | test-design-generator | A2 | |
@@ -62,6 +63,7 @@ Legend: ★ = added 2026-07-02 · License A2 = Apache-2.0, MIT = repo-root MIT.
 ## creative
 | Skill | License | Notes |
 |-------|---------|-------|
+| frontend-designer ★ | MIT | design+implement+visual-review orchestrator; contains `gstack`/`giant`/A2UI brand-example content (accepted) |
 | shadcn | MIT | |
 | ui-skill | MIT | |
 
@@ -133,6 +135,7 @@ Legend: ★ = added 2026-07-02 · License A2 = Apache-2.0, MIT = repo-root MIT.
 ## security-compliance
 | Skill | License | Notes |
 |-------|---------|-------|
+| iso-ai-security-auditor ★ | MIT | AI/security/privacy/PII/log compliance inventory aid; not certification or legal advice |
 | security-review | MIT | |
 
 ## social-media
