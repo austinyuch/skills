@@ -32,7 +32,7 @@
    *    text on dark sections. Broadly applied so no dark band is missed.    */
   html, body,
   nav, header, footer, section, div,
-  .hero, .stats, .bg-dark, .cta-section {
+  .hero, .stats, .metric-strip, .bg-dark, .cta-section {
     -webkit-print-color-adjust: exact !important; /* Chrome/Safari legacy */
     print-color-adjust: exact !important;         /* standard */
   }
@@ -55,7 +55,7 @@
     text-shadow: none !important;
   }
 
-  .hero, .stats, .bg-dark, .cta-section,
+  .hero, .stats, .metric-strip, .bg-dark, .cta-section,
   .on-dark, .dark, .dark-section,
   [data-print-contrast],
   [data-print-contrast="dark"] {
@@ -64,7 +64,7 @@
     text-shadow: none !important;
   }
 
-  .hero *, .stats *, .bg-dark *, .cta-section *,
+  .hero *, .stats *, .metric-strip *, .bg-dark *, .cta-section *,
   .on-dark *, .dark *, .dark-section *,
   [data-print-contrast] *,
   [data-print-contrast="dark"] * {
@@ -76,7 +76,7 @@
    * reduce print legibility. If a project's cards already print with sufficient
    * contrast, their original backgrounds/borders should remain.
    */
-  .section, .hero, .stats, .bg-dark, .cta-section,
+  .section, .hero, .stats, .metric-strip, .bg-dark, .cta-section,
   .cap-card, .pain-card, .vp-card, .int-card, .proof-card,
   .persona-card, .feature-block, .arch-node,
   .card, .stat {

@@ -56,6 +56,34 @@ Reads a report JSON file and prints a compact human-readable summary.
 
 Use after `run uat` or `run demo` when you want a compact textual readback of the generated report.
 
+### report verify-computer-use-bundle
+
+`report verify-computer-use-bundle --bundle <path> [--min-unique-screenshots <n>] [--allow-loopback-target] [--allow-not-assessed] [--allow-manual-source] [--no-require-policy-evidence]`
+
+The **strict evidence verifier** for computer-use / web-UAT bundles. It confirms the bundle preserves `computerUseEnvironments`, safety-policy metadata, readiness metadata, artifact linkage, **readable screenshot bytes**, optional **screenshot uniqueness** (`--min-unique-screenshots`), and a `report show` readback. **Fails closed on a loopback/`localhost`/`file://` target by default** — a bounded local smoke cannot pass as external/GTO proof unless you explicitly pass `--allow-loopback-target`. Use as the final gate before treating a bundle as external-runtime evidence.
+
+### report publish
+
+`report publish --bundle <path> [--sync-rollup]`
+
+Publishes results into the tracked consumer docs. `--sync-rollup` is opt-in (default off, per `ISSUE-GOV-005`): without it a publish does **not** rewrite the curated `.agents/specs/{SPECS,RTM,NEXT_STEPS}.md`. Prefer a `report show -> report publish` readback before refreshing tracked docs (the truth-chain).
+
+### Authenticated web UAT (`login` step / `loginConfig`)
+
+For a web target behind a client-side auth guard (Next.js/SPA), a plan `steps[]` entry with `actionType: "login"` + `loginConfig` runs a real form login before protected-route captures. `loginConfig` fields:
+- `url`, `fields[] { selector, value|valueEnv }`, `submitSelector`, `successCondition { urlContains | urlNotContains | readySelector | cookiePresent }`.
+- `successCondition.cookiePresent: <cookie-name>` proves login by waiting for the auth cookie — **redirect-independent**. Prefer it for SPAs whose post-auth redirect is gated on client auth state (a `urlNotContains` signal can time out even after a fully-successful login; the cookie signal doesn't).
+- `approvalToken` — required before entering any credential-like field (password/token/OTP/…); a login with a credential field but no approval token is recorded `approvalRequired:true, blocked` (never silently submitted).
+- **`isSecret: true`** on a field (contract `plan-definition.schema.json`) **forces the credential-approval gate regardless of selector text** — the authoritative marker when a real credential field carries an opaque selector like `#f1`.
+
+### External-target runtime proof (harness)
+
+`scripts/prove_external_web_target.sh` is the one-command external proof against an **already-running non-loopback** target (it auto-detects the LAN IP, builds `uatdemo` if missing, runs a real Playwright capture, strict-verifies, and copies evidence):
+- **Public single route**: `--port <p> --path <route> --ready-selector <sel> --capture-selector <sel>`.
+- **Authenticated / multi-route**: `--target-config-file <config>` — drives `login` + `captures[]` from an external-target-config (`contract/external-computer-use-target-config.schema.json`); env-wire credential `valueEnv`/`approvalTokenEnv`.
+
+Preflight a target-config without a browser via `python3 scripts/prove_external_computer_use_runtime_bundle.py --require-non-loopback-target --validate-target-config-only --target-config-file <config>` (validates shape + non-loopback posture + credential hygiene, secrets redacted).
+
 ## Expected inputs
 
 - Plan files should conform to `contract/plan-definition.schema.json`

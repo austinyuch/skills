@@ -974,7 +974,7 @@
 
                         <div class="form-group" style="margin-bottom: 16px;">
                             <label style="display: block; margin-bottom: 8px; font-weight: 500;">导入模板：</label>
-                            <a href="#" onclick="downloadTemplate()" style="color: #E94609; text-decoration: none;">
+                            <a href="javascript:void(0)" onclick="downloadTemplate()" style="color: #E94609; text-decoration: none;">
                                 点击下载采购订单导入模板.xlsx
                             </a>
                         </div>
@@ -988,7 +988,7 @@
 
                         <div class="form-group" id="import-fail-group" style="display: none; margin-bottom: 16px;">
                             <label style="display: block; margin-bottom: 8px; font-weight: 500;">失败结果文件：</label>
-                            <a href="#" id="import-fail-link" style="color: #E94609; text-decoration: none;">
+                            <a href="javascript:void(0)" id="import-fail-link" style="color: #E94609; text-decoration: none;">
                                 下载失败结果文件
                             </a>
                         </div>
@@ -1984,7 +1984,7 @@
         function downloadTemplate() {
             console.log('下载采购订单导入模板');
             const link = document.createElement('a');
-            link.href = '#';
+            link.href = 'javascript:void(0)';
             link.download = '采购订单导入模板.xlsx';
             link.click();
             showSuccessMessage('模板下载已开始，请查看浏览器下载目录');

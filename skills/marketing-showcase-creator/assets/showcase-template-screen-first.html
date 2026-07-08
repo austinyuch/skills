@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-TW" id="root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{PRODUCT_NAME}} — {{SHORT_POSITIONING}}</title>
+  <link rel="stylesheet" href="showcase-template-screen-first.css">
+</head>
+<body>
+  <nav class="showcase-nav" aria-label="Primary">
+    <a class="nav-brand" href="#hero">{{PRODUCT_NAME}}</a>
+    <div class="nav-links">
+      <a href="#pain"><span class="lang-zh">痛點</span><span class="lang-en" hidden>Pain</span></a>
+      <a href="#value"><span class="lang-zh">價值</span><span class="lang-en" hidden>Value</span></a>
+      <a href="#proof"><span class="lang-zh">實證</span><span class="lang-en" hidden>Proof</span></a>
+      <a href="#resources"><span class="lang-zh">資源</span><span class="lang-en" hidden>Resources</span></a>
+    </div>
+    <div class="nav-actions" data-noprint>
+      <button id="lang-toggle" type="button" onclick="toggleLang()" aria-label="Switch language / 切換語言">English</button>
+      <button id="print-button" type="button" onclick="printShowcase()" aria-label="Print this showcase / 列印展示文件">
+        <span class="lang-zh">列印</span><span class="lang-en" hidden>Print</span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" id="hero" data-print-contrast="dark">
+      <div class="hero-kicker">
+        <span class="lang-zh">{{ZH_CATEGORY}}</span>
+        <span class="lang-en" hidden>{{EN_CATEGORY}}</span>
+      </div>
+      <h1>
+        <span class="lang-zh">{{ZH_OUTCOME_HEADLINE}}</span>
+        <span class="lang-en" hidden>{{EN_OUTCOME_HEADLINE}}</span>
+      </h1>
+      <p class="hero-copy">
+        <span class="lang-zh">{{ZH_VALUE_SUBHEAD}}</span>
+        <span class="lang-en" hidden>{{EN_VALUE_SUBHEAD}}</span>
+      </p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="{{PRIMARY_CTA_HREF}}">
+          <span class="lang-zh">{{ZH_PRIMARY_CTA}}</span><span class="lang-en" hidden>{{EN_PRIMARY_CTA}}</span>
+        </a>
+        <a class="btn-outline" href="{{SECONDARY_CTA_HREF}}">
+          <span class="lang-zh">{{ZH_SECONDARY_CTA}}</span><span class="lang-en" hidden>{{EN_SECONDARY_CTA}}</span>
+        </a>
+      </div>
+      <figure class="hero-shot">
+        <img src="{{PRODUCT_SCREENSHOT_SRC}}" alt="{{SCREENSHOT_ALT}}">
+        <figcaption>
+          <span class="lang-zh">{{ZH_SCREENSHOT_CAPTION}}</span>
+          <span class="lang-en" hidden>{{EN_SCREENSHOT_CAPTION}}</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="metric-strip" aria-label="Evidence snapshot">
+      <div class="metric"><strong>{{METRIC_1}}</strong><span>{{METRIC_1_LABEL}}</span></div>
+      <div class="metric"><strong>{{METRIC_2}}</strong><span>{{METRIC_2_LABEL}}</span></div>
+      <div class="metric"><strong>{{METRIC_3}}</strong><span>{{METRIC_3_LABEL}}</span></div>
+      <div class="metric"><strong>{{METRIC_4}}</strong><span>{{METRIC_4_LABEL}}</span></div>
+    </section>
+
+    <section class="section muted" id="pain">
+      <div class="section-inner">
+        <p class="section-kicker"><span class="lang-zh">為什麼現在很難</span><span class="lang-en" hidden>Why this is hard now</span></p>
+        <h2><span class="lang-zh">{{ZH_PAIN_HEADING}}</span><span class="lang-en" hidden>{{EN_PAIN_HEADING}}</span></h2>
+        <div class="card-grid">
+          <article class="pain-card"><b>01</b><h3>{{PAIN_1_TITLE}}</h3><p>{{PAIN_1_COPY}}</p></article>
+          <article class="pain-card"><b>02</b><h3>{{PAIN_2_TITLE}}</h3><p>{{PAIN_2_COPY}}</p></article>
+          <article class="pain-card"><b>03</b><h3>{{PAIN_3_TITLE}}</h3><p>{{PAIN_3_COPY}}</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="value">
+      <div class="section-inner">
+        <p class="section-kicker accent"><span class="lang-zh">你得到什麼</span><span class="lang-en" hidden>What changes for you</span></p>
+        <h2><span class="lang-zh">{{ZH_VALUE_HEADING}}</span><span class="lang-en" hidden>{{EN_VALUE_HEADING}}</span></h2>
+        <div class="card-grid">
+          <article class="value-card"><h3>{{VALUE_1_TITLE}}</h3><p>{{VALUE_1_COPY}}</p></article>
+          <article class="value-card"><h3>{{VALUE_2_TITLE}}</h3><p>{{VALUE_2_COPY}}</p></article>
+          <article class="value-card"><h3>{{VALUE_3_TITLE}}</h3><p>{{VALUE_3_COPY}}</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark" id="proof" data-print-contrast="dark">
+      <div class="section-inner">
+        <p class="section-kicker"><span class="lang-zh">可信任的證據</span><span class="lang-en" hidden>Evidence you can inspect</span></p>
+        <h2><span class="lang-zh">{{ZH_PROOF_HEADING}}</span><span class="lang-en" hidden>{{EN_PROOF_HEADING}}</span></h2>
+        <div class="proof-layout">
+          <article class="proof-card"><h3>{{PROOF_1_TITLE}}</h3><p>{{PROOF_1_COPY}}</p></article>
+          <article class="proof-card"><h3>{{PROOF_2_TITLE}}</h3><p>{{PROOF_2_COPY}}</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section resources" id="resources">
+      <div class="section-inner">
+        <h2><span class="lang-zh">下一步</span><span class="lang-en" hidden>Next step</span></h2>
+        <div class="resource-links">
+          <a class="btn-primary" href="{{MANUAL_HREF}}"><span class="lang-zh">閱讀操作手冊</span><span class="lang-en" hidden>Read the manual</span></a>
+          <a class="btn-outline dark-text" href="{{REVIEW_HREF}}"><span class="lang-zh">查看產品 Review</span><span class="lang-en" hidden>Product review</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span class="lang-zh">{{ZH_FOOTER_NOTE}}</span>
+    <span class="lang-en" hidden>{{EN_FOOTER_NOTE}}</span>
+  </footer>
+  <script src="showcase-template-screen-first.js"></script>
+</body>
+</html>

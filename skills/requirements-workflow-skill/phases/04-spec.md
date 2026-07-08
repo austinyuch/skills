@@ -478,10 +478,10 @@ fi
 
 ## 參考文件
 
-- **BA Analyst Skill**: `~/.config/opencode/skills/ba-analyst-skill/SKILL.md`
+- **BA Analyst Skill**: `~/.config/opencode/skills/business/ba-analyst-skill/SKILL.md`
 - **PRD Skill**: `~/.config/opencode/skills/prd-skill/SKILL.md`
 - **BRD Template**: `~/.config/opencode/skills/brd-writer-skill/templates/BRD_TEMPLATE.md`
-- **Spec 格式範例**: `~/.config/opencode/skills/ba-analyst-skill/examples/`
+- **Spec 格式範例**: `~/.config/opencode/skills/business/ba-analyst-skill/examples/`
 
 ---
 

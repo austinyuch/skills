@@ -18,6 +18,20 @@ The profile should describe:
 
 ## Preparation Flow
 
+If the target source repository is available and the profile needs executable
+UI/API assertions, run target source/API discovery first:
+
+```bash
+python3 .agents/skills/uat-demo-agent/scripts/inspect-target-source-api.py \
+  --target-root /path/to/target/repo \
+  --out temp/target-source-api-discovery/<profile-id>.json
+```
+
+Use the resulting `candidateAssertions` and `blockedAssertions` to decide which
+documents and fallback cases belong in the project profile. Do not convert a
+candidate into an executable web step unless the evidence identifies concrete
+route, locator, visible state, endpoint, status, or response-shape semantics.
+
 From a workspace copy of the packaged skill bundle:
 
 ```bash

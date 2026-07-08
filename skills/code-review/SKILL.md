@@ -11,7 +11,7 @@ Enables agents to perform comprehensive code reviews using the Code Review Syste
 
 The published `scripts/` surface is native-binary-only. Agents should invoke the matching `review-cli-<os>-<arch>` binary directly and should not assume Python runtime entrypoints such as `review.py` remain part of the shipped contract.
 
-**GitLab bundle policy:** in this GitLab workspace, the six `review-cli-<os>-<arch>` binaries and the ONNX embedding model are rebuilt from source and tracked through Git LFS. The install scripts remain part of the shipped contract for downstream/release installs: when artifacts are missing, `sh scripts/install.sh` downloads and SHA-256-verifies the matching host binary and model bundle from `REVIEW_CLI_RELEASE` (`gh://OWNER/REPO@TAG`, an `https://` base URL, or a local dir). Set `REVIEW_CLI_SKIP_ONNX=1` to skip the model fetch when only `review-cli` is needed. Maintainers rebuild the model zip and trust-anchor manifest with `scripts/pack-model-bundle.sh`.
+**Download-on-install:** the `review-cli-<os>-<arch>` binaries are NOT shipped inside the bundle (they are not git-LFS-committed). On first use run `sh scripts/install.sh` once — it downloads and SHA-256-verifies **only this host's** single binary from the GitHub release (checksums in `scripts/review-cli-bundle-manifest.json`), so the bundle carries one platform binary instead of all six (~300 MB). The same `install.sh` also fetches the ONNX embedding model as ONE SHA-256-verified `.zip` from the same release and unzips it into `assets/models/` (checksums in `scripts/onnx-model-bundle-manifest.json`); the ~127 MB `model.onnx` + tokenizer/configs are likewise not committed. Set `REVIEW_CLI_SKIP_ONNX=1` to skip the model fetch if you only need `review-cli` without semantic search. Override the release source with `REVIEW_CLI_RELEASE` (`gh://OWNER/REPO@TAG`, an `https://` base URL, or a local dir). Both fetches are idempotent and are no-ops if the artifacts are already present (e.g. a local build). Maintainers (re)build the model zip + trust-anchor manifest with `scripts/pack-model-bundle.sh`.
 
 It also exposes graph retrieval surfaces through `search-code`: hybrid graphRAG for embedding-backed semantic recall, and graph-only retrieval for exact structural questions when embeddings/provider APIs are disallowed.
 
@@ -180,15 +180,17 @@ review aids, not release gates — `security-risk-reviewer` is triage, not a SAS
 
 Where `security-risk-reviewer` is offline OWASP *pattern* triage, the `review-cli security`
 command family is the **active DevSecOps layer** — part of the binary itself, so it is
-cross-platform and needs no shell scripts. Two capabilities, both take `--target <dir>`
-(default: cwd) and `--json`:
+cross-platform and needs no shell scripts. Both commands take `--target <dir>` (default:
+cwd); `security scan` also accepts `--target <file>` for narrow hook/review scopes. Both
+commands accept `--json`:
 
 | Command | Use it to | Notes |
 |---|---|---|
 | `review-cli security audit` | **inventory a target project's DevSecOps posture and report gaps** — SAST, secret-scan, dependency-vuln, SBOM, dependabot, signing, pre-commit, license, OWASP-LLM agent-safety | pure-Go filesystem inspection; deterministic; scores maturity % + lists high-severity gaps + a fix per gap. Use it to answer "what DevSecOps controls is this project missing?" |
 | `review-cli security scan` | **invoke deep multi-language scans** (JS/C#/Py/Go SAST + secret + dependency-vuln + SBOM/misconfig) against the target | detects tools via `LookPath`, runs `govulncheck`/`gitleaks`/`trivy`/`semgrep`, honest `tool-unavailable` (never silent-skip). **Local-tool fallback today; preferred path is delegation to `~/aclab-middlewares/security-stack` (`sectool`/`secsdlc-mcp` → DefectDojo/Dependency-Track)** once its integration contract lands (see that spec's CR). |
-| `review-cli security grounding --hook-mode --warn-only` | **advisory Stop-hook content-safety grounding** for agent output | emitted Claude/Codex/Kiro Stop hooks keep stdout clean for hook protocol and write reports/diagnostics to stderr; omit `--warn-only` only for an intentional blocking security gate. |
+| `scripts/security-grounding-hook.sh` / `review-cli security grounding --hook-mode --warn-only --stderr --timeout 60` | **advisory Stop-hook content-safety grounding** for agent output | installed Claude/Codex/Kiro Stop hooks use the async wrapper so advisory review returns exit 0 immediately and writes status/log files; raw `review-cli security grounding` still honors `--warn-only` on timeout. OpenCode's session-idle plugin uses `.nothrow()` advisory scan behavior. Omit `--warn-only` only for an intentional blocking security gate. |
 | `review-cli security hook-audit` | **inspect installed Stop hooks for xreview/security-grounding drift** | read-only audit that classifies xreview as advisory/non-blocking, detects `security grounding` hooks that drifted from expected `--warn-only`, and labels unknown Stop-hook commands for operator routing. |
+| `review-cli security hook-diagnose` | **classify captured Stop-hook stdout/stderr protocol failures** | feed captured stdout/stderr/exit-code evidence to distinguish `stdout-not-json`, `stdout-json-schema-mismatch`, `stdout-mixed-protocol-and-logs`, `stdout-empty-when-json-required`, and `hook-exit-nonzero`; previews are bounded and redacted. |
 
 These emit **deterministic evidence** that feeds the companion `security-review` skill's lanes
 (`infrastructure-supply-chain.md`, `ai-agent-mcp.md` for OWASP-LLM, and the

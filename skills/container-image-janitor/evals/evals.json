@@ -33,6 +33,39 @@
         "The output explains that image_id is the safer deletion key than tags.",
         "The output explains why reason and delete_command are included in the CSV."
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "請盤點這台機器 Docker/KIND/Podman 還有哪些空間可以釋放；只要 audit，不要刪任何東西。",
+      "expected_output": "Agent 使用 runtime space audit workflow，分開回報 images、build cache、unused volumes、KIND node volume/image、Podman blockers，且不執行清理。",
+      "files": [],
+      "expectations": [
+        "The output references docker system df -v or an equivalent Docker disk audit.",
+        "The output separates build cache, unused volumes, KIND resources, and image cleanup opportunities.",
+        "The output does not delete resources during audit."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "幫我清理 Docker build cache 和 Docker unused volumes，但不要刪 KIND cluster、running containers 或 images。",
+      "expected_output": "Agent warns about unused volume data deletion, runs Docker build cache prune and Docker volume prune only after explicit request, then verifies with docker system df.",
+      "files": [],
+      "expectations": [
+        "The output uses docker builder prune --all --force for build cache cleanup.",
+        "The output warns that docker volume prune --all --force deletes unused named and anonymous volumes.",
+        "The output verifies cleanup with docker system df and does not claim to delete KIND, running containers, or images."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "KIND 裡面有沒有機會移除和釋出一些空間？先評估，不要刪。",
+      "expected_output": "Agent audits KIND clusters, node containers, node volumes, workloads, PVCs, and explains that running KIND node volumes should be released by deleting the cluster only after explicit confirmation.",
+      "files": [],
+      "expectations": [
+        "The output checks kind get clusters or equivalent KIND inventory.",
+        "The output checks workloads/PVCs before recommending cluster deletion.",
+        "The output explains that kindest/node images may appear tagless but can still be in use."
+      ]
     }
   ]
 }

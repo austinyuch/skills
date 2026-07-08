@@ -20,7 +20,7 @@ param(
 )
 $ErrorActionPreference = "Stop"
 
-$CliRepo = "austinyuch/skills"; $CliTag = "review-cli-v0.15.0"
+$CliRepo = "austinyuch/skills"; $CliTag = "review-cli-v0.16.1"
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $Manifest = Join-Path $RepoRoot "skills-manifest.json"
 $Source   = Join-Path $RepoRoot "skills"

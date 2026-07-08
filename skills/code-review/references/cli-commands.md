@@ -1,10 +1,10 @@
 # CLI Commands Reference
 
-<!-- min-review-cli-version: 0.15.0 -->
+<!-- min-review-cli-version: 0.16.1 -->
 
 ## Compatibility
 
-This reference documents the CLI surface as of **`review-cli` v0.15.0** (the
+This reference documents the CLI surface as of **`review-cli` v0.16.1** (the
 `min-review-cli-version` marker above is the machine-readable floor). Flags and
 commands such as `--no-embeddings`, `--no-model`, `--capabilities`, `--summaries`,
 `apply-handoff`, `capability-inventory`, and `summary --granularity` require a
@@ -1122,7 +1122,7 @@ review-cli-<os>-<arch> viewer --mode graph --workspace ./src --graph-db ./.code-
 
 ## security
 
-DevSecOps capability (spec `local-devsecops-hardening`): audit a target project's DevSecOps posture, run deep multi-language scans, and gate agent output. All subcommands accept `--target <dir>` (default: cwd), `--json`, and `--timeout <seconds>` (bound the whole run so a hung external tool can't block a Stop-hook; 0 = no timeout).
+DevSecOps capability (spec `local-devsecops-hardening`): audit a target project's DevSecOps posture, run deep multi-language scans, and gate agent output. All subcommands accept `--target <dir>` (default: cwd), `--json`, and `--timeout <seconds>` (bound the whole run so a hung external tool can't block a Stop-hook; 0 = no timeout). `security scan` also accepts `--target <file>` for narrow hook/review scopes; local scanners run from the file's parent directory and scan the basename.
 
 ### security audit
 
@@ -1154,7 +1154,9 @@ OWASP-LLM content-safety + hallucination gate for agent/subAgent output: fabrica
 - `--hook-mode` — Stop-hook mode: write reports/diagnostics to stderr and keep stdout reserved for hook protocol output. Emitted Claude/Codex/Kiro hooks include this by default.
 - `--stderr` — write the report to stderr and keep stdout empty. Required when run as a Stop-hook unless `--hook-mode` is used.
 - `--gate-injection` — treat prompt-injection (LLM01) as a HIGH gating finding instead of a warning (for autonomous loops where injected instructions are higher-risk).
-- `--emit-hook <agent>` — print a ready-to-install Stop-hook config for `claude|codex|kiro|opencode` and exit (Claude/Codex JSON Stop, Kiro `hooks.stop`, opencode `session.idle` JS plugin). Stop-hook configs default to `--hook-mode --warn-only`.
+- `--emit-hook <agent>` — print a ready-to-install Stop-hook config for `claude|codex|kiro|opencode` and exit (Claude/Codex JSON Stop, Kiro `hooks.stop`, opencode `session.idle` JS plugin). Stop-hook configs default to `--hook-mode --warn-only --stderr --timeout 60`; OpenCode's advisory `session.idle` scan trigger also uses `--timeout 60`.
+- `--hook-binary <path>` — binary path to embed in emitted Claude/Codex/Kiro Stop-hook commands. Defaults to `REVIEW_CLI_BIN`, then `review-cli`.
+- `--hook-skill-dir <path>` — code-review skill directory containing `scripts/` for emitted hook command resolution. Defaults to `REVIEW_CLI_SKILL_DIR` when set; opencode plugin templates otherwise resolve the flat OpenCode home `~/.config/opencode/skills/code-review`.
 
 When a blocking grounding hook exits nonzero, hook mode writes a bounded diagnostic to stderr with a classification such as `hook-gated-high-finding` or `hook-missing-transcript`, the advisory/gating mode, high finding count when known, source path, and remediation. `--warn-only` still reports findings but never exits nonzero for findings.
 
@@ -1172,11 +1174,62 @@ review-cli-<os>-<arch> security hook-audit --json
 The audit classifies recognized commands:
 
 - `xreview run --host-agent ...` — expected advisory/non-blocking.
-- `review-cli security grounding --hook-mode --warn-only` — expected advisory Stop hook.
+- `review-cli security grounding --hook-mode --warn-only --stderr --timeout 60` — expected advisory Stop hook.
+- `review-cli security grounding --hook-mode --warn-only` without `--timeout` — `hook-timeout-missing`; reinstall/emit the hook so a hung grounding pass cannot block the host agent.
 - `review-cli security grounding` without `--warn-only` — `hook-installed-command-drift` / "expected warn-only, found gating"; valid only when the operator intentionally wants HIGH findings to block Stop.
 - unknown Stop hook command — includes command/config/owner hints so the operator can route the failure.
 
 OpenCode is reported separately as a `session.idle` plugin surface; it is advisory by default and is not the same wire contract as Claude/Codex/Kiro Stop-hook JSON.
+
+### security hook-diagnose
+
+Classify captured Stop-hook stdout/stderr/exit-code evidence without executing the hook. Use this when a host reports `invalid stop hook JSON output`, `hook exited with code 1`, or another opaque Stop-hook protocol failure.
+
+**Usage:**
+```bash
+review-cli-<os>-<arch> security hook-diagnose \
+  --agent codex \
+  --config ~/.codex/hooks.json \
+  --command 'review-cli security grounding --hook-mode --warn-only --stderr --timeout 60' \
+  --stdout-file /tmp/hook.stdout \
+  --stderr-file /tmp/hook.stderr \
+  --exit-code 0 \
+  --require-json
+
+review-cli-<os>-<arch> security --json hook-diagnose --agent claude --stdout '{"message":"hello"}' --require-json
+```
+
+Classifications:
+
+- `stdout-not-json` — stdout is neither empty nor JSON.
+- `stdout-json-schema-mismatch` — stdout is valid JSON but lacks recognized Stop-hook protocol fields.
+- `stdout-mixed-protocol-and-logs` — stdout contains log text before/after protocol JSON, or more than one JSON value.
+- `stdout-empty-when-json-required` — stdout is empty but this hook invocation requires protocol JSON.
+- `hook-exit-nonzero` — the hook process exited nonzero; stderr/stdout previews are bounded and redacted.
+
+Good Stop-hook stdout/stderr contract:
+
+```text
+stdout: {"decision":"block","reason":"Security grounding found HIGH findings"}
+stderr: RESULT: FLAG
+```
+
+Good advisory/no-op contract when the host permits no output:
+
+```text
+stdout:
+stderr: RESULT: PASS
+```
+
+Bad contract:
+
+```text
+stdout: [ContinuousLearning] saved note
+stdout: {"decision":"block","reason":"..."}
+stderr:
+```
+
+Fix: move all logs, progress, warnings, and diagnostics to stderr or durable records; reserve stdout for either nothing or exactly one Stop-hook protocol JSON object.
 
 ---
 

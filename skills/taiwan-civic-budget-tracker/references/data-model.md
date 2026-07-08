@@ -390,4 +390,4 @@ CREATE INDEX npo_name_idx FOR (n:NPO) ON (n.name);
 
 ## 資料表建立 SQL
 
-參考 `scripts/create_database.sql` 以了解完整的 PostgreSQL Schema。
+完整 PostgreSQL Schema 請以本文件的資料表定義為準。

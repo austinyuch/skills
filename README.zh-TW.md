@@ -65,7 +65,7 @@ pwsh scripts/install.ps1 claude      # Windows PowerShell
 
 > 🔐 **本 repository 是 private。** `npx`／`uvx`／`git clone` **以及** `--with-cli` 下載 binary 都需要
 > GitHub 驗證。`--with-cli` 透過 **`gh` CLI**（`gh auth login`）從
-> [`review-cli-v0.15.0`](https://github.com/austinyuch/skills/releases/tag/review-cli-v0.15.0)
+> [`review-cli-v0.16.1`](https://github.com/austinyuch/skills/releases/tag/review-cli-v0.16.1)
 > release 抓 asset；沒有 `gh` 時會印出可直接執行的 `gh release download …` 指令。除非把 repo（或 release）
 > 設為 public，否則無法匿名安裝。
 

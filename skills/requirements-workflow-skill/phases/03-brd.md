@@ -388,7 +388,7 @@ echo "✅ BRD 內容品質檢查通過"
 
 - **BRD 模板**: `~/.config/opencode/skills/brd-writer-skill/templates/BRD_TEMPLATE.md`
 - **BRD Writer Skill**: `~/.config/opencode/skills/brd-writer-skill/SKILL.md`
-- **BA Analyst 輸出格式**: `~/.config/opencode/skills/ba-analyst-skill/README.md`
+- **BA Analyst 輸出格式**: `~/.config/opencode/skills/business/ba-analyst-skill/README.md`
 - **Meeting BA Skill 輸出**: `~/.config/opencode/skills/meeting-ba-skill/templates/`
 
 ---

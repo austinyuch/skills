@@ -67,6 +67,7 @@
 - 有插入提示信息
 
 ```markdown
+圖片位置：`./images/supplier-management.png`
 
 > 📋 **提示**：粘贴供應商管理頁面原型圖，包含筛选区、列表区和操作区
 ```

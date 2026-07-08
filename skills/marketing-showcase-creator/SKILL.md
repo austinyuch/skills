@@ -27,6 +27,8 @@ description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷
 
 先判斷這次是 **full regeneration** 還是 **print-only patch**。使用者說「重新產生 / regenerate / 用 showcase 產生 / 以 template 為主 / 正常美觀的 HTML」時，預設是 full regeneration：重新產出 screen-first、template-first 的正常 showcase（hero、visual proof、benefit flow、CTA、manual/review links、雙語文案、草稿與 guide），print-friendly 只作為替代輸出能力。只有使用者明確說「只修 print / 補 print-friendly / 列印跑版」時，才把工作限制為既有 template 的 additive print patch。這個分流很重要：不要把「重生成 showcase」誤做成只補一個 Print 按鈕或把整頁降級成紙本版。
 
+**Retrospective lesson learned（2026-07-07）**：GTO 的失敗不是「不會寫 print CSS」，而是把 print-friendly 當成主產物，覆蓋了原本正常的 marketing showcase 視覺。之後處理既有 showcase 時，先用 `git log` / `git archive` / screenshot 找到修改前或 committed baseline，確認它的 visual language 是否有效；若 baseline 已經有漂亮的 dark hero、產品截圖、stats strip、benefit cards、CTA，就只能做 additive print patch。只有 baseline 本身失效或使用者明確要求重生時，才使用本 skill 的 screen-first template 重建。
+
 ### Phase 1 — Positioning gate（先問，再寫）
 
 定位決定每一句 headline。動筆前先確認**潛在使用者是誰、核心 value message 是什麼**——這通常是使用者的決定，不要自行假設。
@@ -90,6 +92,8 @@ description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷
 
 2. **中英雙語同頁 HTML（English + 繁體中文）。** 兩種語言寫在**同一份 HTML**，用成對 `.lang-en` / `.lang-zh` 節點 + 一個 toggle 切換（記住偏好），不要拆成兩個檔或兩個站。預設語言依專案主要語言。務必**雙語成對、數量一致**（漏配對就會有一語缺字）。模板見 reference。
 
+   **Chrome portal-safe 交付要求。** 面向潛在客戶的 `index.html` 應能直接用 Chrome 雙擊開啟而不退化成白板。Linux desktop / Chrome 可能把雙擊的 HTML 轉成 `file:///run/user/1000/doc/.../index.html` document-portal 單檔授權，此時 sibling `style.css` / `showcase.js` / `../review/screenshots` 不一定可見。保留 `style.css` / `showcase.js` 作為維護來源，但交付的 `index.html` 需內嵌目前 CSS、JS、以及 first-render screenshots（data URL）。manual / review 連結仍可保留相對路徑，因為它們是導覽目標，不是首屏渲染依賴。驗收要把**只有 index.html** 複製到 `/tmp` 後用 Chrome/headless Chrome 截圖，確認不需要 server、不需要鄰近資源也能維持 marketing UI。
+
 3. **manual / review 快速參照連結（條件式）。** 若專案存在 `docs/manual/**/*.html` 或 `docs/review/**/*.html`，在 showcase 內加**連結按鈕**（nav 或 footer 的 resources 區）指向它們，方便潛在客戶 / 評估者一鍵跳去看操作手冊或 review；用相對路徑、雙語標籤。**只有檔案真的存在才加**——偵測不到就不放死連結。
 
 4. **Print-friendly（可快速印成 PDF 傳單）。** 這是**附加能力，不是替換版型**：既有 showcase 的 screen UI、section 結構、class、品牌樣式與 `ui-skill` 產出的渲染成果必須保留；只在既有 nav/header/action 區補上一個可見的 **Print** 按鈕（`type="button"`、`onclick="printShowcase()"` 或等價 listener、可鍵盤操作、雙語標籤），並只把 `assets/showcase-print.css` 的 `@media print` 區塊 append / inline 到頁面樣式。**print-friendly 的重點是列印對比不失敗、文字不消失，不是 remove all styles。** 不要把 reference 裡的 nav 範例拿去覆蓋原本 HTML template，也不要把列印對比修正套到 screen CSS。最常見的 print bug：深色 section（hero / stats / dark / CTA）用白字配深色背景，瀏覽器列印時預設不印背景色 → 白字落在白紙上「整段失蹤」。修法要同時做到兩件事：保留 `print-color-adjust:exact` 作為防消失保險，並在 `@media print` 內**針對暗底/高風險區塊做 scoped contrast repair**（近似 WCAG AA/AAA 對比），不要清掉所有卡片、grid、hero、brand styling；另外把 sticky nav 改 static、隱藏 toggle/print button 等互動 chrome、卡片 `break-inside:avoid`、只印目前語言。改完必須跑 **agent skill-based visual regression loop**：先截 screen baseline，再跑 `check_showcase_contract.py`，再跑 `check_showcase_print_visual.py` 產生 screen/print screenshots + contrast report，由 agent 讀圖檢查；若 contrast/report/screenshot 任一失敗，修改 CSS/HTML 後重跑，直到通過。最後再實際列印 / 匯出 PDF 目視驗證沒有失蹤段落、沒有低對比文字、沒有互動按鈕殘留，且螢幕版除新增 Print control 外沒有被重排/降級。
@@ -112,6 +116,9 @@ description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷
 - 不要交出沒有 Print 按鈕與 `@media print` 的 showcase：深色背景 + 白字在列印時會整段失蹤（背景被丟棄），而且使用者不一定知道怎麼匯出 PDF。加上 print CSS 後要跑 agent visual regression 修改循環與實際印 / 匯出 PDF 目視驗證，不能只看螢幕就宣稱可列印；紙面版應優先修正 contrast/readability，避免靠顏色或背景圖傳達資訊，但不要移除所有 screen styles。
 - 不要為了 print-friendly 重寫或覆蓋原本 HTML template / screen UI。Print-friendly 是「加按鈕 + 加 print-only CSS + 加 handler」；不是把 showcase 改成列印版、不是用 reference 範例 nav 取代既有 nav、也不是把 `ui-skill` 產出的 hero/card/grid/visual styling 清掉。
 - 不要把「重新產生 showcase」縮小成 print-friendly 修補。重生成代表正常螢幕版要重新成立：template-first 的 hero、visual sections、benefit story、CTA、真實 screenshots/assets、雙語草稿與 guide 都要更新；print-friendly 只是同一份 HTML 的 alternative function。
+- 不要在沒有觀摩 baseline 的情況下修既有 showcase。若使用者說「本日修改前視覺正常」或 repo 有既有 `docs/showcase`，先抓 committed baseline 截圖與 current 截圖比較，再動手；contract pass 只能證明 print wiring 存在，不能證明 marketing UI 仍成立。
+- 不要把 `references/build-and-package.md` 裡的 nav/code 片段當成完整 template。若既有 template 失效，改用 `assets/showcase-template-screen-first.*` 作為重建起點；若既有 template 有效，則保留它，只套 additive print patch。
+- 不要假設使用者會用 static server 或真實 `file:///home/...` 路徑打開。Chrome/Chromium 經由檔案管理器開啟時可能出現 `file:///run/user/1000/doc/...` portal 路徑；若 `index.html` 依賴外部 CSS/JS/圖片，會退回白板。交付給非技術使用者的 showcase 要做 standalone first-render 驗證。
 - 不要讓 print CSS 的廣泛文字規則把另一語言印出來；`[hidden]` 必須在 screen 與 print 下都硬隱藏，PDF 目視要檢查只印目前語言。
 - 不要對不存在的 `docs/manual` / `docs/review` 放死連結；先偵測檔案存在再加按鈕。
 - 不要跳過 `SHOWCASE_DRAFT.md` / `GENERATION_GUIDE.md` 直接生 HTML——少了草稿 SSOT 與生成備忘，下一次更新只能憑印象重寫。
@@ -127,6 +134,7 @@ description: 為「潛在使用者 / 潛在客戶」打造 value-driven、行銷
 ## Bundled assets / scripts
 
 - `assets/showcase-print.css` — 可直接納入的 `@media print` 區塊；修掉「深色 section 白字在列印時失蹤」的 bug（`print-color-adjust:exact` + scoped contrast repair）、un-stick nav、隱藏互動 chrome（含 Print 按鈕）、卡片分頁控制、只印目前語言。
+- `assets/showcase-template-screen-first.html` / `.css` / `.js` — 從 GTO showcase 泛化出的 screen-first marketing template。適用於既有 template 已失效或 full regeneration；包含 dark brand hero、真實產品截圖槽、stats strip、pain/value/cards、resource links、final CTA、雙語 toggle 與 print control。不要用它覆蓋仍有效的既有 screen UI。
 - `scripts/check_showcase_contract.py` — 對生成後的 showcase HTML/CSS/JS 做結構檢查：Print button、`window.print()` handler、雙語配對、`@media print`、`print-color-adjust:exact`、紙面高對比規則。內建 `--self-test`。
 - `scripts/check_showcase_print_visual.py` — 用 Playwright 對 showcase 跑 screen + print media 截圖，輸出 `screen-*.png` / `print-*.png` / `report.json`，並在 print media 下量測 WCAG contrast；失敗時修 CSS/HTML 後重跑。
 - `scripts/package_showcase.py` — 把 `docs/showcase`（含 `docs/manual` / `docs/review`，若存在）打包成可寄 email 的 zip，並印出 manifest。跨平台（純 Python，無第三方依賴）。

@@ -1,6 +1,6 @@
 {
   "skill_name": "uat-demo-target-governance-template",
-  "release_id": "20260706-070609",
+  "release_id": "20260707-221258",
   "bundle_dir": "uat-demo-target-governance-template",
   "files": [
     "SKILL.md",

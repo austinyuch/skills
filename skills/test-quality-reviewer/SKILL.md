@@ -76,7 +76,7 @@ comments, are not detected by the per-line/​per-block heuristic. [CR-078]
 Off by default (deterministic-only, exit 0, no network). Pass `--explain` (or set
 `TEST_QUALITY_REVIEWER_EXPLAIN=1`) to ask the configured provider to recalibrate severity
 and reasoning. Provider selection reuses `CODE_REVIEW_LLM_*` (Bedrock-first); see
-the `capability-mapper` skill for the provider table. When
+[../capability-mapper/SKILL.md](../capability-mapper/SKILL.md) for the provider table. When
 `--explain` is set but the provider is unconfigured, the run **fails closed** rather than
 emitting un-calibrated findings as if a model had reviewed them.
 

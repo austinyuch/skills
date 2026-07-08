@@ -739,6 +739,8 @@ docker run -p 8000:8000 \
 
 ## Related Documentation
 
+- [README.md](README.md) - Skill overview and usage
+- [references/api-reference.md](references/api-reference.md) - API documentation
 - [examples/](examples/) - Client examples
 
 ## Support

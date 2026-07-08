@@ -137,9 +137,11 @@ sh "$(dirname "$0")/scripts/build-binaries.sh" /path/to/go-review-service   # ru
 ```
 
 **Maintainer refresh (one command):** `scripts/publish.sh` rebuilds the six binaries and copies this
-skill into the local agent skill homes (`~/.claude`, `~/.kiro`, `~/.config/opencode`, `~/.codex`,
-`~/.gemini`, `~/.gemini/antigravity`, `~/.copilot`), then verifies each copy resolves an executable
-binary. Run after any binary/behavior change. Overrides: `XREVIEW_GO_DIR`, `XREVIEW_SKILL_HOMES`, `XREVIEW_NO_BUILD=1`.
+skill into the local agent skill homes under the flat default `cross-agent-review`
+(`~/.agents`, `~/.claude`, `~/.kiro`, `~/.config/opencode`, `~/.codex`, `~/.gemini`,
+`~/.gemini/antigravity`, `~/.copilot`, `~/.cline`), then verifies each copy resolves an executable
+binary. Run after any binary/behavior change. Overrides: `XREVIEW_GO_DIR`, `XREVIEW_SKILL_HOMES`,
+`XREVIEW_SKILL_REL`, `XREVIEW_NO_BUILD=1`.
 
 **Live transport smoke (opt-in, host-bound):** `go test -tags live -run TestLiveSmoke -timeout 15m
 ./internal/xreview/run/` drives present-backend transports against a real review, asserting each is
@@ -221,8 +223,9 @@ removes only its own entry on `uninstall`, and embeds the resolved local binary 
 > written by `install --agent opencode` with the local binary path baked in (machine-specific — not
 > committed). Its canonical, portable source lives in this skill at
 > [`scripts/xreview.plugin.js`](scripts/xreview.plugin.js): same `session.idle` logic, but it
-> resolves `xreview-<os>-<arch>` at **runtime** (honoring an `XREVIEW_BIN` override, else the
-> canonical `~/.config/opencode/skills/cross-agent-review/scripts/` home) and no-ops if no binary
+> resolves `xreview-<os>-<arch>` at **runtime** (honoring `XREVIEW_BIN`, then
+> `XREVIEW_SKILL_DIR`, else the flat
+> `~/.config/opencode/skills/cross-agent-review/scripts/` home) and no-ops if no binary
 > resolves. Prefer `install --agent opencode` to activate; the template is for reading/auditing the
 > hook, or hand-copying into `~/.config/opencode/plugins/` on a machine where the resolved path is
 > the global skill home.

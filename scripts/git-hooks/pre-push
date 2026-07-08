@@ -187,6 +187,8 @@ href=re.compile(r'(?:href|src)\s*=\s*["\']([^"\'#?]+)')
 broken=[]
 def check(target, base):
     if re.match(r'^[a-z]+://|^#|^mailto:|^data:|^//|^\{', target): return
+    if target in {"URL", "圖片URL", "影片URL"}: return
+    if target.startswith("javascript:"): return
     t=target.split('#')[0].split('?')[0]
     if not t or t.startswith('<'): return            # template placeholder
     p=os.path.normpath(os.path.join(os.path.dirname(base), t))

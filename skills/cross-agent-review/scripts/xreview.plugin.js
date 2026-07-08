@@ -16,11 +16,13 @@ import { existsSync } from "fs"
 function resolveBin() {
   // 1) explicit override wins
   if (process.env.XREVIEW_BIN) return process.env.XREVIEW_BIN
-  // 2) resolve xreview-<os>-<arch> under the canonical global skill home
+  // 2) resolve xreview-<os>-<arch> under an explicit skill dir, or the
+  // flat global skill home.
   const os = platform() === "win32" ? "windows" : platform() // linux | darwin | windows
   const cpu = arch() === "x64" ? "amd64" : arch()            // amd64 | arm64
   const ext = os === "windows" ? ".exe" : ""
   const name = `xreview-${os}-${cpu}${ext}`
+  if (process.env.XREVIEW_SKILL_DIR) return join(process.env.XREVIEW_SKILL_DIR, "scripts", name)
   return join(homedir(), ".config", "opencode", "skills", "cross-agent-review", "scripts", name)
 }
 

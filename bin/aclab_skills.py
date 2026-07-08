@@ -26,7 +26,7 @@ REPO_URL = "https://github.com/austinyuch/skills"
 # code-review's native CLI lives in GitHub Releases (the repo is private, so the
 # download is authenticated via `gh`). Bump CLI_TAG when a new binary is released.
 CLI_REPO = "austinyuch/skills"
-CLI_TAG = "review-cli-v0.15.0"
+CLI_TAG = "review-cli-v0.16.1"
 
 
 def review_cli_asset() -> str | None:

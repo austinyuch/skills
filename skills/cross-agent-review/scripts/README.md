@@ -9,7 +9,7 @@ file is the index so the growing set stays legible.
 | Script | Does |
 |---|---|
 | `build-binaries.sh <go-dir>` | build the 6 `xreview-<os>-<arch>` binaries from Go source + emit `xreview-bundle-manifest.json` |
-| `publish.sh` | rebuild + copy this skill into the 8 agent skill homes; verify each resolves a binary (`XREVIEW_NO_BUILD=1` to skip the rebuild) |
+| `publish.sh` | rebuild + copy this skill into the 9 agent skill homes under flat `cross-agent-review` by default; verify each resolves a binary (`XREVIEW_SKILL_REL` overrides the relative destination, `XREVIEW_NO_BUILD=1` skips the rebuild) |
 | `xreview-bin.sh` | resolve the host's `xreview` binary path |
 
 ## Download-on-install bundle chain (producer → fetch)

@@ -67,6 +67,10 @@ family (Spec #107 `local-devsecops-hardening`) and fold the findings into the la
   Install as a Stop-hook on any agent: `review-cli security grounding --emit-hook <claude|codex|kiro|opencode>`
   prints the ready-to-install config (Claude/Codex = JSON Stop hook; Kiro = hooks.stop; opencode = session.idle JS plugin).
   To install it automatically (safe merge + backup + idempotent) run `python3 scripts/install_grounding_hooks.py --agent all`.
+  The installer defaults to each agent's flat project skill home, such as
+  `~/.claude/skills/code-review` or `~/.codex/skills/code-review`;
+  use `--binary`, `--skill-dir`, `GROUNDING_CODE_REVIEW_SKILL_DIR`, or `REVIEW_CLI_SKILL_DIR` when a target home
+  uses a different layout or a shared binary.
 
 These are **evidence, not verdict** — this skill (and the change's own review) keep authority. Absent
 tools degrade honestly (`tool-unavailable` / `local-fallback`); record that, never silent-skip.

@@ -26,10 +26,14 @@ This skill is the **deliverable agent skill bundle** for `aclab-uat-demo-agent`.
 - `${UATDEMO_BIN:-uatdemo} run windows-vm-computer-use --file <scenario.json> [--vm-instance <domain-or-instance>]`
 - `${UATDEMO_BIN:-uatdemo} report show --file <report.json>`
 - `${UATDEMO_BIN:-uatdemo} report show --bundle <bundle.json>`
-- `${UATDEMO_BIN:-uatdemo} report verify-computer-use-bundle --bundle <bundle.json>`
+- `${UATDEMO_BIN:-uatdemo} report verify-computer-use-bundle --bundle <bundle.json> [--min-unique-screenshots <n>]` (strict evidence gate; fails closed on loopback targets by default)
+- `${UATDEMO_BIN:-uatdemo} report publish --bundle <bundle.json>` (`--sync-rollup` opt-in; otherwise curated specs are not rewritten)
+
+For an **authenticated** web target, add a `steps[]` entry with `actionType: "login"` + `loginConfig` (form login before protected-route captures; `approvalToken` gates credential entry, `isSecret: true` on a field forces that gate regardless of selector text). For a one-command **external runtime proof** against an already-running non-loopback target, use `scripts/prove_external_web_target.sh` (public single-route, or `--target-config-file` for authenticated multi-route). See `references/commands.md`.
 
 Read `references/commands.md` when you need the operator cookbook, input prep rules, and post-run verification flow.
 Read `references/skill-integration.md` when the current workspace is the `aclab-uat-demo-agent` source repo and you need to cooperate with `spec-master`, `spec-driven-development`, `spec-registry-manager`, `user-manual-skill`, or `project-review-skill`.
+Read `references/target-source-api-discovery.md` when a source-backed target repository has no trustworthy executable UI/API assertions yet. Run target discovery before declaring that the target lacks enough data.
 
 When the user needs a reusable onboarding lane for a different target repository, prefer the generic project-profile path in `references/project-profile-onboarding.md` rather than the repo-local self-dogfood helper.
 
@@ -39,7 +43,8 @@ Use this minimal sequence when a general agent needs to operate the packaged CLI
 
 1. Decide whether the user already has a plan file.
    - If yes: start at `plan validate`.
-   - If no: prepare structured manifest/request inputs, then run `plan generate`.
+   - If no and the target source repository is available: run source/API discovery when executable UI/API assertions are missing, then prepare structured manifest/request inputs and run `plan generate`.
+   - If no and the target source repository is unavailable: prepare structured manifest/request inputs, then run `plan generate`.
 2. Prefer `run uat` for normal web-oriented execution. Use `run windows-vm-computer-use` only when a spec or user request explicitly routes into Windows VM computer-use proof work; set `--vm-instance` or `UATDEMO_WINDOWS_VM_INSTANCE` when targeting a known VM domain/instance.
 3. After `run uat` or `run demo`, inspect the returned `reportPath`, `bundlePath`, `runRecord`, and `artifacts` rather than assuming success from exit code alone.
 4. If the user asks what still blocks UAT/demo, read workspace sources such as `.agents/specs/SPECS.md`, `.agents/specs/RTM.md`, and `.agents/specs/NEXT_STEPS.md` first, then distinguish strategic blockers from the local runnable path.
@@ -169,7 +174,7 @@ If a command returns output that lacks these expected fields, treat it as an inv
 
 ## Portability note
 
-This skill is intended to work when installed globally at either `~/.codex/skills/uat-demo-agent/` or `~/.config/opencode/skills/uat-demo-agent/`. Do not assume the active workspace contains this repository, `scripts/uatdemo.sh`, or `bin/uatdemo`.
+This skill is intended to work when installed globally at the catalog canonical flat path `skills/uat-demo-agent/` under the supported Codex, Claude, OpenCode, and Kiro roots. Do not assume the active workspace contains this repository, `scripts/uatdemo.sh`, or `bin/uatdemo`.
 
 Default config file locations:
 

@@ -11,13 +11,12 @@ Do not present the result as certification, legal advice, or complete ISO/CNS co
 
 ## Maintainer Source
 
-This skill is authored from the private hierarchical skill source and mirrored to public skill
-repositories. Its canonical layout path is:
-`skills/security-compliance/iso-ai-security-auditor`.
+This repository is the canonical maintainer source for the skill:
+`aclab-code-review-private/.agents/skills/iso-ai-security-auditor`.
 
-Public and agent-specific skill-home copies are published artifacts. Do not edit generated copies
-directly; update this repo-owned source first, then sync/publish to the public skill repository and
-agent homes.
+Global skill-home copies are published artifacts. Do not edit global copies directly; update this
+repo-owned source, run the publisher, and let `scripts/publish_code_review_skill.py` distribute the
+refreshed copy to global skill homes.
 
 ## Start Here
 
@@ -80,4 +79,4 @@ Use status values only from:
 
 ## Composition
 
-For code-level security findings, compose with `security-review`. For architecture documentation gaps, data-flow/trust-boundary snapshots, or cross-spec architecture narratives, compose with `system-architect`. For formal spec/governance changes in this repo, route through `spec-master`; inside SDD, use this skill as the requirements/design/review compliance inventory input and keep the final readiness verdict in `review.md`.
+For code-level security findings, compose with `security-review`. For architecture documentation gaps, compose with `system-architect`. For formal spec/governance changes in this repo, route through `spec-master`.

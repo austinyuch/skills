@@ -9,6 +9,7 @@
 # Overrides:
 #   XREVIEW_GO_DIR      path to go-review-service (else the arg, else auto-detected)
 #   XREVIEW_SKILL_HOMES space-separated skills dirs to publish into (else the 5 defaults)
+#   XREVIEW_SKILL_REL   destination path under each skills dir (default: cross-agent-review)
 #   XREVIEW_NO_BUILD=1  skip the rebuild and publish whatever binaries are present
 #
 # Idempotent: each target is removed and re-copied. Verifies each published copy
@@ -39,19 +40,22 @@ fi
 
 # 2) Publish to the agent skill homes (real dirs; mirrors code-review's home set).
 : "${HOME:?HOME must be set}"
-homes="${XREVIEW_SKILL_HOMES:-$HOME/.claude/skills $HOME/.kiro/skills $HOME/.config/opencode/skills $HOME/.codex/skills $HOME/.gemini/skills $HOME/.gemini/antigravity/skills $HOME/.copilot/skills $HOME/.cline/skills}"
+homes="${XREVIEW_SKILL_HOMES:-$HOME/.agents/skills $HOME/.claude/skills $HOME/.kiro/skills $HOME/.config/opencode/skills $HOME/.codex/skills $HOME/.gemini/skills $HOME/.gemini/antigravity/skills $HOME/.copilot/skills $HOME/.cline/skills}"
+skill_rel="${XREVIEW_SKILL_REL:-$skill_name}"
 
 published=0
 for base in $homes; do
   mkdir -p "$base"
-  rm -rf "$base/$skill_name"
-  cp -R "$skill_dir" "$base/$skill_name"
-  bin="$(sh "$base/$skill_name/scripts/xreview-bin.sh")"
+  dest="$base/$skill_rel"
+  rm -rf "$dest"
+  mkdir -p "$(dirname "$dest")"
+  cp -R "$skill_dir" "$dest"
+  bin="$(sh "$dest/scripts/xreview-bin.sh")"
   if [ -x "$bin" ]; then
-    echo "  ok   $base/$skill_name  (bin: $(basename "$bin"))"
+    echo "  ok   $dest  (bin: $(basename "$bin"))"
     published=$((published + 1))
   else
-    echo "  WARN $base/$skill_name  (binary not executable/missing: $bin)" >&2
+    echo "  WARN $dest  (binary not executable/missing: $bin)" >&2
   fi
 done
 

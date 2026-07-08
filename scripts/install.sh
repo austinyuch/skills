@@ -16,7 +16,7 @@ REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 MANIFEST="$REPO_ROOT/skills-manifest.json"
 SOURCE="$REPO_ROOT/skills"
 
-CLI_REPO="austinyuch/skills"; CLI_TAG="review-cli-v0.15.0"
+CLI_REPO="austinyuch/skills"; CLI_TAG="review-cli-v0.16.1"
 AGENT="opencode"; WITH_CLI=0
 while [ "$#" -gt 0 ]; do
   a="$1"

@@ -1,8 +1,0 @@
-# uatdemo platform binaries are download-on-install build artifacts (NOT committed):
-# install-bundle.sh (or the resolve_binary() runtime self-heal) fetches THIS host's single
-# binary from the GitHub release and SHA-256-verifies it against the release's
-# bundle-manifest.json. [ISS-2026-007] Committed alongside: install-bundle.sh,
-# bundle-release.json, uatdemo.py, config.env.example.
-uatdemo-linux-*
-uatdemo-darwin-*
-uatdemo-windows-*

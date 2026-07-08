@@ -349,7 +349,7 @@ A: 使用 `"重新執行 Phase {N}"` 命令。系統會覆蓋現有輸出。
 - **Phase 4**: `phases/04-spec.md`
 - **Phase 5**: `phases/05-handoff.md`
 - **Skills**:
-  - `skills/ba-analyst-skill/`
+  - `skills/business/ba-analyst-skill/`
   - `skills/meeting-ba-skill/`
   - `skills/brd-writer-skill/`
   - `skills/prd-skill/`

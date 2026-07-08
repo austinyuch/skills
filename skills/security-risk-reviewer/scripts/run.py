@@ -102,13 +102,9 @@ RULES = [
     ("COMMAND_INJECTION", re.compile(r"os\.system\(|subprocess\.[A-Za-z_]+\([^)]*shell\s*=\s*True|\bexec\.Command\(\s*['\"](?:sh|bash|cmd)['\"]\s*,\s*['\"]-c['\"]|child_process\.(?:exec|execSync)\(|\bProcess\.Start\(|new\s+ProcessStartInfo|Runtime\.getRuntime\(\)\.exec"),
      "high", "A03:2021 Injection", "CWE-78", 0.6,
      "Avoid the shell; pass argv arrays, validate/allow-list inputs, never concatenate user data into a command.", None),
-    ("INSECURE_DESERIALIZE", re.compile(
-        r"pickle\.lo" r"ads?\(|yaml\.lo" r"ad\((?![^)]*Safe)|cPickle\.|marshal\.lo" r"ads\(|"
-        r"\bBinary" r"Form" r"atter\b|TypeName" r"Handling\.(?:All|Auto)|"
-        r"new\s+JavaScript" r"Serializer|node-" r"serialize"
-    ),
+    ("INSECURE_DESERIALIZE", re.compile(r"pickle\.loads?\(|yaml\.load\((?![^)]*Safe)|cPickle\.|marshal\.loads\(|\bBinaryFormatter\b|TypeNameHandling\.(?:All|Auto)|new\s+JavaScriptSerializer|node-serialize"),
      "high", "A08:2021 Data Integrity", "CWE-502", 0.7,
-     "Use a safe loader (YAML safe loader) / a non-executable format (JSON); never deserialize untrusted data. In .NET avoid dangerous formatter APIs and unsafe type-name handling.", None),
+     "Use a safe loader (yaml.safe_load) / a non-executable format (JSON); never deserialize untrusted data. In .NET avoid BinaryFormatter and TypeNameHandling.All.", None),
     ("DISABLED_TLS_VERIFY", re.compile(r"(?i)verify\s*=\s*False|InsecureSkipVerify\s*:\s*true|rejectUnauthorized\s*:\s*false|CURLOPT_SSL_VERIFYPEER\s*,\s*0|ServerCertificate\w*ValidationCallback\s*\+?=|RemoteCertificateValidationCallback\s*\+?="),
      "high", "A05:2021 Security Misconfiguration", "CWE-295", 0.75,
      "Enable certificate verification; pin/trust a proper CA instead of disabling TLS validation.", None),

@@ -1,6 +1,6 @@
 ---
 name: uat-demo-agent-packaging
-description: Use this internal workspace skill when maintainers need to package, verify, release, or install the deliverable `uat-demo-agent` skill bundle from the canonical workspace bundle to the global opencode skills directory. Trigger when the user asks to release the skill, refresh bundled multi-arch binaries, install/update the global skill, or verify workspace/global bundle consistency.
+description: Use this internal workspace skill when maintainers need to package, verify, release, or install the deliverable `uat-demo-agent` skill bundle from the canonical workspace bundle to catalog-resolved global skill directories. Trigger when the user asks to release the skill, refresh bundled multi-arch binaries, install/update the global skill, or verify workspace/global bundle consistency.
 ---
 
 # UAT Demo Agent Packaging
@@ -12,7 +12,7 @@ This is a **maintainer-only packaging skill** for the `uat-demo-agent` deliverab
 1. release the canonical workspace bundle from `.agents/skills/uat-demo-agent/`
 2. verify required vs denied bundle content
 3. publish a verified bundle to `dist/uat-demo-agent-*`
-4. install the verified bundle to `~/.config/opencode/skills/uat-demo-agent/`
+4. install the verified bundle to the catalog canonical path, defaulting to `~/.config/opencode/skills/uat-demo-agent/`
 5. smoke-check workspace and global bundle states
 6. maintain the bundled multi-arch binaries and their release hygiene contract
 
@@ -52,7 +52,7 @@ This is a **maintainer-only packaging skill** for the `uat-demo-agent` deliverab
 3. Run the release script to build the multi-arch `uatdemo` matrix, stage the bundle, verify it structurally, publish `dist/uat-demo-agent-*` outputs, and then authoritatively verify the published bundle against `release-manifest.json` and `checksums.txt`.
 4. Use `python3 scripts/release_uatdemo_skill_bundle.py --no-sync` when you explicitly need a fresh verified bundle without syncing refreshed binaries back into `.agents/skills/uat-demo-agent/scripts/*`.
 5. Run workspace-bundle verification if you need a direct check of the canonical source.
-6. Install from the verified `dist/uat-demo-agent-latest/uat-demo-agent/` bundle into `~/.config/opencode/skills/uat-demo-agent/` using the backup-first installer helper. The previous global bundle should be preserved for rollback until the new install verifies cleanly.
+6. Install from the verified `dist/uat-demo-agent-latest/uat-demo-agent/` bundle into `~/.config/opencode/skills/uat-demo-agent/` by default, or pass `--global-root <path>` for another catalog-resolved root. The previous global bundle should be preserved for rollback until the new install verifies cleanly.
 7. Run global verification after install; do not treat PATH-only CLI smoke as proof that the global skill is installed correctly. Installed copies should carry release metadata so verification remains authoritative.
 8. Read [references/release-hygiene.md](./references/release-hygiene.md) before changing bundled binaries, releasing from a dirty tree, or using the shared publisher lane to refresh `uat-demo-agent`.
 
@@ -66,3 +66,4 @@ This is a **maintainer-only packaging skill** for the `uat-demo-agent` deliverab
 6. Runtime state belongs in the target workspace or an agent-neutral user state directory, never under agent-specific skill install folders.
 7. The companion `uat-demo-target-governance-template` bundle is template-only; keep its release/install/verify lane separate from the binary-oriented `uat-demo-agent` bundle, even though both are repo-owned.
 8. `--no-sync` / shared publisher `--skip-binary-refresh` only controls workspace sync-back. It does not weaken preflight, dist verification, or install verification requirements.
+9. Use `config/repo-owned-skills.json` `installPath` or pass an explicit `--global-root`; this repo-owned family installs under flat `skills/<skill-id>/`.

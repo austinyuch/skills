@@ -229,6 +229,8 @@ data: {"event_type":"agent.completed","session_id":"...","data":{...}}
 - `agent.completed`
 - `agent.sub_invoke.completed`
 
+See the event list above for SSE event details.
+
 ## Performance
 
 - **Session Duration**: 30-60 seconds per round
@@ -242,3 +244,8 @@ API version is included in response headers:
 ```
 X-API-Version: 1.5.0
 ```
+
+## Related Documentation
+
+- [../README.md](../README.md) - Skill overview
+- [../examples/](../examples/) - Client examples
