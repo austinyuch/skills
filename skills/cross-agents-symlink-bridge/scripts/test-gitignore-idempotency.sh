@@ -53,6 +53,10 @@ assert_sync_idempotent() {
     bash "$SYNC_SCRIPT" --staged >/dev/null
     git diff --exit-code -- .gitignore >/dev/null
 
+    git rm -q CLAUDE.md
+    bash "$SYNC_SCRIPT" --staged >/dev/null
+    git diff --exit-code -- .gitignore >/dev/null
+
     if git ls-files -i -c --exclude-standard -- vendor/ | grep -q .; then
         echo "tracked vendor files are ignored" >&2
         git ls-files -i -c --exclude-standard -- vendor/ >&2
