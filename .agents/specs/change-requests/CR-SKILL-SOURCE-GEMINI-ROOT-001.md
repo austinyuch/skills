@@ -1,6 +1,6 @@
 # CR-SKILL-SOURCE-GEMINI-ROOT-001 — update upstream Gemini/Antigravity profile root
 
-- **Status**: Proposed
+- **Status**: Implementation ready; source merge and global republish pending
 - **Date**: 2026-07-11
 - **Source issue**: `ISSUE-CU-145`
 - **Requester / source repo**: `aclab-uat-demo-agent-private`
@@ -106,3 +106,26 @@ the stale upstream references as an open cross-repo governance gap, not as a
 
 See
 `.agents/specs/uat-demo-repo-owned-skill-publisher/reports/2026-07-11-skill-source-gemini-root-cr-refresh.md`.
+
+## Target Implementation
+
+Target-owned implementation now corrects the active references in
+`skills/spec-master/WORKFLOW.md` and
+`skills/spec-driven-development/SKILL.md` to
+`~/.gemini/config/skills`.
+
+`scripts/ci-checks.sh` now includes a fail-closed repo-wide policy check that
+rejects the legacy Antigravity-specific skill root under active skill, script,
+CLI, and documentation sources. The sentinel is assembled at runtime so the
+guard itself does not preserve a complete legacy target literal in source.
+
+Pre-merge verification:
+
+- `bash scripts/ci-checks.sh`: PASS (8/8 sections).
+- `quick_validate.py skills/spec-master`: PASS.
+- `quick_validate.py skills/spec-driven-development`: PASS.
+- active-source legacy-root grep: no matches.
+- `git diff --check`: PASS.
+
+The CR remains open until the source commit is merged, affected global copies
+are republished from merged source, and installed-copy readback is recorded.
