@@ -116,6 +116,17 @@ SEC="$(grep -rInE 'AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-
 if [ -n "$SEC" ]; then bad "possible secret material"; printf '%s\n' "$SEC" | head -5 | sed 's/^/      /'
 else ok "no high-entropy secrets"; fi
 
+# 8. Gemini/Antigravity canonical skill root
+echo "[8] Gemini skill-root policy"
+LEGACY_GEMINI_ROOT='~/.gemini/'"antigravity/skills"
+GEMINI_ROOT_HITS="$(grep -rInF "$LEGACY_GEMINI_ROOT" skills scripts bin docs 2>/dev/null || true)"
+if [ -n "$GEMINI_ROOT_HITS" ]; then
+  bad "legacy Gemini/Antigravity skill root is still an active source target"
+  printf '%s\n' "$GEMINI_ROOT_HITS" | head -5 | sed 's/^/      /'
+else
+  ok "canonical Gemini/Antigravity skill root is ~/.gemini/config/skills"
+fi
+
 echo "============================="
 if [ "$FAIL" -eq 0 ]; then echo "✅ CI checks passed"; else echo "❌ CI checks FAILED"; fi
 exit "$FAIL"
