@@ -95,6 +95,10 @@ declare -a MANAGED_LINKS=()
 
 append_unique() {
     local value="$1"
+    case "$value" in
+        /*) : ;;
+        *)  value="/$value" ;;
+    esac
     local existing
     for existing in "${MANAGED_LINKS[@]:-}"; do
         if [ "$existing" = "$value" ]; then
@@ -144,8 +148,13 @@ rewrite_gitignore_section() {
         !skip { print }
     ' .gitignore > "$tmp_file"
 
+    # Idempotency: drop trailing blank lines left after removing the old section
+    awk 'NF { last = NR } { buf[NR] = $0 } END { for (i = 1; i <= last; i++) print buf[i] }' \
+        "$tmp_file" > "$tmp_file.trim" && mv "$tmp_file.trim" "$tmp_file"
+
     if [ ${#entries[@]} -gt 0 ]; then
-        printf "\n%s\n" "$begin_marker" >> "$tmp_file"
+        [ -s "$tmp_file" ] && printf "\n" >> "$tmp_file"   # one separator, only if non-empty
+        printf "%s\n" "$begin_marker" >> "$tmp_file"
         printf "%s\n" "${entries[@]}" >> "$tmp_file"
         printf "%s\n" "$end_marker" >> "$tmp_file"
     fi
@@ -225,7 +234,7 @@ handle_specs_target() {
             if [ -d "$target_path" ] && [ ! -L "$target_path" ]; then
                 echo -e "   ${CYAN}📥${NC} Merging existing $target_path/ into $SOURCE_SPECS/ before linking"
                 rsync_directory "$target_path" "$SOURCE_SPECS"
-                rm -rf "$target_path"
+                rm -rf "$target_path"  # agent-safety-allow: merged into source first, then remove (backup-before-delete)
             elif [ -e "$target_path" ] && [ ! -L "$target_path" ]; then
                 backup_path "$target_path"
             fi
