@@ -105,4 +105,4 @@ git config --global core.symlinks true
 
 `.gitignore` 只會影響尚未被追蹤的路徑。若 `.claude/skills`、`.kiro/skills`、`.codex/skills` 或 `CLAUDE.md` 先前已進入 git history，建立 ignore 規則後仍可能在 `git status` 中顯示刪除 / 變更；這需要人工決定是否保留、untrack，或重新整理工作樹。
 
-另外，`sync-claude-md` 的 full scan 會刻意排除 `.claude/`、`.kiro/`、`.codex/` 子樹，避免在 generated agent directories 裡再次生成 `CLAUDE.md`。
+另外，`sync-claude-md` 的 full scan 會刻意排除 `.claude/`、`.kiro/`、`.codex/` 與 `vendor/` 子樹，避免在 generated agent directories 或第三方 vendored code 裡再次生成 `CLAUDE.md`。

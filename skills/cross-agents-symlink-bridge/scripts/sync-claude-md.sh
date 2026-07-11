@@ -67,9 +67,9 @@ rewrite_gitignore_section() {
         !skip { print }
     ' .gitignore > "$tmp_file"
 
-    # Idempotency: drop trailing blank lines left after removing the old section
-    # so the blank separator below is not re-accumulated on every run.
-    awk 'NF { last = NR } { buf[NR] = $0 } END { for (i = 1; i <= last; i++) print buf[i] }' \
+    # Idempotency: drop blank separators left at either edge after removing the
+    # old section so they are not re-accumulated on every run.
+    awk 'NF { if (!first) first = NR; last = NR } { buf[NR] = $0 } END { if (last) for (i = first; i <= last; i++) print buf[i] }' \
         "$tmp_file" > "$tmp_file.trim" && mv "$tmp_file.trim" "$tmp_file"
 
     if [ ${#entries[@]} -gt 0 ]; then

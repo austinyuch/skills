@@ -73,7 +73,7 @@ sync 腳本支援兩種模式：
 | **Full scan** | 直接執行，無參數 | 掃描整個 repo 所有目錄 |
 | **Git diff mode** | `--staged` 參數 | 只處理 `git diff --cached` 中的 AGENTS.md；若本次 commit 沒有 staged `AGENTS.md`，仍會從目前 repo 內有效的 `CLAUDE.md -> AGENTS.md` symlink 狀態重建 managed `.gitignore` section，避免把既有 entries 洗掉 |
 
-> Full scan 會排除 `.git/`、`node_modules/`，以及 generated `.claude/`、`.kiro/`、`.codex/` 子樹，避免在 agent mirror / bridge 目錄內重複生成 `CLAUDE.md`。
+> Full scan 會排除 `.git/`、`node_modules/`、`vendor/`，以及 generated `.claude/`、`.kiro/`、`.codex/` 子樹，避免在 agent mirror / bridge 目錄或第三方 vendored code 內重複生成 `CLAUDE.md`。
 
 ### Phase 3：安裝 pre-commit hook（可選）
 
@@ -105,6 +105,7 @@ sync 腳本支援兩種模式：
 - `CLAUDE.md` 層級：每個成功建立的 `CLAUDE.md` symlink 的相對路徑（如 `docs/CLAUDE.md`）
 - 若 `.gitignore` 不存在則自動建立
 - 使用 **獨立 managed sections** 管理 bridge paths 與 `CLAUDE.md` paths，避免 stale entries 殘留
+- managed entries 以 repo-root anchored 形式寫入（例如 `/CLAUDE.md`），避免 root 檔名規則誤傷 vendored `CLAUDE.md`
 - `sync-claude-md --staged` 若本次沒有 staged `AGENTS.md`，不可把 `CLAUDE.md` managed section 重寫為空；應從目前有效 symlink 狀態重建該 section
 - 若 `.claude/skills`、`.kiro/skills`、`.codex/skills` 曾被 git 追蹤，加入 `.gitignore` **不會自動 untrack**；agent 應提醒使用者檢查 `git status`
 
@@ -116,6 +117,7 @@ sync 腳本支援兩種模式：
 | `scripts/init.ps1` | Windows | 同上，使用 Junction / Robocopy |
 | `scripts/sync-claude-md.sh` | Linux/macOS | 遞迴同步 `CLAUDE.md` symlink，並重寫 dedicated `.gitignore` section |
 | `scripts/sync-claude-md.ps1` | Windows | 同上 |
+| `scripts/test-gitignore-idempotency.sh` | Linux/macOS | 驗證 managed `.gitignore` sections idempotent、root anchored，且 `vendor/` 不被掃描/忽略 |
 | `scripts/install-hook.sh` | Linux/macOS | 安裝 git pre-commit hook |
 | `scripts/install-hook.ps1` | Windows | 同上 |
 
