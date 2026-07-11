@@ -132,6 +132,9 @@ function Rewrite-GitignoreSection([string]$BeginMarker, [string]$EndMarker, [str
     while ($filtered.Count -gt 0 -and [string]::IsNullOrWhiteSpace($filtered[$filtered.Count - 1])) {
         $filtered.RemoveAt($filtered.Count - 1)
     }
+    while ($filtered.Count -gt 0 -and [string]::IsNullOrWhiteSpace($filtered[0])) {
+        $filtered.RemoveAt(0)
+    }
 
     if ($Entries.Count -gt 0) {
         if ($filtered.Count -gt 0) {
