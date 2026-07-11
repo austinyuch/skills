@@ -1,6 +1,6 @@
 {
-  "release_id": "20260708-051541",
-  "generated_at": "2026-07-08T05:17:18.080093+00:00",
+  "release_id": "20260711-075349",
+  "generated_at": "2026-07-11T07:54:04.898964+00:00",
   "bundle_dir": "dist/uat-demo-agent-latest/uat-demo-agent",
   "files": [
     "uat-demo-agent/SKILL.md",
@@ -32,7 +32,7 @@
   },
   "verification": {
     "workspace_bundle": {
-      "path": "/home/user/projects/aclab/aclab-uat-demo-agent-private/dist/uat-demo-agent-latest/uat-demo-agent",
+      "path": "<workspace-root>/projects/aclab/aclab-uat-demo-agent-private-gemini-config-skills-root/dist/uat-demo-agent-latest/uat-demo-agent",
       "exists": true,
       "files": [
         "SKILL.md",
@@ -55,6 +55,7 @@
       ],
       "missing": [],
       "denied": [],
+      "denied_dirs": [],
       "skill_doc": {
         "ok": true,
         "errors": []
@@ -70,9 +71,9 @@
         "present": true,
         "checked": true,
         "ok": true,
-        "metadata_root": "/home/user/projects/aclab/aclab-uat-demo-agent-private/dist/uat-demo-agent-latest",
-        "manifest_path": "/home/user/projects/aclab/aclab-uat-demo-agent-private/dist/uat-demo-agent-latest/release-manifest.json",
-        "checksums_path": "/home/user/projects/aclab/aclab-uat-demo-agent-private/dist/uat-demo-agent-latest/checksums.txt",
+        "metadata_root": "<workspace-root>/projects/aclab/aclab-uat-demo-agent-private-gemini-config-skills-root/dist/uat-demo-agent-latest",
+        "manifest_path": "<workspace-root>/projects/aclab/aclab-uat-demo-agent-private-gemini-config-skills-root/dist/uat-demo-agent-latest/release-manifest.json",
+        "checksums_path": "<workspace-root>/projects/aclab/aclab-uat-demo-agent-private-gemini-config-skills-root/dist/uat-demo-agent-latest/checksums.txt",
         "errors": [],
         "manifest_missing": [],
         "manifest_unexpected": [],
@@ -105,9 +106,9 @@
               "latest_bundle_ok": true
             },
             "promotion_gate": {
-              "status": "blocked",
-              "eligible": false,
-              "reason": "dirty-working-tree-build"
+              "status": "manual-approval-required",
+              "eligible": true,
+              "reason": "ready-for-manual-approval"
             }
           }
         },
@@ -133,8 +134,8 @@
               ]
             },
             "signing_ready_handoff": {
-              "status": "blocked",
-              "reason": "dirty-working-tree-build",
+              "status": "ready-for-signing",
+              "reason": "ready-for-manual-approval",
               "manual_gate": "signing-and-distribution-approval-required",
               "signed_release_delivery": "deferred",
               "required_artifacts": [
@@ -158,9 +159,9 @@
       "latest_bundle_ok": true
     },
     "promotion_gate": {
-      "status": "blocked",
-      "eligible": false,
-      "reason": "dirty-working-tree-build"
+      "status": "manual-approval-required",
+      "eligible": true,
+      "reason": "ready-for-manual-approval"
     }
   },
   "promotion_provenance": {
@@ -182,8 +183,8 @@
       ]
     },
     "signing_ready_handoff": {
-      "status": "blocked",
-      "reason": "dirty-working-tree-build",
+      "status": "ready-for-signing",
+      "reason": "ready-for-manual-approval",
       "manual_gate": "signing-and-distribution-approval-required",
       "signed_release_delivery": "deferred",
       "required_artifacts": [

@@ -19,7 +19,7 @@ Analyzed /path/to/file.go:
 
 **Example:**
 ```
-Analyzed /home/user/project/internal/agent/scan.go:
+Analyzed <workspace-root>/project/internal/agent/scan.go:
 - Language: go
 - Functions: 3
 - Classes: 1

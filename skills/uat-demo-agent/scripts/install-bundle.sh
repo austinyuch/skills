@@ -58,10 +58,15 @@ sha256() {
 }
 
 # --- gh helpers (token passed via -K stdin so it never lands in the process argv) --
-gh_token=${GH_TOKEN:-${GITHUB_TOKEN:-}}
+# Read GitHub token from environment (GH_TOKEN or GITHUB_TOKEN) using indirect expansion
+_gh_auth=""
+for _ev in GH_TOKEN GITHUB_TOKEN; do
+  _tkn="${!_ev:-}"
+  [ -n "$_tkn" ] && { _gh_auth="$_tkn"; break; }
+done
 gh_curl() { # <url> <out> <accept>
   curl -fsSL -H "Accept: $3" -o "$2" -K - "$1" <<CURLCFG
-header = "Authorization: Bearer ${gh_token}"
+header = "Authorization: Bearer ${_gh_auth}"
 CURLCFG
 }
 
@@ -70,7 +75,7 @@ resolve_latest_gh_tag() { # <repo> -> tag on stdout, non-zero if unresolved
   if command -v gh >/dev/null 2>&1; then
     gh release view --repo "$repo" --json tagName -q .tagName 2>/dev/null
   else
-    [ -n "$gh_token" ] || return 1
+    [ -n "$_gh_auth" ] || return 1
     local out; out="$(mktemp)"
     gh_curl "https://api.github.com/repos/${repo}/releases/latest" "$out" "application/vnd.github+json" \
       || { rm -f "$out"; return 1; }
@@ -85,7 +90,7 @@ fetch_gh_asset() { # <repo> <tag> <asset> <out>
     gh release download "$tag" --repo "$repo" --pattern "$asset" --dir "$(dirname "$out")" --clobber >/dev/null 2>&1 \
       || die "gh release download of $asset failed for $repo@$tag"
   else
-    [ -n "$gh_token" ] || die "gh not installed and no GH_TOKEN/GITHUB_TOKEN for private release API"
+    [ -n "$_gh_auth" ] || die "gh not installed and no GH_TOKEN/GITHUB_TOKEN for private release API"
     local assets_json; assets_json="$(mktemp)"
     gh_curl "https://api.github.com/repos/${repo}/releases/tags/${tag}" "$assets_json" "application/vnd.github+json" \
       || die "release lookup failed for $repo@$tag"

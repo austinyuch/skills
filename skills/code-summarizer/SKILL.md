@@ -33,9 +33,33 @@ Use this state machine when a coding agent performs the summary directly:
 
 Do not expose hidden chain-of-thought. The `reasoning` field is a short reviewable decision summary.
 
-### Writeback round-trip — apply your summaries to the graph (Spec #97 CR-2026-06-22-001)
+### Writeback round-trip — apply your summaries to the graph (Spec #97 CR-2026-06-22-001, CR-2026-07-09-001)
 
-In `agent-instruction` mode `review-cli index --summaries` only *emits a handoff* (`.code-review/agent-instruction-summaries.json`); it does not write File summaries. To enrich the graph: run this state machine over each handoff candidate, collect per-file outputs into a JSON array where each item adds `source_file`, then assemble and apply:
+In `agent-instruction` mode `review-cli index --summaries` only *emits a handoff*; it does not write File summaries. Current binaries emit both the legacy `.code-review/agent-instruction-summaries.json` and a preferred sharded handoff directory:
+
+```
+.code-review/agent-instruction-handoffs/<run-id>/
+  manifest.json
+  candidates/summaries-000001.jsonl
+  results/
+  failures/
+```
+
+For large repos, use the sharded workflow so multiple agent workers can summarize files independently without building one giant JSON document:
+
+```
+# inspect work queue / progress
+review-cli handoff status .code-review/agent-instruction-handoffs/<run-id> --format json
+
+# for each candidates/*.jsonl row, run this skill and write one JSON object per result line:
+# {source_file, summary, confidence, reasoning, skill_version}
+# into results/<same-or-worker-name>.jsonl
+
+# write result shards onto File nodes (same writer as llm-api mode; review-cli calls no provider API)
+review-cli apply-handoff .code-review/agent-instruction-handoffs/<run-id> --target <manifest.target_root>
+```
+
+Legacy single-file result envelopes remain supported for small repos or older agents:
 
 ```
 # wrap your per-file outputs (array of {source_file, summary, confidence, reasoning, skill_version})
@@ -73,6 +97,35 @@ Output (stdout, single JSON object):
 On bad input, an unconfigured/missing provider, or unparseable model output, the script exits
 **non-zero** and writes the reason to stderr. It never fabricates a summary — the runner counts
 such files as failed and prints the stderr.
+
+## Concurrency, first-run strategy & lifecycle (CR-2026-07-11)
+
+**Provider default is the subscription coding agent's CLI.** With no mode env set, this skill
+runs in **agent-instruction** mode — a subscription agent follows the state machine above; no
+provider API is called. `llm-api` is opt-in (see below). Provider credentials alone never flip
+the mode.
+
+**Annotation concurrency is INDEPENDENT of embedding concurrency.** Summaries/capabilities are a
+different service (the coding-agent provider or the `llm-api` provider) with its own rate/resource
+limits, so it has its own knob — do **not** reuse `--embedding-workers`:
+
+- `review-cli index --summaries --annotation-workers N --annotation-rate-limit R`
+- env `CODE_REVIEW_ANNOTATION_WORKERS` / `CODE_REVIEW_ANNOTATION_RATE_LIMIT` (default workers 4,
+  rate 0 = unlimited). Applies to the `llm-api` and mock/skill execution paths (agent-instruction
+  mode does per-file work in the agent, not in-process).
+
+**Pick a first-run strategy by repo size, then override if needed.** Use the size tool, then index:
+
+```bash
+review-cli corpus-size <root> --format json   # {files,bytes,lines,recommended_strategy,rationale}
+review-cli index <root> --index-strategy auto --summaries --capabilities
+```
+
+`--index-strategy auto` (default) sizes the repo and picks `lightweight` (small: parse →
+summaries/capabilities → stop, skips embeddings) or `full` (large: graph + embeddings +
+annotations); it prints the rationale so you can override with `--index-strategy lightweight|full`.
+The command also prints a lifecycle recommendation for the next run. For small projects, the
+lightweight annotate-only pass is usually all you need.
 
 ## Provider configuration (`llm-api` only)
 

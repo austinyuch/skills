@@ -109,15 +109,18 @@ on session-end (a Stop hook, `xreview install`), **cross-machine / CI / server**
 | Goal | Command |
 |------|---------|
 | Review the current changes once, now | `xreview review --host-agent <agent>` |
-| Auto-review when the author agent finishes | `xreview install --agent <claude\|codex\|opencode\|kiro\|antigravity>` |
-| Remove the auto-review trigger | `xreview uninstall --agent <claude\|codex\|opencode\|kiro\|antigravity>` |
+| Auto-review when the author agent finishes | `xreview install --agent <claude\|codex\|opencode\|kiro\|antigravity\|all\|comma-list>` |
+| Remove the auto-review trigger | `xreview uninstall --agent <claude\|codex\|opencode\|kiro\|antigravity\|all\|comma-list>` |
+| Check trigger coverage drift | `xreview doctor --coverage` |
 | Change which model/agent reviews | edit the config (below), no reinstall needed |
 | Refresh which SOTA models are available | `xreview cards update` |
 
 > **Which `--agent`?** Use the agent **you are running as right now** — that's the *author* whose
 > work gets reviewed by a different family. If you're Claude, `--agent claude`; if Codex,
 > `--agent codex`; and so on for `opencode` / `kiro` / `antigravity`. All five have working
-> trigger installers.
+> trigger installers. If you switch between agents on the same workstation, install every authoring
+> agent you actually use, for example `--agent claude,codex`; use `--agent all` for the full supported
+> set. Run `xreview doctor --coverage` to see which author-agent triggers are installed or missing.
 
 ## Resolve the binary (platform-agnostic)
 
@@ -139,7 +142,7 @@ sh "$(dirname "$0")/scripts/build-binaries.sh" /path/to/go-review-service   # ru
 **Maintainer refresh (one command):** `scripts/publish.sh` rebuilds the six binaries and copies this
 skill into the local agent skill homes under the flat default `cross-agent-review`
 (`~/.agents`, `~/.claude`, `~/.kiro`, `~/.config/opencode`, `~/.codex`, `~/.gemini`,
-`~/.gemini/antigravity`, `~/.copilot`, `~/.cline`), then verifies each copy resolves an executable
+`~/.gemini/config`, `~/.copilot`, `~/.cline`), then verifies each copy resolves an executable
 binary. Run after any binary/behavior change. Overrides: `XREVIEW_GO_DIR`, `XREVIEW_SKILL_HOMES`,
 `XREVIEW_SKILL_REL`, `XREVIEW_NO_BUILD=1`.
 
@@ -174,6 +177,11 @@ select a **different-family** reviewer via the model-card registry (Claude autho
 → dispatch it headlessly to run the `code-review` skill → run the consensus loop → write a
 review-record. The result is advisory (visible, non-blocking) unless `on_findings: blocking` is set.
 
+For higher recall on sensitive scopes, set `"second_opinion_review": true` in `.xreview/config.json`.
+This keeps the primary cross-family reviewer and adds a supplemental same-family reviewer from a
+different backend, driven adversarially at highest effort; the consensus loop sees the de-duplicated
+union of both reviewers' findings and the record includes `second_opinion`.
+
 **Machine-readable output + multi-turn (session id).** `--format json` returns the full review
 record as one JSON object on stdout (outcome, reviewer, findings, degrade_codes, remediation, and
 `session`), so a host agent can parse it and **continue the review conversation in a later turn**:
@@ -203,10 +211,11 @@ API transport. (The underlying agents also expose their own resume: `codex exec 
 ## Auto-trigger when the author agent finishes
 
 Each agent exposes a different "finished a turn / session" mechanism; `xreview install --agent <name>`
-writes the right one for you. Every installer **merges** (never clobbers), is **idempotent**, backs up
-the prior file, removes only its own entry on `uninstall`, and writes the resolved local binary path
-(so it works on any OS/arch). Idempotency/uninstall match the `run --host-agent` invocation signature,
-so a renamed/relocated binary is still recognized.
+writes the right one for you. `--agent` also accepts `all` or a comma-list such as `claude,codex` for
+users who switch authoring agents on the same host. Every installer **merges** (never clobbers), is
+**idempotent**, backs up the prior file, removes only its own entry on `uninstall`, and writes the
+resolved local binary path (so it works on any OS/arch). Idempotency/uninstall match the
+`run --host-agent` invocation signature, so a renamed/relocated binary is still recognized.
 
 ```sh
 "$BIN" install --agent claude       # → Stop hook in ~/.claude/settings.json
@@ -214,6 +223,8 @@ so a renamed/relocated binary is still recognized.
 "$BIN" install --agent opencode     # → session.idle JS plugin in ~/.config/opencode/plugins/xreview.js
 "$BIN" install --agent kiro         # → hooks.stop in a kiro-cli agent config (see note)
 "$BIN" install --agent antigravity  # → agy plugin (plugin.json + root hooks.json Stop), via `agy plugin install`
+"$BIN" install --agent claude,codex # → cover a host where both agents author code
+"$BIN" doctor --coverage            # → report installed/missing xreview triggers by agent
 ```
 
 All five author agents are covered. Every installer **merges/writes** without clobbering, is idempotent,

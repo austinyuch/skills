@@ -13,11 +13,23 @@
 #   gh://OWNER/REPO@TAG   → `gh release download` (uses gh auth; reaches PRIVATE release assets)
 #   https://BASE/         → curl (Bearer $GH_TOKEN/$GITHUB_TOKEN for github.com hosts)
 #   /local/dir            → cp (offline / air-gapped mirror)
+# REVIEW_CLI_ONNX_RELEASE may point the optional ONNX model bundle at a different release/mirror.
 # The fetched binary is a verified build artifact and is gitignored — never commit it back.
 set -eu
 
 here=$(dirname -- "$0"); here=$(cd -- "$here" && pwd)
-release="${REVIEW_CLI_RELEASE:-https://github.com/austinyuch/aclab-code-review/releases/download/v0.16.1/}"
+manifest="$here/review-cli-bundle-manifest.json"
+[ -f "$manifest" ] || { echo "install.sh: missing review-cli-bundle-manifest.json next to it (trust anchor missing)" >&2; exit 1; }
+command -v python3 >/dev/null 2>&1 || { echo "python3 required but not found on PATH" >&2; exit 1; }
+default_tag=$(python3 - "$manifest" <<'PY'
+import json, sys
+version = json.load(open(sys.argv[1])).get("version", "")
+if not isinstance(version, str) or not version.startswith("v"):
+    raise SystemExit("manifest version must be a v-prefixed release tag")
+print(version)
+PY
+)
+release="${REVIEW_CLI_RELEASE:-https://github.com/austinyuch/aclab-code-review/releases/download/$default_tag/}"
 
 if [ ! -f "$here/install-bundle.sh" ]; then
   echo "install.sh: missing install-bundle.sh next to it (bundle incomplete)" >&2
@@ -35,8 +47,19 @@ echo "review-cli: ready (run: $here/review-cli-\$(uname -s)-\$(uname -m) --help)
 if [ "${REVIEW_CLI_SKIP_ONNX:-0}" = 1 ]; then
   echo "onnx model: skipped (REVIEW_CLI_SKIP_ONNX=1) — semantic search will be unavailable until installed" >&2
 elif [ -f "$here/install-model-bundle.sh" ]; then
-  echo "onnx model: fetching embedding bundle from $release ..." >&2
-  sh "$here/install-model-bundle.sh" "$release" "$here/.."
+  model_manifest="$here/onnx-model-bundle-manifest.json"
+  [ -f "$model_manifest" ] || { echo "onnx model: missing onnx-model-bundle-manifest.json next to install-model-bundle.sh" >&2; exit 1; }
+  default_model_tag=$(python3 - "$model_manifest" <<'PY'
+import json, sys
+version = json.load(open(sys.argv[1])).get("version", "")
+if not isinstance(version, str) or not version.startswith("v"):
+    raise SystemExit("model manifest version must be a v-prefixed release tag")
+print(version)
+PY
+)
+  model_release="${REVIEW_CLI_ONNX_RELEASE:-https://github.com/austinyuch/aclab-code-review/releases/download/$default_model_tag/}"
+  echo "onnx model: fetching embedding bundle from $model_release ..." >&2
+  sh "$here/install-model-bundle.sh" "$model_release" "$here/.."
 else
   echo "onnx model: install-model-bundle.sh missing next to install.sh — skipping model fetch" >&2
 fi

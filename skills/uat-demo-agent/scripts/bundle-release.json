@@ -2,6 +2,6 @@
   "schema": "uatdemo-bundle-release/v1",
   "repo": "austinyuch/aclab-uat-demo-agent",
   "preferLatest": true,
-  "pinnedTag": "v0.1.0",
+  "pinnedTag": "v0.1.2",
   "note": "The uatdemo platform binaries are delivered as GitHub release assets, NOT committed to git. install-bundle.sh and the resolve_binary() runtime self-heal fetch THIS host's binary from the release (prefer the latest release; fall back to pinnedTag if set and latest is unreachable), verifying SHA-256 against the release's bundle-manifest.json. Override the source with UATDEMO_BUNDLE_SOURCE (a local dir, https prefix, or gh:owner/repo@tag)."
 }

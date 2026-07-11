@@ -1,10 +1,10 @@
 # CLI Commands Reference
 
-<!-- min-review-cli-version: 0.16.1 -->
+<!-- min-review-cli-version: 0.19.1 -->
 
 ## Compatibility
 
-This reference documents the CLI surface as of **`review-cli` v0.16.1** (the
+This reference documents the CLI surface as of **`review-cli` v0.19.1** (the
 `min-review-cli-version` marker above is the machine-readable floor). Flags and
 commands such as `--no-embeddings`, `--no-model`, `--capabilities`, `--summaries`,
 `apply-handoff`, `capability-inventory`, and `summary --granularity` require a
@@ -221,6 +221,8 @@ review-cli-<os>-<arch> index <project-path> [--no-embeddings|--no-model]
 
 Use `--no-model` when the run must avoid both embedding/vector providers and LLM API annotation writes. `--no-model` does **not** forbid capabilities or summaries: with `--capabilities` or `--summaries`, the CLI resolves the source corpus and returns an `agent-instruction` handoff/guideline for a subscription coding agent instead of invoking provider APIs.
 
+If the user names a concrete embedding provider/model/endpoint for evidence, this command is provider-bound. Record the allowed provider, endpoint/base URL, model, dimensions, execution provider if relevant, and forbidden fallback before the run. Use `--no-embeddings` for a graph-only claim; do not set `CODE_REVIEW_EMBEDDING_PROVIDER=mock` as a workaround in a provider-bound lane. Mock is a deterministic test provider and creates mock vector rows.
+
 **Optional LLM enrichment flags (depend on separate Agent Skills):**
 
 After Layers 1–4, `index` can run two opt-in enrichment passes. Each is powered by its **own separate skill** — `code-review` orchestrates them but does not contain them:
@@ -236,13 +238,18 @@ Do **not** confuse these with the read-side `capability-inventory` and `summary`
 
 The `--capabilities` run summary is **eligibility-aware** (Spec #87 cluster): only behavioral artifacts (e.g. X++ Classes/Forms) are enrichable, so the text summary reports `N processed, M failed (E of C recognized source files eligible; S skipped — no behavioral symbols)` — "processed" is not the same as "failed". With `--format json` it emits a structured `{"skill_available","annotation_mode","handoff_required","guideline","files_considered","files_eligible","files_skipped_no_symbol","files_processed","files_failed"}` object instead of human lines.
 
-**Agent-instruction writeback round-trip (`apply-handoff`, Spec #97 CR-2026-06-22-001):** in `agent-instruction` mode `--capabilities`/`--summaries` only *emit a handoff*; they do not write graph annotations (that is by design — `review-cli` calls no provider API in this mode). To actually enrich the graph "with a subscription coding agent", complete the round-trip:
+**Agent-instruction writeback round-trip (`handoff status` + `apply-handoff`, Spec #97 CR-2026-06-22-001 / CR-2026-07-09-001):** in `agent-instruction` mode `--capabilities`/`--summaries` only *emit a handoff*; they do not write graph annotations (that is by design — `review-cli` calls no provider API in this mode). To actually enrich the graph "with a subscription coding agent", complete the round-trip:
 
-1. `review-cli index <path> --no-model --capabilities` (and/or `--summaries`) → writes `.code-review/agent-instruction-{capabilities,summaries}.json` (candidates + expected output schema + `target_root` + `cli_version`).
-2. The subscription coding agent runs the **capability-mapper** / **code-summarizer** skill state machine over the candidates and produces a result envelope. The skills' `run.py --emit-result-envelope --target-root <root>` (reads a JSON array of `{source_file, capability|summary, …}` from `--annotations <file>` or stdin) assembles `agent-instruction-{capabilities,summaries}-result/v1` for you.
-3. `review-cli apply-handoff <result.json> [--target <root>] [--format text|json]` writes the annotations into the graph through the **same** writer `llm-api` mode uses (canonical `BusinessCapability` nodes, `SERVES` edges for declared `req_id`s, `business_value`, File summaries), tagged `annotation_mode=agent-instruction`.
+1. `review-cli index <path> --no-model --capabilities --handoff-shard-size 500` (and/or `--summaries`) writes the legacy `.code-review/agent-instruction-{capabilities,summaries}.json` plus a sharded work queue at `.code-review/agent-instruction-handoffs/<run-id>/`.
+2. Prefer the sharded path for large repos: agents process `candidates/*.jsonl` independently, write one result JSON object per line into `results/*.jsonl`, and check progress with `review-cli handoff status <handoff-dir> [--format text|json]`.
+3. Either run the agent manually, or use `review-cli handoff run-agent <handoff-dir> --agent auto --apply`. The command detects supported non-interactive CLIs (`codex exec`, Claude Code `claude -p`, `opencode run`, `kiro-cli chat --no-interactive`, `agy -p`) or uses `--agent-command <wrapper>` for custom agents, waits for result shards, then calls the same apply path.
+4. Before installing lifecycle hooks, run `review-cli handoff agent-doctor --agent <agent|all|auto> --strict` to verify the real host CLI command shape without sending an annotation prompt. Built-in checks validate `codex exec --help`, `claude -p --help`, `opencode run --help`, `kiro-cli chat --no-interactive --help`, and `agy -p --help`; custom `--agent-command` wrappers get executable-only validation.
+4. `review-cli apply-handoff <handoff-dir> [--target <root>] [--format text|json]` writes sorted result shards into the graph through the **same** writer `llm-api` mode uses (canonical `BusinessCapability` nodes, `SERVES` edges for declared `req_id`s, `business_value`, File summaries), tagged `annotation_mode=agent-instruction`.
+5. Legacy single-file result envelopes remain supported: the skills' `run.py --emit-result-envelope --target-root <root>` (reads a JSON array of `{source_file, capability|summary, …}` from `--annotations <file>` or stdin) assembles `agent-instruction-{capabilities,summaries}-result/v1`; apply it with `review-cli apply-handoff <result.json>`.
 
-`apply-handoff` is **fail-closed**: a wrong `schema_version`/`cost_class`/`provenance` rejects the whole file; per item, an out-of-range confidence, a `source_file` outside `target_root` or absent from the current graph, or an undeclared `req_id` fails that item (counted in `files_failed` with a printed reason) without writing it — never a partial write, never a fabricated requirement. JSON output reports `files_processed`/`files_failed`/`nodes_created`/`serves_created`/`summaries_written`/`failures`, reconcilable with the handoff's `candidate_count`. `review-cli` still calls no provider API — the annotations come from the agent.
+`apply-handoff` is **fail-closed**: a wrong `schema_version`/`cost_class`/`provenance` rejects the whole file or shard; per item, an out-of-range confidence, a `source_file` outside `target_root` or absent from the current graph, or an undeclared `req_id` fails that item (counted in `files_failed` with a printed reason) without writing it — never a partial write, never a fabricated requirement. JSON output reports `files_processed`/`files_failed`/`nodes_created`/`serves_created`/`summaries_written`/`failures`, reconcilable with the handoff's `candidate_count`. `review-cli` still calls no provider API — the annotations come from the agent.
+
+`handoff run-agent` and `apply-handoff` do not consume embedding provider configuration to create vectors. In a provider-bound evidence lane, do not prefix these commands with `CODE_REVIEW_EMBEDDING_PROVIDER=mock`; record their result as subscription-agent annotation writeback evidence only. Vector readiness still needs `index --status --format json` or an equivalent vector-specific check from the embedding-backed indexing command.
 
 **Complete `index` flag reference** (authoritative — mirrors the binary):
 
@@ -250,6 +257,7 @@ The `--capabilities` run summary is **eligibility-aware** (Spec #87 cluster): on
 |------|---------|
 | `--no-embeddings` | Force graph-only indexing; do not initialize embedding/vector providers (cost class: no-model; Spec #62). |
 | `--no-model` | Force no-model indexing: no embeddings and no LLM API annotation writes. `--capabilities`/`--summaries` return agent-instruction handoff hints instead of provider execution. |
+| `--handoff-shard-size <int>` | Agent-instruction candidates per JSONL shard; `<=0` disables the sharded handoff directory and leaves only the legacy single-file handoff. |
 | `--status` | Show index status instead of indexing. |
 | `--watch` | With `--status`: poll readiness every 2s until Ctrl-C (REQ-ICB-103). Distinct from the top-level `watch` command. |
 | `--force` | Force a full re-index (clears the triage cache). |
@@ -260,6 +268,10 @@ The `--capabilities` run summary is **eligibility-aware** (Spec #87 cluster): on
 | `--batch-max-bytes <size>` | With `--recursive`: max logical input bytes per batch, e.g. `64MB`, `128MiB` (default `64MB`). |
 | `--batch-sort <dir\|name\|mtime>` | With `--recursive`: batch ordering (default `dir`; git changed/untracked files prioritized when available). |
 | `--prune-ignored` | With `--recursive`: remove existing File/symbol/vector traces no longer in the discovered corpus. |
+| `--embedding-batch-size <int>` | Embedding provider batch size override for this run. Distinct from recursive file batching. |
+| `--embedding-workers <int>` | Embedding provider worker count override for this run. Use low values for bounded local/self-hosted endpoints. |
+| `--embedding-rate-limit <float>` | Embedding provider request rate limit override in requests per second; `0` disables rate limiting. |
+| `--embedding-timeout <duration>` | Embedding provider request timeout override, e.g. `60s`, `1m`, `2m30s`. |
 | `--exclude <dir>` | Exclude a directory (repeatable; REQ-ICB-003). See "Index Corpus Ignores" in usage-guide.md. |
 | `--no-respect-gitignore` | Do not parse `.gitignore`/legacy `.reviewignore`; use builtin + `.code-review/config.yaml` + `--exclude` only (REQ-ICB-002). |
 | `--dry-run-corpus` | Report the corpus plan and exit before indexing. Use `--format json` for included/excluded samples with matched source/rule. |
@@ -369,9 +381,12 @@ review-cli-<os>-<arch> graph zoom-precompute --graph-db .code-review/graph.sqlit
 #### graph hook
 Manage a Git post-commit hook that triggers precise incremental graph/vector re-indexing. Subcommands: `install`, `status`, `uninstall`.
 
+Plain hook mode is a Git/review-cli mechanism only; it does not run a subscription agent. The generated hook bakes the resolved persistence env into the managed block (`CODE_REVIEW_PERSISTENCE_MODE`/`PERSISTENCE_MODE`, `CODE_REVIEW_SQLITE_ENABLED`/`SQLITE_ENABLED`, and SQLite file/state aliases when present); if no mode is resolved, Git-hook installs default to repo-local `local-sqlite` with SQLite enabled. Opt-in `--subscription-agent` mode first runs no-model capability/summary handoff generation synchronously, then launches `handoff run-agent --latest --artifact all --apply` detached from the commit via `setsid nohup`/`nohup`; that detached command invokes a supported non-interactive agent CLI or an explicit `--agent-command` wrapper and applies results through `apply-handoff`. Do not use hook installation or commit return as proof that annotations completed; verify the handoff/apply result before claiming subscription-agent annotation writeback.
+
 **Usage:**
 ```bash
 review-cli-<os>-<arch> graph hook install     # install the managed post-commit hook
+review-cli-<os>-<arch> graph hook install --subscription-agent --agent auto
 review-cli-<os>-<arch> graph hook status      # show whether the managed hook is installed
 review-cli-<os>-<arch> graph hook uninstall   # remove the managed hook block
 ```
@@ -380,6 +395,11 @@ review-cli-<os>-<arch> graph hook uninstall   # remove the managed hook block
 - `--path <dir>` — path inside the Git repository to manage/inspect (default `.`; all three subcommands).
 - `--binary <path>` (install only) — `review-cli` binary the hook invokes (default: current executable).
 - `--fail-on-error` (install only) — let hook failures propagate instead of logging and continuing.
+- `--subscription-agent` (install only) — after synchronous `index --no-model --capabilities --summaries`, launch latest handoffs through detached `handoff run-agent --apply`.
+- `--agent <auto|codex|claude|opencode|kiro|antigravity>` (install only) — subscription agent selector for `--subscription-agent`; Kiro uses `kiro-cli chat --no-interactive`, Antigravity uses `agy -p`.
+- `--agent-command <command>` (install only) — explicit non-shell wrapper command passed to `handoff run-agent`.
+
+For agent StopHook/session-idle lifecycle installation from a published global skill, use `scripts/install-agent-handoff-hooks.py` from the `code-review` skill directory while your shell is in the target repo. It installs Claude/Codex/Kiro Stop hooks, an OpenCode idle plugin, and an Antigravity agy plugin that call `scripts/agent-handoff-hook.py`; the wrapper then runs `index --no-model --capabilities --summaries`, an explicit `context-index` refresh, and `handoff run-agent --apply` against the target repo. Use `--preflight` when installing so the script runs `handoff agent-doctor --strict` before writing hooks.
 
 The project SQLite graph DB is single-writer — enforced by a single writer connection plus a `busy_timeout` — so concurrent graph mutations against the same DB serialize (a second writer waits) rather than failing with `SQLITE_BUSY` while a hook-triggered index is active.
 
@@ -391,11 +411,11 @@ Normalize raw AX2009 native xref table exports into the CSV contract consumed by
 **Usage:**
 ```bash
 review-cli-<os>-<arch> xref-normalize \
-  --xref-dir /home/user/projects/giant-ax/lab/download_xref_tables/xref_csv_output \
+  --xref-dir <workspace-root>/projects/giant-ax/lab/download_xref_tables/xref_csv_output \
   --source-object AxSalesLine \
-  --target /home/user/projects/giant-ax \
-  --out /home/user/projects/giant-ax/.code-review/artifacts/xref/axsalesline.refs.csv \
-  --run-log /home/user/projects/giant-ax/.code-review/artifacts/xref/xref-normalize.jsonl
+  --target <workspace-root>/projects/giant-ax \
+  --out <workspace-root>/projects/giant-ax/.code-review/artifacts/xref/axsalesline.refs.csv \
+  --run-log <workspace-root>/projects/giant-ax/.code-review/artifacts/xref/xref-normalize.jsonl
 ```
 
 **Flags:**
@@ -410,7 +430,31 @@ review-cli-<os>-<arch> xref-normalize \
 `source,target,target_kind,reference,line`, where field and method targets are owner-qualified (`Table.Field`, `Class.method`) and enum literals roll up to their owning enum. `xref-recall` filters the denominator to graph-modeled first-layer families.
 
 **Artifact convention:**
-For reusable AX recall evidence, prefer target-local ignored paths such as `.code-review/artifacts/xref/*.csv` and `.code-review/artifacts/xref/*.jsonl` over `/tmp`. For the giant-ax sample project, the reusable full graph is `/home/user/projects/giant-ax/.code-review/graph.sqlite` (about 1.2 GB on this host). If a target repo deliberately shares that graph later, track only the exact `.code-review/graph.sqlite` path via GitLab/Git LFS or an equivalent artifact store; keep derived refs, graph-edge dumps, and JSONL run logs ignored unless the target repo explicitly promotes a curated evidence file.
+For reusable AX recall evidence, prefer target-local ignored paths such as `.code-review/artifacts/xref/*.csv` and `.code-review/artifacts/xref/*.jsonl` over `/tmp`. For the giant-ax sample project, the reusable full graph is `<workspace-root>/projects/giant-ax/.code-review/graph.sqlite` (about 1.2 GB on this host). If a target repo deliberately shares that graph later, track only the exact `.code-review/graph.sqlite` path via GitLab/Git LFS or an equivalent artifact store; keep derived refs, graph-edge dumps, and JSONL run logs ignored unless the target repo explicitly promotes a curated evidence file.
+
+### xpp-diagnose
+Emit method-level AX2009/XPO parser diagnostics for one `.xpo` file without writing graph state or
+including source text in the report.
+
+Use this before promoting an informal partial-function parser report into a Spec #103/#81/#82 CR.
+The JSON contract is `schema_version=xpp-diagnose/v1` and includes SOURCE block counts, method line
+spans, brace balance, parsed statement counts, raw-statement ratio, calls, table / field / enum
+references, intrinsics, labels, and structured diagnostics.
+
+**Usage:**
+```bash
+review-cli-<os>-<arch> xpp-diagnose <workspace-root>/projects/giant-ax/gts/Classes/CLASSES_AxSalesLine.xpo --json
+review-cli-<os>-<arch> xpp-diagnose /path/to/file.xpo --method suspectMethod --json
+```
+
+**Flags:**
+- `--json` — emit `schema_version=xpp-diagnose/v1` JSON.
+- `--method <name>` — only report the SOURCE block whose parsed or source name matches this method.
+
+**Bug-report evidence bundle:**
+Attach the `xpp-diagnose` JSON, the concrete `.xpo` sample path or sanitized sample, the expected
+AST/graph behavior, and current `review` / `index` output. Keep reusable reports under
+`.code-review/artifacts/xpp-diagnose/*.json` so they are durable for agents but ignored by default.
 
 ### xpp-refresh
 Refresh selected X++ parser-derived graph nodes/edges against an existing project graph without rebuilding the full corpus.
@@ -422,13 +466,13 @@ Artifact catalog and re-runs graph-only indexing only for the explicit file set.
 **Usage:**
 ```bash
 review-cli-<os>-<arch> xpp-refresh \
-  --target /home/user/projects/giant-ax/gts \
+  --target <workspace-root>/projects/giant-ax/gts \
   --file Classes/CLASSES_AxSalesLine.xpo \
   --json
 
 review-cli-<os>-<arch> xpp-refresh \
-  --target /home/user/projects/giant-ax/gts \
-  --file-list /home/user/projects/giant-ax/gts/.code-review/artifacts/xpp-refresh/changed-xpo-files.txt \
+  --target <workspace-root>/projects/giant-ax/gts \
+  --file-list <workspace-root>/projects/giant-ax/gts/.code-review/artifacts/xpp-refresh/changed-xpo-files.txt \
   --json
 ```
 
@@ -682,10 +726,10 @@ review-cli-<os>-<arch> impact <file> <function> [--depth N] [--format text|json]
 
 **Granularity (`impact_granularity`):**
 - **Go etc.** → `call-level`: `direct_callers` / `indirect_callers` / `direct_callees` from the `CALLS` family (unchanged).
-- **X++ (`.xpo`)** → `object-level`: X++ has no `CALLS` family, so method callers are unavailable. The result honestly says so and populates `object_level_references` — the method's references/overrides in the program graph (`REFERENCES_TABLE/CLASS/ENUM`, `OVERRIDES`, `INHERITS_FROM`) — instead of a misleadingly empty caller set.
+- **X++ (`.xpo`)** → `object-level` plus bounded method-level CALLS when the indexed graph has enough X++ relation data. The result may populate `direct_callers` / `direct_callees` for deterministic `this.method()`, `Class::method()`, local/parameter/field receiver, and simple alias calls. Treat the output as conservative: unsupported flow-sensitive receiver forms are skipped, and the CLI's `risk_reason` explains the boundary. Older or partial graphs can still return only object-level references.
 
 **Use when:**
-- You need a bounded dependency-impact view around a specific function (Go: call-level; X++: object-level references).
+- You need a bounded dependency-impact view around a specific function (Go: call-level; X++: object-level references plus bounded method-level callers/callees when available).
 
 #### dependency-path
 Find a dependency path between two **indexed files** in the graph.
@@ -765,6 +809,7 @@ review-cli-<os>-<arch> search-code \
 - When additive role semantics are available, per-result output may also expose `candidate_role` so developer-facing consumers can distinguish authoritative generators from helper/consumer hits.
 - Per-result audit fields distinguish first-pass `base_similarity` from final deterministic `final_score`; `similarity` remains the final score for backward compatibility.
 - When Mode B is selected, output may additionally expose `execution_mode: mode_b` and bounded `recovered_context` previews per result.
+- For large existing graphs, do not infer success from `manifest.json` alone. Validate the live SQLite DB and run the exact query path (`--graph-only --graph-init skip` for read-only no-model revalidation). If `candidate_role` / `ranking_reasons` say the source-of-truth generator is top-ranked, follow with `impact` or `bounded-context` before writing a closure artifact.
 
 ---
 
@@ -971,6 +1016,10 @@ review-cli-<os>-<arch> trace <req-id>
 - `index --diff-base <sha>` and `index --force` are the incremental and fail-open/force-refresh knobs. Use them when you need a changed-file rebuild or want to discard triage cache state.
 - `search-code` requires `PERSISTENCE_MODE=local-sqlite SQLITE_ENABLED=true` for graph-aware refinement. Unsupported modes fail closed with explicit capability disclosure rather than silently falling back.
 - `review index <path> --status` is the primary readiness surface. It now distinguishes plain `graph_queryable` from `relation_coverage_status`, so a graph can be traversable while topology coverage remains only partial.
+- `review init <path> --graph --format json` and `review graph init <path>` emit the same read-only vector readiness object under `vector`. Treat graph readiness, vector readiness, and subscription-agent annotation writeback as separate claims.
+- When vector readiness includes `manifested`, that count comes from per-run `embedding_run_items` rows. It proves the run has inspectable item outcomes; it does not by itself prove automated resume/rollback or a refreshed live target-project dogfood run.
+- When vector readiness includes `rollback_deleted`, that count means the latest local SQLite run cleaned stale generated vectors from a prior non-ready run before starting. It is cleanup evidence, not proof of selective failed/deferred-only retry scheduling or live target-project dogfood completion.
+- A normal follow-up `index <path>` uses the latest non-ready local SQLite embedding manifest to reprocess files with generated/error/deferred vector items even when file content hashes are unchanged. This is repo-side retry scheduling evidence; live target-project dogfood still needs an actual target run.
 - When `index` creates `.code-review/graph.sqlite`, do not automatically commit it. If the repository intentionally promotes that DB into reusable GraphRAG state for later agent queries, track the exact graph DB with Git LFS. Track a graph `manifest.json` as text only when it documents that durable snapshot; runtime `status.json`, session, cache, vector, and local registry outputs remain ignored by default. See `local-state-version-control.md`.
 
 ### Triage Summary

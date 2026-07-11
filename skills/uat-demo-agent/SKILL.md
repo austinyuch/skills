@@ -33,7 +33,7 @@ For an **authenticated** web target, add a `steps[]` entry with `actionType: "lo
 
 Read `references/commands.md` when you need the operator cookbook, input prep rules, and post-run verification flow.
 Read `references/skill-integration.md` when the current workspace is the `aclab-uat-demo-agent` source repo and you need to cooperate with `spec-master`, `spec-driven-development`, `spec-registry-manager`, `user-manual-skill`, or `project-review-skill`.
-Read `references/target-source-api-discovery.md` when a source-backed target repository has no trustworthy executable UI/API assertions yet. Run target discovery before declaring that the target lacks enough data.
+Run source/API discovery preflight before saying a source-backed target lacks enough UI/API contract data. Read `references/target-source-api-discovery.md` when a target repository has source code available and no trustworthy executable UI/API assertions yet; the helper records graph preflight, direct-source fallback, and the machine-readable `preflightDecision`.
 
 When the user needs a reusable onboarding lane for a different target repository, prefer the generic project-profile path in `references/project-profile-onboarding.md` rather than the repo-local self-dogfood helper.
 
@@ -43,7 +43,7 @@ Use this minimal sequence when a general agent needs to operate the packaged CLI
 
 1. Decide whether the user already has a plan file.
    - If yes: start at `plan validate`.
-   - If no and the target source repository is available: run source/API discovery when executable UI/API assertions are missing, then prepare structured manifest/request inputs and run `plan generate`.
+   - If no and the target source repository is available: run source/API discovery preflight when executable UI/API assertions are missing, inspect `preflightDecision`, then prepare structured manifest/request inputs and run `plan generate`.
    - If no and the target source repository is unavailable: prepare structured manifest/request inputs, then run `plan generate`.
 2. Prefer `run uat` for normal web-oriented execution. Use `run windows-vm-computer-use` only when a spec or user request explicitly routes into Windows VM computer-use proof work; set `--vm-instance` or `UATDEMO_WINDOWS_VM_INSTANCE` when targeting a known VM domain/instance.
 3. After `run uat` or `run demo`, inspect the returned `reportPath`, `bundlePath`, `runRecord`, and `artifacts` rather than assuming success from exit code alone.
@@ -92,7 +92,7 @@ The purpose of this recipe is to prove the packaged CLI surface works locally. I
 6. Treat `UATDEMO_BIN` as a global-only trust boundary: project config may not override which binary is executed.
 7. Default the runtime state to `{target-workspace}/.uatdemo` when running against a target workspace. If the current context is an installed skill directory rather than a target workspace, fall back to an agent-neutral user state directory instead of writing under the skill install folder.
 8. When the resolved runtime state directory is project-local, require the target project's `.gitignore` to ignore it before running the CLI. The default `.uatdemo/` state must be ignored, and `temp/...` state directories must be covered by `temp/` or the exact subpath.
-9. Never treat `~/.codex/skills/...`, `~/.config/opencode/skills/...`, `~/.claude/skills/...`, `~/.gemini/skills/...`, or `~/.kiro/skills/...` as runtime state homes.
+9. Never treat `~/.codex/skills/...`, `~/.config/opencode/skills/...`, `~/.claude/skills/...`, `~/.gemini/config/skills/...`, or `~/.kiro/skills/...` as runtime state homes.
 10. Keep this skill thin. Domain logic remains in Go packages and contracts.
 
 ## BVT smoke test guidance

@@ -1,9 +1,9 @@
 # Target Source/API Discovery
 
-Use this guide when a target repository has source code available and the current
-plan is blocked because the agent does not yet know the target's real UI/API
-contract. This is the preferred lane before declaring "not enough data" for
-browser-executable UAT steps.
+Use this guide as the source/API discovery preflight when a target repository has
+source code available and the current plan is blocked because the agent does not
+yet know the target's real UI/API contract. This lane is required before
+declaring "not enough data" for browser-executable UAT steps.
 
 This guide is intentionally a skill-native discovery workflow. It does not add
 runtime readiness claims and it does not replace `plan validate`, `run uat`, or
@@ -24,10 +24,16 @@ report verification.
    - Playwright configuration and browser e2e harness files
    - frontend/backend binding env vars such as server host/port
    - backend route handlers or API server entrypoints
-4. Convert discovered evidence into assertion candidates. A candidate is not a
+   - assistant-generation runtime, provider/model, no-reply boundary, and
+     browser assistant-message evidence when the requested proof is richer than
+     persisted user-message visibility
+4. Inspect `preflightDecision`; if `sourceAvailable=true`, do not end the work
+   with an insufficient-data verdict unless the graph preflight and direct
+   source scan have both been recorded.
+5. Convert discovered evidence into assertion candidates. A candidate is not a
    pass claim; it only says there is enough source evidence to author a concrete
    UI/API assertion.
-5. Feed the evidence into a project profile or a hand-authored plan, then run the
+6. Feed the evidence into a project profile or a hand-authored plan, then run the
    normal `uatdemo` gates.
 
 ## Helper Command
@@ -38,6 +44,28 @@ From a checkout of the skill bundle:
 python3 .agents/skills/uat-demo-agent/scripts/inspect-target-source-api.py \
   --target-root /path/to/target/repo \
   --out temp/target-source-api-discovery/<target-id>.json
+```
+
+To create a target-maintainer handoff without claiming runtime readiness, also
+write a Markdown summary:
+
+```bash
+python3 .agents/skills/uat-demo-agent/scripts/inspect-target-source-api.py \
+  --target-root /path/to/target/repo \
+  --out temp/target-source-api-discovery/<target-id>.json \
+  --handoff-md temp/target-source-api-discovery/<target-id>-handoff.md
+```
+
+When the Markdown will be attached to a cross-repo CR or issue, redact the
+machine-local absolute target path from the handoff while keeping the JSON
+diagnostic local:
+
+```bash
+python3 .agents/skills/uat-demo-agent/scripts/inspect-target-source-api.py \
+  --target-root /path/to/target/repo \
+  --out temp/target-source-api-discovery/<target-id>.json \
+  --handoff-md temp/target-source-api-discovery/<target-id>-handoff.md \
+  --handoff-redact-local-root
 ```
 
 If `code-review` is installed in a nonstandard place, pass:
@@ -53,12 +81,23 @@ The helper emits `uatdemo-target-source-api-discovery/v1` JSON with:
 - `codeReviewGraph`: graph preflight result and queryability boundary
 - `codeReviewGraphQueries`: focused graph-only query results, or a skipped
   reason when graph state is not queryable
+- `preflightDecision`: machine-readable instruction that direct source scan was
+  required/completed and that an insufficient-data verdict is not allowed before
+  this preflight is recorded
 - `apiContracts`: API contract/doc-route candidates
 - `frontendSurfaces`: Playwright or browser harness candidates
 - `frontendBackendBindings`: env/config evidence that binds frontend to backend
+- `assistantGenerationSurfaces`: static evidence for provider-backed assistant
+  generation, browser assistant-message fixtures, and no-reply boundaries that
+  must not be confused with generated assistant responses
 - `candidateAssertions`: assertion families that can be authored next
 - `blockedAssertions`: assertion families that are still missing evidence
 - `claimBoundary`: static-analysis-only authority statement
+
+The optional Markdown handoff repeats the same static-analysis boundary, lists
+candidate/blocked assertions, and adds target-owned gates for assistant-generation
+UI journeys. Use it for CR handoff to the target repo; do not treat it as a
+`run uat` result or stakeholder-facing readiness proof.
 
 ## Code-Review Boundary
 
@@ -73,7 +112,7 @@ candidates from checked-out source files.
 
 ## `aclab-opencode` Example
 
-For `/home/user/projects/aclab/aclab-opencode`, the relevant target slice is the
+For `<workspace-root>/projects/aclab/aclab-opencode`, the relevant target slice is the
 original OpenCode web interface with `packages/gocode` as backend. Discovery
 should look for:
 
@@ -88,3 +127,11 @@ When those files are present, the next step is to author concrete API response
 shape or UI visible-state assertions. Do not claim `aclab-opencode` browser UAT
 has passed until the generated or hand-authored plan validates and `run uat`
 produces verified report evidence.
+
+For assistant-generation UI journeys, the helper may emit an
+`assistant-generation-ui-journey` candidate only when checked-out source contains
+both backend/session generation evidence and browser/UI evidence. That candidate
+is still static-analysis-only: the target repo must define provider or
+deterministic generation posture, assistant-response markers, selectors, live
+`uatdemo plan validate` / `uatdemo run uat` evidence, screenshot bytes, and a
+fail-closed report guard before any assistant-generation readiness claim.

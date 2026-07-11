@@ -30,7 +30,7 @@ export WORKLOAD_ID=ext-task-task-001
 export CONTROLLER_API_URL=http://controller:19080
 
 # 執行任務
-cd /home/agent/workspace
+cd <workspace-root>
 ./execute-task.sh task-spec.json
 ```
 

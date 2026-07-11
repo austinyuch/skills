@@ -70,7 +70,7 @@ echo "export KIND_EXPERIMENTAL_PROVIDER=podman" >> ~/.bashrc
 nodes:
   - role: control-plane
     extraMounts:
-      - hostPath: /home/user/projects
+      - hostPath: <workspace-root>/projects
         containerPath: /host/projects
 ```
 
@@ -120,4 +120,4 @@ Created `kind-services.py` - systemctl-like interface:
 
 - KIND rootless docs: https://kind.sigs.k8s.io/docs/user/rootless/
 - Systemd delegation: https://systemd.io/CGROUP_DELEGATION/
-- Project: `/home/user/projects/aclab-middlewares/k8s/`
+- Project: `<workspace-root>/projects/aclab-middlewares/k8s/`

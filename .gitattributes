@@ -1,0 +1,8 @@
+skills/*/scripts/viewer/**/*.js filter=lfs diff=lfs merge=lfs -text
+skills/*/scripts/viewer/**/*.css filter=lfs diff=lfs merge=lfs -text
+skills/*/scripts/viewer/**/*.wasm filter=lfs diff=lfs merge=lfs -text
+skills/*/scripts/*-linux-* filter=lfs diff=lfs merge=lfs -text
+skills/*/scripts/*-darwin-* filter=lfs diff=lfs merge=lfs -text
+skills/*/scripts/*-windows-*.exe filter=lfs diff=lfs merge=lfs -text
+skills/*/scripts/*.wasm filter=lfs diff=lfs merge=lfs -text
+skills/*/assets/models/**/*.onnx filter=lfs diff=lfs merge=lfs -text

@@ -35,11 +35,58 @@ Mandatory sequence for non-trivial work:
 
 1. Init/preflight the graph lifecycle: run the repo-local status/doctor command when one exists; otherwise run `review-cli-<os>-<arch> init <project-path> --graph` (or `graph init <project-path>`). If query commands support `--graph-init`, use `auto` by default and `always` when the graph is known stale; use `skip` only when a read-only lifecycle is intentional and existing graph state is already queryable.
 2. Run one or more focused `search-code`, `architecture`, `developer-routing`, `bounded-context`, `impact`, `dependency-path`, `capability-inventory`, or `summary` queries that match the decision you are making before settling a design or implementation path.
-3. Select a trigger strategy for ongoing work: repo-owned refresh command, `review-cli watch . --once --json` for a one-shot working-tree refresh, long-running `review-cli watch .` for active edit sessions, or `review-cli graph hook status` / explicit `graph hook install` for post-commit refresh where repo/user policy allows local hook installation. If no trigger is used, record why.
+3. Select a trigger strategy for ongoing work: repo-owned refresh command, `review-cli watch . --once --json` for a one-shot working-tree Layer 1-4 refresh, long-running `review-cli watch .` for active edit sessions, or `review-cli graph hook status` / explicit `graph hook install` for post-commit refresh where repo/user policy allows local hook installation. Plain Git/watch triggers are review-cli-only topology refresh mechanisms. For subscription-agent capability/summary enrichment, use `review-cli handoff run-agent <handoff-dir> --agent auto --apply` after no-model handoff emission, or opt in to `review-cli graph hook install --subscription-agent --agent auto` so the hook generates the handoff, bakes the resolved persistence env into the hook command, and launches the non-interactive agent handoff detached before applying through `apply-handoff`. A fast commit return proves the hook did not block on the agent; it does not prove annotation writeback has completed. Built-in handoff launchers are Codex CLI (`codex exec`), Claude Code CLI (`claude -p`), OpenCode (`opencode run`), Kiro CLI (`kiro-cli chat --no-interactive`), and Antigravity (`agy -p`); use `--agent-command` for custom wrappers. Before installing lifecycle hooks, run `review-cli handoff agent-doctor --agent <agent|all|auto> --strict` or install with `scripts/install-agent-handoff-hooks.py --preflight` so missing binaries and changed flags fail before the hook is written. If no trigger is used, record why.
 4. Rebuild or refresh only when the status/manifest is stale, missing, not queryable, or too partial for the question.
 5. Record the graph query and trigger/preflight result, or the reason for skipping them, in the spec/design/review artifact when the task produces one.
 
 If a target repo repeatedly needs repo-specific graph bootstrap rules, durable snapshot ownership, or trigger policy, recommend a target-repo constitution update such as `AGENTS.md`, Kiro steering, or `CLAUDE.md`. Treat that as a candidate governance patch or handoff unless the user explicitly asks you to edit the target repo's constitution in the current task; do not silently rewrite another repo's agent rules from this skill alone.
+
+## Provider-Bound Evidence Lane
+
+When the user names a concrete provider, model, endpoint, execution provider, or dimension for graph/vector evidence, treat the run as provider-bound. Examples include BGE-M3, ONNX GPU, CUDAExecutionProvider, a self-hosted `/v1/embeddings` endpoint, Bedrock Titan, Vertex embeddings, or an OpenAI embedding model. In this lane, do not silently substitute `mock`, another provider family, another endpoint, or a different model.
+
+Before any write-producing or evidence-producing code-review command, record the provider contract:
+
+| Field | Required value |
+|---|---|
+| Allowed provider | Provider family or protocol selected for this lane, such as `self-hosted`, `onnx`, `openai`, `bedrock`, or `vertex`. |
+| Endpoint/base URL | Exact endpoint or explicit "not applicable" for local/bundled providers. |
+| Model | Exact model ID, such as `BAAI/bge-m3` or the configured provider model. |
+| Dimensions | Expected vector dimensions, or explicit "not used" for graph-only commands. |
+| Execution provider | CPU/CUDA/other runtime detail when the provider exposes it. |
+| Forbidden fallback | Usually `CODE_REVIEW_EMBEDDING_PROVIDER=mock` and any unset-provider auto fallback. |
+
+Rules for this lane:
+
+1. Print or record the active provider, endpoint/base URL, model, dimensions, and execution provider before each graph/vector write command or before claiming evidence from one.
+2. Use `index --status --format json` when available to separate `graph` readiness from `vector` readiness. Structural graph readiness, vector readiness, and subscription-agent annotation writeback are separate claims. A vector `manifested` count means per-item outcomes were persisted for inspection; `rollback_deleted` means stale vectors from a prior non-ready local SQLite run were cleaned before the new run. A follow-up `index` also reprocesses files with generated/error/deferred items from the latest non-ready manifest even when file hashes are unchanged. These repo-side signals still do not prove live target-project dogfood completion.
+3. Use `--no-embeddings` for intentional graph-only indexing. Do not use `CODE_REVIEW_EMBEDDING_PROVIDER=mock` as a graph-only shortcut; mock still creates deterministic mock vector rows.
+4. `review-cli handoff run-agent` and `review-cli apply-handoff` do not generate embedding vectors. They process and validate subscription-agent annotation results. Do not wrap those commands in a mock embedding env inside a provider-bound lane; record their claim as annotation writeback, not vector provider proof.
+5. If the wrong provider, endpoint, model, dimensions, or execution provider is observed, stop the run, audit the process tree/command history where practical, quarantine or clearly mark affected artifacts, and write a retrospective before continuing.
+
+Closeout for code graph work in a provider-bound lane must include:
+
+| Field | Value |
+|---|---|
+| Provider used | The actual provider family observed during the run. |
+| Endpoint/base URL | The actual endpoint or "not applicable". |
+| Model and dimensions | The observed model and vector width, or "not used" for graph-only. |
+| Graph readiness claim | Structural graph status and supporting command. |
+| Vector readiness claim | Vector status and supporting command, or "not claimed". |
+| Annotation writeback claim | Handoff/apply status, or "not claimed". |
+| Claim supported | Exact claim this evidence supports; do not roll graph/vector/annotation into one readiness statement. |
+
+## Large Graph Retrieval Revalidation
+
+When a downstream repo reports that a reusable `.code-review/graph.sqlite` has been refreshed, verify the graph itself before changing ranking code:
+
+1. Treat the SQLite DB and live CLI output as stronger evidence than a companion `manifest.json`; manifests can lag behind a copied or rebuilt multi-GB graph.
+2. Check graph size and counts directly, then run the exact user-facing query surface. For class-first XPO retrieval, use `search-code <repo> "<developer question>" --graph-only --graph-init skip --limit 10`.
+3. Inspect `retrieval_stage`, `graph_capability`, `candidate_role`, and `ranking_reasons`; do not treat "topical" hits as sufficient if the requested source-of-truth method is missing from the practical top candidates.
+4. Follow a ranked source-of-truth candidate with `impact <file> <method> --format json` or `bounded-context` when the next decision needs dependency or implementation context.
+5. Record stale metadata separately from functional proof. A stale manifest, stale path property, or partial topology note is a residual artifact-hygiene finding; it is not automatically a ranking failure if the live query satisfies the acceptance contract.
+
+For the detailed workflow and command examples, read [references/usage-guide.md](references/usage-guide.md) "Large Graph Retrieval Revalidation".
 
 ## AX Native Xref Recall Artifacts
 
@@ -47,14 +94,14 @@ For AX2009/X++ recall work, start from raw native xref exports with `xref-normal
 
 ```bash
 review-cli-<os>-<arch> xref-normalize \
-  --xref-dir /home/user/projects/giant-ax/lab/download_xref_tables/xref_csv_output \
+  --xref-dir <workspace-root>/projects/giant-ax/lab/download_xref_tables/xref_csv_output \
   --source-object AxSalesLine \
-  --target /home/user/projects/giant-ax \
-  --out /home/user/projects/giant-ax/.code-review/artifacts/xref/axsalesline.refs.csv \
-  --run-log /home/user/projects/giant-ax/.code-review/artifacts/xref/xref-normalize.jsonl
+  --target <workspace-root>/projects/giant-ax \
+  --out <workspace-root>/projects/giant-ax/.code-review/artifacts/xref/axsalesline.refs.csv \
+  --run-log <workspace-root>/projects/giant-ax/.code-review/artifacts/xref/xref-normalize.jsonl
 ```
 
-Keep reusable refs CSVs, graph-edge dumps, and JSONL run logs under the target repo's ignored `.code-review/artifacts/xref/` instead of `/tmp` when another agent should reuse them. For giant-ax, the sample reusable graph is `/home/user/projects/giant-ax/.code-review/graph.sqlite`; that is the text-based local SQLite graph, distinct from any embedding/vector DB. If that 1GB+ graph is shared later, use an exact GitLab/Git LFS path or artifact-store rule for `.code-review/graph.sqlite` only. For inherited X++ `this.*` calls, include the optional `dispatch_object_qualified_name` column in graph-edge dumps so `xref-recall` can compare at AX native-xref dispatch granularity while the graph edge still targets the real base-class definition. Do not treat `xref-import` + `xref-recall` against the same xref as AST recall evidence; that path validates merge/import behavior, while AST recall requires an independently indexed graph dump.
+Keep reusable refs CSVs, graph-edge dumps, and JSONL run logs under the target repo's ignored `.code-review/artifacts/xref/` instead of `/tmp` when another agent should reuse them. For giant-ax, the sample reusable graph is `<workspace-root>/projects/giant-ax/.code-review/graph.sqlite`; that is the text-based local SQLite graph, distinct from any embedding/vector DB. If that 1GB+ graph is shared later, use an exact GitLab/Git LFS path or artifact-store rule for `.code-review/graph.sqlite` only. For inherited X++ `this.*` calls, include the optional `dispatch_object_qualified_name` column in graph-edge dumps so `xref-recall` can compare at AX native-xref dispatch granularity while the graph edge still targets the real base-class definition. Do not treat `xref-import` + `xref-recall` against the same xref as AST recall evidence; that path validates merge/import behavior, while AST recall requires an independently indexed graph dump.
 
 When X++ producer code changes but the target XPO files did not, do not default to a full giant-ax
 rebuild. First refresh only the affected XPO files against the existing text graph:
@@ -62,7 +109,7 @@ rebuild. First refresh only the affected XPO files against the existing text gra
 ```bash
 PERSISTENCE_MODE=local-sqlite SQLITE_ENABLED=true \
 review-cli-<os>-<arch> xpp-refresh \
-  --target /home/user/projects/giant-ax/gts \
+  --target <workspace-root>/projects/giant-ax/gts \
   --file Classes/CLASSES_AxSalesLine.xpo \
   --json
 ```
@@ -72,6 +119,19 @@ file set. Keep `xpp-refresh` JSONL run logs under `.code-review/artifacts/xpp-re
 loads the existing graph's Artifact catalog, refreshes only selected parser-derived nodes/edges, and
 does not use embeddings or model providers. A full recursive rebuild is reserved for measuring true
 full-corpus AST recall or creating a new reusable `graph.sqlite` snapshot.
+
+For informal or not-yet-reproducible X++ parser reports, collect a narrow parser-diagnostics artifact
+before patching parser behavior:
+
+```bash
+review-cli-<os>-<arch> xpp-diagnose /path/to/file.xpo --json \
+  > /path/to/target/.code-review/artifacts/xpp-diagnose/<case>.json
+```
+
+The report is `schema_version=xpp-diagnose/v1` and intentionally omits source text. Attach it with
+the concrete `.xpo` sample path or sanitized sample, expected AST/graph behavior, and current
+`review` / `index` output. Use this for giant-ax partial-function parsing signals before promoting
+the report into a Spec #103/#81/#82 CR.
 
 ## Start Here
 
@@ -128,9 +188,15 @@ review-cli-<os>-<arch> index <project-path> \
 
 The corpus is filtered by builtin excluded dirs → root `.gitignore` → legacy root `.reviewignore` → `.code-review/config.yaml` → `--exclude` (additive, in that order). Prefer `.code-review/config.yaml` as the target repo's single review configuration file; `.reviewignore` is accepted only as a legacy import surface. Never copy files, symlink files, or expanded inventories into `.reviewignore` or `.code-review/config.yaml`. Preview with `index --dry-run-corpus --format json` to see included/excluded samples plus the matched source/rule. Full rules: [references/usage-guide.md](references/usage-guide.md) "Index Corpus Ignores".
 
-Use `--no-embeddings` to skip embedding/vector provider initialization. Use `--no-model` when the run must avoid both embeddings and LLM API annotation writes. `--no-model --capabilities` / `--no-model --summaries` still return agent-instruction handoff hints for the coding agent; they do not mean the capability/summary work is forbidden. `CODE_REVIEW_EMBEDDING_PROVIDER=mock` is a deterministic test provider and still creates mock embedding rows; it is not graph-only indexing.
+Codegen policy is topology-first. Do not broadly exclude generated code just because it is generated when it carries runtime contract or dependency shape. For Ent specifically, keep both `ent/schema/*.go` and generated `ent/**/*.go` in the primary graph when impact analysis, dependency paths, repository/service routing, query/mutation behavior, predicates, hooks, edges, or client wiring may matter. If generated Ent nodes dominate search ranking for a human-authored design task, use a clearly named low-noise profile or temporary `.code-review/config.yaml` rule and record that runtime impact through Ent is incomplete. The current corpus config can include/exclude only; it cannot mark generated nodes as lower-rank. Prefer inclusion for correctness, and use scoped queries/impact surfaces to manage noise.
+
+Use `--no-embeddings` to skip embedding/vector provider initialization. Use `--no-model` when the run must avoid both embeddings and LLM API annotation writes. `--no-model --capabilities` / `--no-model --summaries` still return agent-instruction handoff hints for the coding agent; they do not mean the capability/summary work is forbidden. Current binaries emit both the legacy `.code-review/agent-instruction-{capabilities,summaries}.json` file and a preferred sharded work queue under `.code-review/agent-instruction-handoffs/<run-id>/` with `manifest.json`, `candidates/*.jsonl`, `results/`, and `failures/`. For large repos, agents should process `candidates/*.jsonl` shards independently, write per-item result JSONL rows into `results/`, check `review-cli handoff status <handoff-dir> --format json`, then run `review-cli apply-handoff <handoff-dir> --target <manifest.target_root>`. `review-cli handoff run-agent <handoff-dir> --agent auto --apply` automates that middle step for supported non-interactive subscription-agent CLIs while preserving the same `apply-handoff` validator. This keeps annotation generation async and bounded while final persistence still goes through the same GraphStore writer. Plain Git hooks and `watch` do not run this subscription-agent loop automatically; `graph hook install --subscription-agent` is the explicit opt-in path. `CODE_REVIEW_EMBEDDING_PROVIDER=mock` is a deterministic test provider and still creates mock embedding rows; it is not graph-only indexing.
+
+To install agent-lifecycle handoff hooks from a published global skill inside a target repo, run `python <code-review-skill>/scripts/install-agent-handoff-hooks.py --agent claude,codex,kiro,opencode,antigravity --run-agent auto` from that target repo. The installer embeds the current repo path with `--target` by default; use `--dynamic-target` only when runtime cwd should decide the target.
 
 Two opt-in LLM enrichment passes depend on **separate Agent Skills** that this skill orchestrates but does not contain: `index --capabilities` requires the **`capability-mapper`** skill (Layer 5 `BusinessCapability` nodes) and `index --summaries` requires the **`code-summarizer`** skill (File-node summaries). Both install to `~/.config/opencode/skills/` via their own `install.sh`, are Bedrock-first, and exit non-zero without fabricating when no provider is configured — the graph-only lane never invokes them unless you pass the flag. Details + the read-side vs write-side distinction: [references/cli-commands.md](references/cli-commands.md) `index`.
+
+Annotation lane knobs (CR-2026-07-11): summaries/capabilities **default to the subscription coding-agent CLI** (agent-instruction; `llm-api` opt-in) and have their **own concurrency** separate from embeddings — `--annotation-workers` / `--annotation-rate-limit` (env `CODE_REVIEW_ANNOTATION_WORKERS/_RATE_LIMIT`, default 4). Size the repo with `review-cli corpus-size <root> --format json` and pick a first-run `--index-strategy auto|lightweight|full` (agent-overridable; `lightweight` skips embeddings for small repos). Every `index` also **lands a folder-tree context index** by default — a provider-free, AFM/MEMORY.md-style `CONTEXT.md` per directory under `.code-review/context/<dir>/` (distinct filename, never `MEMORY.md`), discoverable by scanning only the top frontmatter, plus an SSOT `annotation-manifest.json`. Rebuild/refresh it with `review-cli context-index <root>`; opt out with `--no-context-index`. The index carries real summaries/capabilities when they exist (overlaid from the graph — `generated_from: annotated` in the manifest, else `structural`), auto-refreshes after `apply-handoff` / `handoff run-agent --apply`, and the managed Git/agent hook installers now also run an explicit `context-index` refresh step so hook logs show the lifecycle artifact was refreshed.
 
 Incremental `index` reflects the working tree, not just committed history: an **uncommitted** edit in a git repo is picked up and reindexed (it no longer reports "No changes since last index"). A pure line shift / comment-only edit that leaves a file's structure unchanged is detected and its edges are preserved (no churn), and non-git working trees fall back to an OS-native `(mtime,size)` fast-path plus content hash so unchanged files are skipped without re-reading. These are deterministic graph-update behaviors and require no extra flags.
 
@@ -188,7 +254,7 @@ commands accept `--json`:
 |---|---|---|
 | `review-cli security audit` | **inventory a target project's DevSecOps posture and report gaps** — SAST, secret-scan, dependency-vuln, SBOM, dependabot, signing, pre-commit, license, OWASP-LLM agent-safety | pure-Go filesystem inspection; deterministic; scores maturity % + lists high-severity gaps + a fix per gap. Use it to answer "what DevSecOps controls is this project missing?" |
 | `review-cli security scan` | **invoke deep multi-language scans** (JS/C#/Py/Go SAST + secret + dependency-vuln + SBOM/misconfig) against the target | detects tools via `LookPath`, runs `govulncheck`/`gitleaks`/`trivy`/`semgrep`, honest `tool-unavailable` (never silent-skip). **Local-tool fallback today; preferred path is delegation to `~/aclab-middlewares/security-stack` (`sectool`/`secsdlc-mcp` → DefectDojo/Dependency-Track)** once its integration contract lands (see that spec's CR). |
-| `scripts/security-grounding-hook.sh` / `review-cli security grounding --hook-mode --warn-only --stderr --timeout 60` | **advisory Stop-hook content-safety grounding** for agent output | installed Claude/Codex/Kiro Stop hooks use the async wrapper so advisory review returns exit 0 immediately and writes status/log files; raw `review-cli security grounding` still honors `--warn-only` on timeout. OpenCode's session-idle plugin uses `.nothrow()` advisory scan behavior. Omit `--warn-only` only for an intentional blocking security gate. |
+| `review-cli security grounding --hook-mode --warn-only --stderr --timeout 60` | **advisory Stop-hook content-safety grounding** for agent output | installed Claude/Codex/Kiro Stop hooks use the configured `review-cli` command from agent settings; raw `review-cli security grounding` still honors `--warn-only` on timeout. OpenCode's session-idle plugin uses `.nothrow()` advisory scan behavior. Omit `--warn-only` only for an intentional blocking security gate. |
 | `review-cli security hook-audit` | **inspect installed Stop hooks for xreview/security-grounding drift** | read-only audit that classifies xreview as advisory/non-blocking, detects `security grounding` hooks that drifted from expected `--warn-only`, and labels unknown Stop-hook commands for operator routing. |
 | `review-cli security hook-diagnose` | **classify captured Stop-hook stdout/stderr protocol failures** | feed captured stdout/stderr/exit-code evidence to distinguish `stdout-not-json`, `stdout-json-schema-mismatch`, `stdout-mixed-protocol-and-logs`, `stdout-empty-when-json-required`, and `hook-exit-nonzero`; previews are bounded and redacted. |
 
@@ -196,6 +262,27 @@ These emit **deterministic evidence** that feeds the companion `security-review`
 (`infrastructure-supply-chain.md`, `ai-agent-mcp.md` for OWASP-LLM, and the
 `languages/{go,javascript-typescript,python,dotnet-csharp}.md` lanes) — they do not adjudicate;
 `review.md` + the `security-review` gate keep verdict authority. Spec: `local-devsecops-hardening`.
+
+### NIS2 / GenAI / SecSDLC Evidence Packet
+
+When the user asks for NIS2, GenAI usage, AI-assisted development, SecSDLC, OWASP LLM Top 10, RAG,
+MCP/tool execution, coding-agent governance, or developer compliance evidence, produce a bounded
+evidence packet instead of a compliance verdict:
+
+- graph preflight/status, focused `impact` / `dependency-path` / `bounded-context` / `search-code`
+  queries for the changed AI, data, CI/CD, and security-sensitive components;
+- `review-cli security audit --target <dir>` posture evidence when available;
+- `review-cli security scan --target <dir>` SAST/SCA/secrets/SBOM evidence or honest
+  `tool-unavailable` / `dependency not configured` notes;
+- SBOM, provenance/signing, dependency lockfile, CI/CD, model/provider, MCP/tool, and supply-chain
+  evidence refs;
+- OWASP LLM Top 10 evidence refs for prompt injection, sensitive-data leakage, supply chain,
+  poisoning, output handling, excessive agency, prompt leakage, vector/embedding weaknesses,
+  misinformation, and unbounded consumption.
+
+Feed this packet to `security-review` for per-change trust-boundary judgment and to
+`iso-ai-security-auditor` for NIS2 / EU AI Act / GDPR / ISO / NIST evidence inventory. Do not turn
+the packet into legal compliance, certification, or release-readiness approval.
 
 ### Ponytail / YAGNI minimality boundary
 

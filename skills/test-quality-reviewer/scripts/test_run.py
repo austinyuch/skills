@@ -45,7 +45,7 @@ class TestDetectors(unittest.TestCase):
         self.assertNotIn("NO_ASSERTION", rules(out))
 
     def test_mystery_guest(self):
-        src = ("def test_reads():\n    data = open('/home/ci/fixture.json').read()\n"
+        src = ("def test_reads():\n    data = open('<workspace-root>/fixture.json').read()\n"
                "    assert data\n")
         out = json.loads(invoke({"file": "t_test.py", "content": src}).stdout)
         self.assertIn("MYSTERY_GUEST", rules(out))
@@ -174,7 +174,7 @@ class TestRecallHeld(unittest.TestCase):
     I/O-context and assertion-context requirements removed only false positives, not detection."""
 
     def test_real_mystery_guest_io_still_fires(self):
-        for src in ('def test_r():\n    data = open("/home/ci/fixture.json").read()\n    assert data\n',
+        for src in ('def test_r():\n    data = open("<workspace-root>/fixture.json").read()\n    assert data\n',
                     'def test_a():\n    r = requests.get("https://api.internal/x")\n    assert r.ok\n'):
             out = json.loads(invoke({"file": "m_test.py", "content": src}).stdout)
             self.assertIn("MYSTERY_GUEST", rules(out), f"recall lost on real mystery guest: {src!r}")

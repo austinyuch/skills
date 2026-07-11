@@ -17,7 +17,7 @@ HOME = Path.home()
 SKILL_INSTALL_ROOTS = [
     HOME / ".config" / "opencode" / "skills",
     HOME / ".claude" / "skills",
-    HOME / ".gemini" / "skills",
+    HOME / ".gemini" / "config" / "skills",
     HOME / ".kiro" / "skills",
 ]
 

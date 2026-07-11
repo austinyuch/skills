@@ -35,9 +35,33 @@ Use this state machine when a coding agent performs the mapping directly:
 
 Do not expose hidden chain-of-thought. The `reasoning` field is a short reviewable decision summary.
 
-### Writeback round-trip — apply your annotations to the graph (Spec #97 CR-2026-06-22-001)
+### Writeback round-trip — apply your annotations to the graph (Spec #97 CR-2026-06-22-001, CR-2026-07-09-001)
 
-In `agent-instruction` mode `review-cli index --capabilities` only *emits a handoff* (`.code-review/agent-instruction-capabilities.json`); it does not write graph nodes. To actually enrich the graph: run this skill's state machine over each handoff candidate, collect the per-file outputs into a JSON array where each item adds `source_file` (the candidate path), then assemble and apply the result:
+In `agent-instruction` mode `review-cli index --capabilities` only *emits a handoff*; it does not write graph nodes. Current binaries emit both the legacy `.code-review/agent-instruction-capabilities.json` and a preferred sharded handoff directory:
+
+```
+.code-review/agent-instruction-handoffs/<run-id>/
+  manifest.json
+  candidates/capabilities-000001.jsonl
+  results/
+  failures/
+```
+
+For large repos, use the sharded workflow so multiple agent workers can process candidate files independently without building one giant JSON document:
+
+```
+# inspect work queue / progress
+review-cli handoff status .code-review/agent-instruction-handoffs/<run-id> --format json
+
+# for each candidates/*.jsonl row, run this skill and write one JSON object per result line:
+# {source_file, capability, description?, confidence, reasoning, requirements?, business_value?, skill_version}
+# into results/<same-or-worker-name>.jsonl
+
+# write result shards into the graph (same writer as llm-api mode; review-cli calls no provider API)
+review-cli apply-handoff .code-review/agent-instruction-handoffs/<run-id> --target <manifest.target_root>
+```
+
+Legacy single-file result envelopes remain supported for small repos or older agents:
 
 ```
 # wrap your per-file outputs (array of {source_file, capability, description, confidence, reasoning, requirements?, business_value?, skill_version})
@@ -130,6 +154,30 @@ The Go writer **enforces** this deterministically (snap-to-canonical by exact �
 alias → X++ variant-base; `canonical_id`-keyed nodes; raw names retained in `aliases[]`), so drift
 is corrected even if the model varies — but mapping into the glossary at the source keeps the
 signal clean and the `NEW:` proposals meaningful.
+
+## Concurrency, first-run strategy & lifecycle (CR-2026-07-11)
+
+**Provider default is the subscription coding agent's CLI.** With no mode env set, this skill runs
+in **agent-instruction** mode (subscription agent follows the state machine; no provider API).
+`llm-api` is opt-in (below); provider credentials alone never flip the mode.
+
+**Annotation concurrency is INDEPENDENT of embedding concurrency** — a different service with its
+own rate/resource limits. Do not reuse `--embedding-workers`:
+
+- `review-cli index --capabilities --annotation-workers N --annotation-rate-limit R`
+- env `CODE_REVIEW_ANNOTATION_WORKERS` / `CODE_REVIEW_ANNOTATION_RATE_LIMIT` (default workers 4,
+  rate 0 = unlimited). Applies to the `llm-api` and mock/skill paths.
+
+**Size-routed first-run strategy** (shared with `code-summarizer`):
+
+```bash
+review-cli corpus-size <root> --format json
+review-cli index <root> --index-strategy auto --capabilities --summaries
+```
+
+`--index-strategy auto` sizes the repo → `lightweight` (skip embeddings) or `full`, prints the
+rationale (agent-overridable) and a lifecycle recommendation. Note: capability *canonicalization*
+can use embeddings, so on larger repos prefer `full` when you need deduped capability labels.
 
 ## Provider configuration (`llm-api` only)
 

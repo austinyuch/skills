@@ -21,7 +21,7 @@ flowchart LR
     end
 
     subgraph S2["② 發布到 global skills"]
-        GLOBAL["~/.claude/skills/ · ~/.config/opencode/skills/<br/>~/.kiro/skills/ · ~/.codex/skills/ · ~/.gemini/antigravity/skills/"]
+        GLOBAL["~/.claude/skills/ · ~/.config/opencode/skills/<br/>~/.kiro/skills/ · ~/.codex/skills/ · ~/.gemini/config/skills/"]
     end
 
     subgraph S3["③ 下游專案 vendoring（例：giant-ax）"]
@@ -54,7 +54,7 @@ flowchart LR
 ## ② 發布到 global skills
 
 - 主要發布器:`scripts/publish_code_review_skill.py --build zig`(或 `--build lsp` / `--build none`),一次發到八個 global home：
-  `~/.claude/skills/`、`~/.kiro/skills/`、`~/.codex/skills/`、`~/.config/opencode/skills/`、`~/.gemini/skills/`、`~/.gemini/antigravity/skills/`、`~/.copilot/skills/`、`~/.cline/skills/`。
+  `~/.claude/skills/`、`~/.kiro/skills/`、`~/.codex/skills/`、`~/.config/opencode/skills/`、`~/.gemini/skills/`、`~/.gemini/config/skills/`、`~/.copilot/skills/`、`~/.cline/skills/`。
 - 也有 Unix make 路徑:`make install-skill`(只發 `~/.config/opencode/skills/`),以及各 skill 的 `scripts/install.sh`。
 - 發布內容:`code-review` 帶 **SKILL.md + 6 顆 binary + viewer assets + references**;siblings 帶 **SKILL.md + run.py 等 runtime script**;companion skills 帶各自的 **SKILL.md + scripts/references**。
 - 維護者觸發介面:`.agents/skills/code-review-publish/` skill(包裝上述 Python CLI)。

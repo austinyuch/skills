@@ -8,7 +8,7 @@
 #   publish.sh [path-to-go-review-service]
 # Overrides:
 #   XREVIEW_GO_DIR      path to go-review-service (else the arg, else auto-detected)
-#   XREVIEW_SKILL_HOMES space-separated skills dirs to publish into (else the 5 defaults)
+#   XREVIEW_SKILL_HOMES space-separated skills dirs to publish into (else the 9 defaults)
 #   XREVIEW_SKILL_REL   destination path under each skills dir (default: cross-agent-review)
 #   XREVIEW_NO_BUILD=1  skip the rebuild and publish whatever binaries are present
 #
@@ -40,7 +40,7 @@ fi
 
 # 2) Publish to the agent skill homes (real dirs; mirrors code-review's home set).
 : "${HOME:?HOME must be set}"
-homes="${XREVIEW_SKILL_HOMES:-$HOME/.agents/skills $HOME/.claude/skills $HOME/.kiro/skills $HOME/.config/opencode/skills $HOME/.codex/skills $HOME/.gemini/skills $HOME/.gemini/antigravity/skills $HOME/.copilot/skills $HOME/.cline/skills}"
+homes="${XREVIEW_SKILL_HOMES:-$HOME/.agents/skills $HOME/.claude/skills $HOME/.kiro/skills $HOME/.config/opencode/skills $HOME/.codex/skills $HOME/.gemini/skills $HOME/.gemini/config/skills $HOME/.copilot/skills $HOME/.cline/skills}"
 skill_rel="${XREVIEW_SKILL_REL:-$skill_name}"
 
 published=0
