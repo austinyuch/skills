@@ -116,9 +116,7 @@ if [ ${#AGENTS_FILES[@]} -eq 0 ]; then
     echo "   No AGENTS.md files found."
 
     if [ "$MODE" = "staged" ]; then
-        echo "   Preserving managed CLAUDE.md entries from current symlink state."
-        collect_managed_claude_symlinks
-        rewrite_gitignore_section "$SECTION_BEGIN" "$SECTION_END" "${MANAGED_CLAUDE[@]}"
+        echo "   Leaving managed CLAUDE.md .gitignore section unchanged."
         exit 0
     fi
 
