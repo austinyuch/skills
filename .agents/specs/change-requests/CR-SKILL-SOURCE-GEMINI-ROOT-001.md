@@ -1,6 +1,6 @@
 # CR-SKILL-SOURCE-GEMINI-ROOT-001 — update upstream Gemini/Antigravity profile root
 
-- **Status**: Implementation ready; source merge and global republish pending
+- **Status**: Closed — source merged and global copies republished/verified
 - **Date**: 2026-07-11
 - **Source issue**: `ISSUE-CU-145`
 - **Requester / source repo**: `aclab-uat-demo-agent-private`
@@ -127,5 +127,30 @@ Pre-merge verification:
 - active-source legacy-root grep: no matches.
 - `git diff --check`: PASS.
 
-The CR remains open until the source commit is merged, affected global copies
-are republished from merged source, and installed-copy readback is recorded.
+## Closure Evidence
+
+The implementation merged to target `main` through PR #5 at
+`960073c0f062f455c24dd203f061c516f7e49775`.
+
+From that merged source, `spec-master` and `spec-driven-development` were
+republished in flat layout to:
+
+- `~/.codex/skills`
+- `~/.claude/skills`
+- `~/.config/opencode/skills`
+- `~/.kiro/skills`
+- `~/.agents/skills`
+- `~/.gemini/config/skills`
+
+Each installed skill directory is byte-for-byte aligned with merged source by
+`diff -qr`. Cross-root readback recorded these stable hashes:
+
+- `spec-master/WORKFLOW.md`: `6889b1272aeeae89e23c6eb1e2dbe99aa6939ebbf4d026e514fd0961c531ed5b`
+- `spec-driven-development/SKILL.md`: `550f1d39216c585f6cda72289efecee1743eb1858a8d4d70b4f6c6bff940b26f`
+
+No installed affected copy teaches the legacy Antigravity-specific path, and
+no `spec-master` or `spec-driven-development` directory was published beneath
+`~/.gemini/antigravity/skills`.
+
+See
+`.agents/specs/change-requests/reports/2026-07-11-gemini-config-root-closeout.md`.
