@@ -212,6 +212,9 @@ Rule of thumb:
 
 - 不要把這個 skill 擴張成另一個六階段 spec workflow。
 - 不要在這裡重新定義 `TESTS.md` / `SPECS.md` / `NEXT_STEPS.md` / `RTM.md` 的 schema；沿用既有 skills 的治理語意。
+- 若請求會改變未來 customer repository 的 `TESTS.md` / `SPECS.md` / `NEXT_STEPS.md` / `RTM.md`
+  格式、schema、alias、或 update mechanism，必須導向 owning global skill source update 或 CR/handoff；
+  不得把單一 target repo 的 local wording / parser patch 當成 reusable governance contract。
 - 不要把 `ISSUE_LOG.md` 寫成第二份 registry、第二份 review verdict、或第二份 operational memo。
 - 不要把 runtime allocation state 寫進 `SPECS.md`。
 - 不要把 registry work 與 authoring work 混寫成同一個 authority surface。

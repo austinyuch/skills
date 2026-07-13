@@ -46,6 +46,9 @@ requirements.md / design.md / tasks.md / review.md / test reports
 - `RTM.md` 是 **traceability rollup**，不是 test catalog
 - `SPECS.md` 是 **spec registry**，不是 test registry
 - `review.md` 才是最終 verdict authority
+- reusable `TESTS.md` schema / alias / migration policy 的 authority 是這個 skill 的 source；
+  target repo 內的 ad hoc parser、local spec wording、或單次手工 patch 只能是 consumer evidence，
+  不可被宣稱為未來 customer repository 的新格式契約
 
 禁止：
 
@@ -96,6 +99,7 @@ requirements.md / design.md / tasks.md / review.md / test reports
 - 檢查 `Requirement / AC Trace`
 - 檢查 `Task / Spec Trace`
 - 檢查 lifecycle / stale markers
+- 先用 legacy-compatible alias recognition 讀取既有欄位；不要要求 customer repository 先破壞式改表頭
 
 若某個 test 仍無法可靠映射到 spec / REQ / AC，應保守標成：
 
@@ -105,6 +109,33 @@ requirements.md / design.md / tasks.md / review.md / test reports
 - `stale`
 
 不要硬補假的 traceability。
+
+### 2.1 Legacy-compatible schema recognition
+
+本 skill 必須用 **normalize first, rewrite later** 的策略處理 legacy `TESTS.md`：
+
+- 先建立 normalized row view，讓下游 selector / rollup / audit consumer 可以讀取一致欄位。
+- 常見表頭 alias 必須被視為相容輸入，而不是要求 target repo 立即改名：
+  - `Type`, `Type Tag`, `Test Type` -> `Test Type`
+  - `Command`, `Canonical Command`, `Run`, `How to Run` -> `Canonical Command`
+  - `Req / Trace`, `Req Trace`, `Requirement / AC Trace`, `Requirement Trace` -> `Requirement / AC Trace`
+  - `Evidence`, `Evidence Ref`, `Evidence Summary`, `Latest Evidence` -> `Evidence Ref`
+  - `Task Trace`, `Task / Spec Trace`, `Spec Trace` -> `Task / Spec Trace`
+  - `Status`, `Execution`, `Execution Status` -> `Execution Status`
+- 若欄位缺失但 row 可識別，輸出 `missing_field` / `recommended_add_column` 類 advisory；不得自動補假的 command、owner、evidence、REQ。
+- 下游 product code 可以 consume normalized view；但新的 reusable schema / tier metadata / migration behavior
+  必須先在此 skill source 記錄，不能只在某個 target repo 的產品 parser 中發明。
+
+### 2.2 Advisory update mechanism
+
+當需要建議或套用 `TESTS.md` 更新時：
+
+- 預設輸出 recommendation plan；只有使用者明確要求或 repo workflow 明確允許時才 writeback。
+- 自動 rewrite 必須 idempotent，且保留 user-authored prose、comments、section order。
+- 對 managed insertion 使用 marker block 只能用於新增 summary / generated section；不可包住或覆寫整份手寫 catalog。
+- 高風險 rewrite 前建立 `.bak` 或等價備份；若 repo 禁止備份檔入版控，備份路徑需留在本機 temp 並在報告中說明。
+- 回報結果必須區分 `recommended`, `applied`, `blocked`, `not_applicable`。
+- Legacy repos 應先得到 compatibility diagnostics 與 migration suggestion；fresh repos 才使用 preferred template 初始化。
 
 ### 2.5 Lifecycle Crosswalk
 

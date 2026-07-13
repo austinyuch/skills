@@ -38,6 +38,9 @@ Core rules:
 - `SPECS.md` summarizes stable spec / CR state. It does not create work or replace upstream evidence.
 - `NEXT_STEPS.md` is overwritten as operational state changes. It does not preserve history.
 - Derived artifacts never repair upstream artifacts.
+- Reusable artifact schema, lifecycle wording, or migration behavior that should affect future customer repositories
+  must be authored in the owning global skill source first. A target repo's local spec wording or product parser can
+  record consumption evidence, but it is not by itself a reusable governance contract.
 
 ## 3. Maintenance Behavior by Phase
 
@@ -124,6 +127,8 @@ Refresh RTM only after upstream artifacts and test evidence are current. If RTM 
 - `NEXT_STEPS.md -> tasks.md` as task progress source.
 - `NEXT_STEPS.md -> SPECS.md` as registry truth.
 - Runtime allocation state -> `SPECS.md` / `RTM.md`.
+- Target-repo-only artifact format change -> future customer repository contract.
+- Product parser implementation -> governance schema authority.
 
 ## 8. Closeout Order
 
@@ -136,3 +141,15 @@ When a spec affects governance artifacts, use this order:
 5. Refresh `RTM.md` from upstream artifacts and test authority.
 6. Refresh `SPECS.md` stable summary through `spec-registry-manager`.
 7. Update `NEXT_STEPS.md` to current resume / closure / handoff state only.
+
+## 9. Reusable Governance Contract Changes
+
+When a branch spec discovers that artifact rules themselves need to change:
+
+1. Decide the owning skill:
+   - `test-registry-manager` owns `TESTS.md` schema, aliases, row reconciliation, evidence posture, and update recommendations.
+   - `spec-driven-development` / `spec-master` own SDD lifecycle, RTM, NEXT_STEPS, and phase closeout ordering.
+   - `spec-registry-manager` owns `SPECS.md` registry semantics and warning summaries.
+2. Update the canonical skill source or file a CR/handoff before claiming customer-repo impact.
+3. Keep legacy compatibility explicit. Existing repositories should get normalized reads and advisory migration plans before destructive rewrites.
+4. In the target repo, record only what was consumed or verified locally; do not claim global inheritance until the skill source is published/installed.

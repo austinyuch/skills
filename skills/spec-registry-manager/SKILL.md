@@ -31,6 +31,8 @@ description: 負責掃描專案內的所有 Specs 文件，進行規格盤點與
 - 在尚未產生 `review.md` 正式 readiness verdict 前，可摘要 requirements / design / tasks 已知的 **pre-review caution summary**（例如 early false-green、mock-dominant、artifact honesty 風險），但不得把這些 caution 寫成 `PASS` / `CONDITIONAL` / `FAIL`
 - 視需要與 workspace-level `RTM.md` 協同，提供 traceability completeness / refs 的治理摘要
 - 視需要摘要 `ISSUE_LOG.md` pointer 與 promotion 風險，但不得把 issue-log surface 本身當成 stable spec registry 替代品
+- 僅摘要已由 global skill source 或 explicit CR/handoff 承認的 reusable artifact schema / lifecycle policy；
+  不得把單一 target repo 的 local parser、local spec wording、或 ad hoc table rewrite 當成未來 customer repo 的治理契約
 
 上述 summary 都必須維持**高層、保守、可追溯**：
 - registry 只摘要已存在 artifact 的結論或 caution，不自行推導 readiness
@@ -177,6 +179,10 @@ warning code 命名請與共用 taxonomy 對齊：`../../docs/DEMO_RISK_WARNING_
 同樣地，更新 registry 時不得從 `RTM.md` 抽取 task counters、execution ordering、或任何把 workspace rollup 變成 task dashboard 的欄位；若這類資訊存在，應視為超出 registry 的治理邊界。
 
 同樣地，更新 registry 時不得讓 `SPECS.md` 與 `RTM.md` 互相糾正彼此的 snapshot 欄位。若 `SPECS.md`、`RTM.md` 與 `TESTS.md` / `review.md` 的欄位衝突，必須返回 upstream authority 重新生成，而不是 derived-to-derived sync。
+
+若 registry 摘要涉及 `TESTS.md` / `RTM.md` / `SPECS.md` / `NEXT_STEPS.md` 格式、schema、alias、
+或 migration/update behavior，必須確認該行為來自 owning global skill source 或明確 open CR。
+Target repo-local wording 可以作為 local evidence，不可被 registry 寫成已發布的 customer-repo behavior。
 
 必須採用 **[安全文件更新守則](./references/safe-update-protocol.md)** 來編輯檔案：
 1. **生成草稿**：寫入臨時檔案（如 `temp/SPECS_draft.md`）。
